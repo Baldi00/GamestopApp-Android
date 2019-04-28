@@ -1,4 +1,4 @@
-<h1>GamestopApp-Android v0.8</h1>
+<h1>GamestopApp-Android v0.9</h1>
 
 This is the android app for the program by https://github.com/Brankale/GamestopApp<br><br>
 
