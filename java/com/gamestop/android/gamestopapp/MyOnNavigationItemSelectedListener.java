@@ -35,7 +35,7 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
                 newsPage.setVisibility(View.VISIBLE);
                 add.setVisibility(View.GONE);
                 remove.setVisibility(View.GONE);
-                main.setSelecting(false,main.getWishistView());
+                main.setSelecting(false,main.getWishlistView());
                 main.setSelecting(false,main.getSearchedGameListView());
                 return true;
             case R.id.navigation_wishlist:
@@ -52,7 +52,7 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
                 searchPage.setVisibility(View.VISIBLE);
                 remove.setVisibility(View.GONE);
                 add.setVisibility(View.VISIBLE);
-                main.setSelecting(false,main.getWishistView());
+                main.setSelecting(false,main.getWishlistView());
                 return true;
         }
         return false;

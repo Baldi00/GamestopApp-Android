@@ -50,9 +50,7 @@ public class GameAdapter extends ArrayAdapter<Game>{
         publisher.setText(game.getPublisher());
         newPrice.setText(String.valueOf(game.getNewPrice()) + "€");
         usedPrice.setText(String.valueOf(game.getUsedPrice()) + "€");
-        final Context context = image.getContext();
-        int id = context.getResources().getIdentifier(game.getCover().substring(0,game.getCover().lastIndexOf(".")), "drawable", context.getPackageName());
-        image.setImageResource(id);
+        image.setImageURI(Uri.fromFile(new File(game.getCover())));
 
         usedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 

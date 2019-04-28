@@ -15,7 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/action_bar"
+        tools:ignore="InvalidId">
 
         <TextView
             android:layout_width="wrap_content"
@@ -189,7 +191,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/resultsOfSearchLayout"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <!--
             <LinearLayout

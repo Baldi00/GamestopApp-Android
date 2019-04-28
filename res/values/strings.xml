@@ -19,7 +19,7 @@
     <string name="genres" tools:ignore="ExtraTranslation">Genere:</string>
     <string name="date" tools:ignore="ExtraTranslation">Data di uscita:</string>
     <string name="players" tools:ignore="ExtraTranslation">Numero di giocatori:</string>
-    <string name="pegi" tools:ignore="ExtraTranslation">Pegi:</string>
+    <string name="pegi" tools:ignore="ExtraTranslation">Pegi</string>
 
     <string name="newPrice" tools:ignore="ExtraTranslation">"NUOVO: "</string>
     <string name="usedPrice" tools:ignore="ExtraTranslation">"USATO: "</string>

@@ -8,8 +8,11 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
 
@@ -30,9 +33,20 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
             i.putExtra("title", g.getTitle());
             i.putExtra("platform", g.getPlatform());
             i.putExtra("publisher", g.getPublisher());
+            i.putExtra("releaseDate",g.getReleaseDate());
+            i.putExtra("players",g.getPlayers());
+            i.putExtra("description",g.getDescription());
+
+            i.putStringArrayListExtra("genres",(ArrayList)g.getGenres());
+            i.putStringArrayListExtra("pegi",(ArrayList)g.getPegi());
+
             i.putExtra("cover", g.getCover());
             i.putExtra("newPrice", g.getNewPrice());
             i.putExtra("usedPrice", g.getUsedPrice());
+            i.putStringArrayListExtra("olderNewPrices",(ArrayList)g.getOlderNewPrices());
+            i.putStringArrayListExtra("olderUsedPrices",(ArrayList)g.getOlderUsedPrices());
+
+            i.putExtra("galleryDir",g.getGameGalleryDirectory());
 
             main.startActivity(i);
         } else {

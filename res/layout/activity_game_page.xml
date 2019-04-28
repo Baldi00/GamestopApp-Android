@@ -93,8 +93,7 @@
                 android:layout_height="350dp"
                 android:src="@drawable/no_image"
                 android:adjustViewBounds="true"
-                android:padding="10dp"
-                android:onClick="enlargeImage"/>
+                android:padding="10dp"/>
 
 
             <LinearLayout
@@ -186,27 +185,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:orientation="vertical"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/info"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="21dp"
                     android:background="@drawable/game_page_info_background"
                     android:paddingTop="30dp"
-                    android:paddingBottom="10dp"/>
+                    android:paddingBottom="10dp"
+                    android:text="@string/info"
+                    android:textColor="#000"
+                    android:textSize="21dp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
@@ -214,24 +213,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/title"
-                        android:textSize="17dp"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
@@ -239,24 +238,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/publisher"
-                        android:textSize="17dp"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/publisher"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
@@ -264,24 +263,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/platform"
-                        android:textSize="17dp"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/platform"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
@@ -289,24 +288,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/genres"
-                        android:textSize="17dp"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/genres"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
@@ -314,87 +313,117 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/date"
-                        android:textSize="17dp"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/releaseDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:text="@string/players"
-                        android:textSize="17dp"
-                        android:gravity="center"/>
+                        android:textSize="17dp" />
 
                     <TextView
                         android:id="@+id/players"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:text="@string/no_info"
-                        android:textStyle="bold"
                         android:textSize="17dp"
-                        android:gravity="right"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pegi"
-                        android:textSize="17dp"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-
-
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pegi"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="21dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="10dp"
+                android:layout_marginLeft="10dp"/>
 
             <HorizontalScrollView
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_gravity="center">
+                android:layout_height="60dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="10dp">
 
                     <ImageView
-                        android:id="@+id/pegiAge"
+                        android:id="@+id/pegi18"
+                        android:visibility="gone"
                         android:layout_width="43dp"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
-                        android:layout_marginLeft="10dp"
                         android:adjustViewBounds="true"
                         android:src="@drawable/pegi18" />
 
                     <ImageView
+                        android:id="@+id/pegi16"
+                        android:visibility="gone"
+                        android:layout_width="43dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/pegi16" />
+
+                    <ImageView
+                        android:id="@+id/pegi12"
+                        android:visibility="gone"
+                        android:layout_width="43dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/pegi12" />
+
+                    <ImageView
+                        android:id="@+id/pegi7"
+                        android:visibility="gone"
+                        android:layout_width="43dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/pegi7" />
+
+                    <ImageView
+                        android:id="@+id/pegi3"
+                        android:visibility="gone"
+                        android:layout_width="43dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/pegi3" />
+
+                    <ImageView
                         android:id="@+id/pegiBadLanguage"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/bad_language"
@@ -403,6 +432,7 @@
 
                     <ImageView
                         android:id="@+id/pegiDiscrimination"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/discrimination"
@@ -411,6 +441,7 @@
 
                     <ImageView
                         android:id="@+id/pegiDrugs"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
@@ -419,6 +450,7 @@
 
                     <ImageView
                         android:id="@+id/pegiFear"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/fear"
@@ -427,6 +459,7 @@
 
                     <ImageView
                         android:id="@+id/pegiGambling"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/gambling"
@@ -434,15 +467,8 @@
                         android:layout_marginRight="5dp"/>
 
                     <ImageView
-                        android:id="@+id/pegiOnline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/online"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
                         android:id="@+id/pegiSex"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/sex"
@@ -451,11 +477,22 @@
 
                     <ImageView
                         android:id="@+id/pegiViolence"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:src="@drawable/violence"
                         android:adjustViewBounds="true"
-                        android:layout_marginRight="10dp"/>
+                        android:layout_marginRight="5dp"/>
+
+
+                    <ImageView
+                        android:id="@+id/pegiOnline"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/online"
+                        android:adjustViewBounds="true"
+                        android:layout_marginRight="5dp"/>
 
                 </LinearLayout>
             </HorizontalScrollView>

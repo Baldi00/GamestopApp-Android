@@ -5,16 +5,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -22,11 +25,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity{
     //Lists
     private static Games wishlistData;                  //Data
     private Games searchedGameListData;
-    private ListView wishistView, searchedGameListView; //View
+    private ListView wishlistView, searchedGameListView; //View
     private static GameAdapter wishlistAdapter;         //Adapter
     private GameAdapter searchedGameListAdapter;
 
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity{
 
         pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
 
-        wishistView = (ListView)findViewById(R.id.wishlistView);
+        wishlistView = (ListView)findViewById(R.id.wishlistView);
         searchedGameListView = (ListView)findViewById(R.id.searchedGameList);
 
         gameToSearch = (EditText)findViewById(R.id.gameToSearch);
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
 
         navigation.setOnNavigationItemSelectedListener(new MyOnNavigationItemSelectedListener(newsPage,wishlistPage,searchPage,add,remove,this));
 
-        wishistView.setOnItemClickListener(new MyOnItemClickListener(this,"wishlist"));
+        wishlistView.setOnItemClickListener(new MyOnItemClickListener(this,"wishlist"));
         searchedGameListView.setOnItemClickListener(new MyOnItemClickListener(this,"searchGameList"));
 
         pullToRefresh.setOnRefreshListener(new MyOnRefreshListener(pullToRefresh,this));
@@ -113,18 +115,8 @@ public class MainActivity extends AppCompatActivity{
 
         //OPERATIONS
 
-        //Add data, ************* TEST *************
         wishlistData = new Games();
-        wishlistData.add(new Game("Detroit: Become Human","PS4", "Quantic Dream",70.98, 40.98,"test1.jpg"));
-        wishlistData.add(new Game("Horizon Zero Dawn","PS4","Guerrilla Games",70.98, 40.98, "test2.jpg"));
-        wishlistData.add(new Game("GTA V","PC","Rockstar Games",50.98, 34.98,"test3.jpg"));
-
-        //TEST
         searchedGameListData = new Games();
-        searchedGameListData.add(new Game("Detroit: Become Human","PS4", "Quantic Dream",70.98, 40.98,"test1.jpg"));
-        searchedGameListData.add(new Game("Horizon Zero Dawn","PS4","Guerrilla Games",70.98, 40.98, "test2.jpg"));
-        searchedGameListData.add(new Game("GTA V","PC","Rockstar Games",50.98, 34.98,"test3.jpg"));
-
 
         //Adapters
         //Maybe 2 different adapter classes in the future
@@ -132,14 +124,14 @@ public class MainActivity extends AppCompatActivity{
         wishlistAdapter = new GameAdapter(wishlistData,this);
         searchedGameListAdapter = new GameAdapter(searchedGameListData,this);
 
-        wishistView.setAdapter(wishlistAdapter);
+        wishlistView.setAdapter(wishlistAdapter);
         searchedGameListView.setAdapter(searchedGameListAdapter);
 
-        wishistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        wishlistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                selecting = true;
                 view.setBackgroundColor(Color.parseColor("#FBD1D0"));   //Set temp color to let user see something has changed
+                setSelecting(true,wishlistView);
                 return false;
             }
         });
@@ -147,11 +139,25 @@ public class MainActivity extends AppCompatActivity{
         searchedGameListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                selecting = true;
                 view.setBackgroundColor(Color.parseColor("#FBD1D0"));   //Set temp color to let user see something has changed
+                setSelecting(true,searchedGameListView);
                 return false;
             }
         });
+
+        //Add data, ************* TEST *************
+        /*Downloader downloader1 = new Downloader(this,"https://www.gamestop.it/PS4/Games/110143/detroit-become-human");
+        Downloader downloader2 = new Downloader(this,"https://www.gamestop.it/PS4/Games/97544/horizon-zero-dawn");
+        Downloader downloader3 = new Downloader(this,"https://www.gamestop.it/PS4/Games/34052/gta-v");
+        downloader1.execute();
+        downloader2.execute();
+        downloader3.execute();*/
+
+        //TEST
+        /*
+        searchedGameListData.add(new Game("https://www.gamestop.it/PS4/Games/110143/detroit-become-human"));
+        searchedGameListData.add(new Game("https://www.gamestop.it/PS4/Games/97544/horizon-zero-dawn"));
+        searchedGameListData.add(new Game("https://www.gamestop.it/PC/Games/34054/gta-v"));*/
 
 
         //Set "Wishlist" page as first page
@@ -163,10 +169,8 @@ public class MainActivity extends AppCompatActivity{
 
         //Check if it is selecting
         if(isSelecting()){
-            selecting = false;
-
-            //Set default background color to every view
-            setDefaultBackgroundColorToAllListViews(wishistView);
+            setSelecting(false,wishlistView);
+            setSelecting(false,searchedGameListView);
 
             return;
         }
@@ -190,23 +194,24 @@ public class MainActivity extends AppCompatActivity{
 
     //RESEARCH A GAME ON GAMESTOP WEBSITE
 
-    //Checks if game is set and disable TextView, then starts the research
+    //Checks if game is set
     public void searchGame(View v){
 
         if(!gameToSearch.getText().toString().equals("")) {
+            searchedGameListData.clear();
+            searchedGameListAdapter.notifyDataSetChanged();
             startSearch();
-            gameToSearch.setEnabled(false);
         }else{
             Toast.makeText(this,"Gioco non inserito", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    //Start the thread that will do the research. NOT IMPLEMENTED YET
+    //Start the thread that will do the research. Then enable/disable elements
     private void startSearch(){
-
-        Searcher s = new Searcher(this);
+        Searcher s = new Searcher(this,gameToSearch.getText().toString());
         s.execute();
+        gameToSearch.setEnabled(false);
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.GONE);
         findViewById(R.id.progressBarOnSearch).setVisibility(View.VISIBLE);
 
@@ -214,9 +219,15 @@ public class MainActivity extends AppCompatActivity{
 
     //Receive research results and enable TextView
     public void onEndSearch(Object result){
-
+        if(result!=null){
+            for(Game g : (Games)result){
+                searchedGameListData.add(g);
+            }
+            searchedGameListAdapter.notifyDataSetChanged();
+        }else{
+            Toast.makeText(this,"Nessun risultato trovato", Toast.LENGTH_SHORT).show();
+        }
         findViewById(R.id.progressBarOnSearch).setVisibility(View.GONE);
-        //((TextView) (findViewById(R.id.resultsFound))).setText("3");
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.VISIBLE);
         gameToSearch.setEnabled(true);
 
@@ -339,14 +350,14 @@ public class MainActivity extends AppCompatActivity{
 
             final ArrayList<Integer> toRemove = new ArrayList();
             for(int i=0;i<wishlistData.size();i++){
-                if(((Game)wishistView.getItemAtPosition(i)).isSelected()){
+                if(((Game) wishlistView.getItemAtPosition(i)).isSelected()){
                     toRemove.add(i);
                 }
             }
 
             if(toRemove.size()==0) {
                 Toast.makeText(getApplicationContext(), "Non hai selezionato nessun gioco da rimuovere", Toast.LENGTH_SHORT).show();
-                setSelecting(false,wishistView);
+                setSelecting(false, wishlistView);
                 return;
             }
 
@@ -365,7 +376,7 @@ public class MainActivity extends AppCompatActivity{
                             wishlistAdapter.notifyDataSetChanged();
                             Toast.makeText(getApplicationContext(),"I giochi selezionati sono stati rimossi dalla wishlist",Toast.LENGTH_SHORT).show();
 
-                            setSelecting(false,wishistView);
+                            setSelecting(false, wishlistView);
                             dialog.cancel();
                         }
                     });
@@ -375,13 +386,13 @@ public class MainActivity extends AppCompatActivity{
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            setSelecting(false,wishistView);
+                            setSelecting(false, wishlistView);
                             dialog.cancel();
                         }
                     });
             dialog.show();
         } else {
-            setSelecting(true,wishistView);
+            setSelecting(true, wishlistView);
             Toast.makeText(this,"Seleziona i giochi da rimuovere",Toast.LENGTH_SHORT).show();
         }
     }
@@ -389,7 +400,7 @@ public class MainActivity extends AppCompatActivity{
     //Set default background color to every view
     private void setDefaultBackgroundColorToAllListViews(@NonNull ListView list){
         for(int i=0;i<list.getAdapter().getCount();i++){
-            list.getAdapter().getView(i,null,wishistView).setBackgroundColor(Color.parseColor("#EEEEEE"));
+            list.getAdapter().getView(i,null, wishlistView).setBackgroundColor(Color.parseColor("#EEEEEE"));
         }
 
         ((ArrayAdapter)list.getAdapter()).notifyDataSetChanged();
@@ -410,6 +421,39 @@ public class MainActivity extends AppCompatActivity{
                 for (Game g : searchedGameListData) {
                     g.setSelected(false);
                 }
+            }
+
+            more.setVisibility(View.VISIBLE);
+            findViewById(R.id.action_bar).setBackgroundResource(R.color.colorPrimary);
+
+            if(list == wishlistView) {
+                remove.setBackgroundResource(R.color.colorPrimary);
+                add.setVisibility(View.VISIBLE);
+            } else {
+                add.setBackgroundResource(R.color.colorPrimary);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+            }
+        } else {
+            more.setVisibility(View.GONE);
+            findViewById(R.id.action_bar).setBackgroundColor(Color.parseColor("#838383"));
+
+            if(list == wishlistView) {
+                add.setVisibility(View.GONE);
+                remove.setBackgroundColor(Color.parseColor("#838383"));
+            }else{
+                remove.setVisibility(View.GONE);
+                add.setBackgroundColor(Color.parseColor("#838383"));
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.parseColor("#838383"));
             }
         }
     }
@@ -433,8 +477,8 @@ public class MainActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    public ListView getWishistView() {
-        return wishistView;
+    public ListView getWishlistView() {
+        return wishlistView;
     }
 
     public ListView getSearchedGameListView() {
@@ -449,5 +493,12 @@ public class MainActivity extends AppCompatActivity{
     public static void removeGameFromGamePage(Game g){
         wishlistData.remove(g);
         wishlistAdapter.notifyDataSetChanged();
+    }
+
+    public void onEndDownload(Object g){
+        if(g!=null) {
+            wishlistData.add((Game) g);
+            wishlistAdapter.notifyDataSetChanged();
+        }
     }
 }

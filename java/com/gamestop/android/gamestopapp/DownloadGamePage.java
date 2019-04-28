@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 public class DownloadGamePage extends AsyncTask {
 
     private ActivityGamePage main;
+
+
     public DownloadGamePage(ActivityGamePage main) {
         this.main = main;
     }
@@ -12,10 +14,6 @@ public class DownloadGamePage extends AsyncTask {
     //Downloads in background of the game info, if not present NOT IMPLEMENTED YET
     @Override
     protected Object doInBackground(Object[] params) {
-        //TODO Download the game
-        try{
-            Thread.sleep(1000);
-        }catch(Exception e){};
         return "xxxxxx";
     }
 
