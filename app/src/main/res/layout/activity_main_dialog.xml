@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/titolo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_info"
+        android:textColor="#000"
+        android:textSize="16dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="right">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/moveUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SU"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+
+            <TextView
+                android:id="@+id/moveDown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GIU'"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/moveTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN CIMA"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+
+            <TextView
+                android:id="@+id/moveBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN FONDO"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RIMUOVI"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+
+            <TextView
+                android:id="@+id/undo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ANNULLA"
+                android:textStyle="bold"
+                android:textColor="@color/redGamestop"
+                android:padding="5dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

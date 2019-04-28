@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ActivityMain">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:id="@+id/action_bar"
+        tools:ignore="InvalidId">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="@string/app_name"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right">
+
+            <ImageButton
+                android:id="@+id/goToSearch"
+                android:layout_width="39dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="end"
+                android:adjustViewBounds="true"
+                android:background="@color/colorPrimary"
+                android:scaleType="fitCenter"
+                android:paddingLeft="7dp"
+                android:paddingRight="7dp"
+                android:src="@drawable/ic_add_circle_outline_black_70dp"
+                android:onClick="goToSearch"/>
+
+            <ImageButton
+                android:id="@+id/more"
+                android:layout_width="35dp"
+                android:layout_height="match_parent"
+                android:paddingRight="10dp"
+                android:layout_gravity="end"
+                android:adjustViewBounds="true"
+                android:background="@color/colorPrimary"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_more_vert_black_70dp"
+                android:onClick="showMoreOptionsMenu"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/newsPage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#003791"
+            android:onClick="promoPlaystation"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:src="@drawable/promo_playstation_logo"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#e60012"
+            android:onClick="promoNintendo"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:src="@drawable/promo_nintendo_logo"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#107c10"
+            android:onClick="promoXbox"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:src="@drawable/promo_xbox_logo"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/wishlistPage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/gamestop_bunny_wishlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Inizia subito ad aggiungere giochi!"
+                android:textSize="20dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:gravity="center"/>
+
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/gamestop_bunny_wishlist_image"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gamestop_bunny"/>
+
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:visibility="visible"
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/wishlistView">
+
+
+
+            </ListView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/searchPage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <EditText
+                android:id="@+id/gameToSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:hint="@string/game_to_search_hint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:shadowColor="@color/redGamestop"
+                android:textSize="20dp"
+                android:imeOptions="actionSearch"/>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@color/redGamestop"
+                android:src="@drawable/ic_search_black_70dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:layout_marginBottom="8dp"
+                android:onClick="searchGame"
+                android:tint="#fff"/>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarOnSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/gamestop_bunny_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/gamestop_bunny_search_image"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gamestop_bunny"
+                android:scaleX="-1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/resultsOfSearchLayout"
+            android:visibility="gone">
+
+            <!--
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp">
+
+                <TextView
+                    android:id="@+id/resultsFound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N"
+                    android:textSize="15dp"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" risultato/i"
+                    android:textSize="15dp"
+                    android:textColor="#000"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ordina per:"
+                        android:textSize="15dp"
+                        android:textColor="#000"
+                        />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/ordina_per"
+                        android:dropDownWidth="150dp">
+
+                    </Spinner>
+
+                </LinearLayout>
+            </LinearLayout>
+            -->
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/searchedGameList">
+            </ListView>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        app:itemIconTint="@color/btn_tab_item_foreground"
+        app:itemTextColor="@color/btn_tab_item_foreground"
+        app:menu="@menu/navigation" />
+
+</LinearLayout>

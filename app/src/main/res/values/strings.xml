@@ -1,0 +1,58 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Gamestop Wishlist</string>
+
+    <string name="title_wishlist" tools:ignore="ExtraTranslation">Wishlist</string>
+    <string name="title_search" tools:ignore="ExtraTranslation">Cerca</string>
+    <string name="title_promo" tools:ignore="ExtraTranslation">Promo</string>
+
+    <string name="game_to_search_hint" tools:ignore="ExtraTranslation">Inserisci il gioco da cercare</string>
+
+    <string name="info" tools:ignore="ExtraTranslation">Informazioni</string>
+    <string name="settings" tools:ignore="ExtraTranslation">Impostazioni</string>
+    <string name="description" tools:ignore="ExtraTranslation">Descrizione</string>
+    <string name="gallery" tools:ignore="ExtraTranslation">Galleria</string>
+
+    <string name="no_info" tools:ignore="ExtraTranslation">No info</string>
+    <string name="title" tools:ignore="ExtraTranslation">Titolo:</string>
+    <string name="publisher" tools:ignore="ExtraTranslation">Editore:</string>
+    <string name="platform" tools:ignore="ExtraTranslation">Piattaforma:</string>
+    <string name="genres" tools:ignore="ExtraTranslation">Genere:</string>
+    <string name="date" tools:ignore="ExtraTranslation">Data di uscita:</string>
+    <string name="players" tools:ignore="ExtraTranslation">Numero di giocatori:</string>
+    <string name="officialSite" tools:ignore="ExtraTranslation">Sito ufficiale:</string>
+    <string name="pegi" tools:ignore="ExtraTranslation">Pegi</string>
+
+    <string name="newPrice" tools:ignore="ExtraTranslation">"NUOVO: "</string>
+    <string name="usedPrice" tools:ignore="ExtraTranslation">"USATO: "</string>
+    <string name="digitalPrice" tools:ignore="ExtraTranslation">"DIGITALE: "</string>
+    <string name="preorderPrice" tools:ignore="ExtraTranslation">"PREORDINE: "</string>
+    <string name="validForPromotions" tools:ignore="ExtraTranslation">"VALIDO PER LE PROMOZIONI"</string>
+
+
+    <string name="more_options_sort" tools:ignore="ExtraTranslation">Ordina per...</string>
+    <string name="more_options_open_site" tools:ignore="ExtraTranslation">Apri GameStop</string>
+    <string name="more_options_open_on_site" tools:ignore="ExtraTranslation">Apri su GameStop</string>
+    <string name="more_options_settings" tools:ignore="ExtraTranslation">Impostazioni</string>
+    <string name="more_options_add_id" tools:ignore="ExtraTranslation">Aggiungi ID</string>
+
+    <string name="sort_by_relevance" tools:ignore="ExtraTranslation">Rilevanza</string>
+    <string name="sort_by_aplhabet" tools:ignore="ExtraTranslation">Alfabeto</string>
+    <string name="sort_by_platform" tools:ignore="ExtraTranslation">Piattaforma</string>
+    <string name="sort_by_date" tools:ignore="ExtraTranslation">Data di uscita</string>
+    <string name="sort_by_new_price" tools:ignore="ExtraTranslation">Prezzo nuovo</string>
+    <string name="sort_by_used_price" tools:ignore="ExtraTranslation">Prezzo usato</string>
+
+
+    <string name="lorem_ipsum" tools:ignore="ExtraTranslation">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam hendrerit augue mi, ut ullamcorper nisi venenatis id. Sed accumsan sed arcu ut gravida. Cras aliquam turpis et tortor sollicitudin pharetra. Ut gravida metus turpis, eget mollis lectus varius eget. In mi urna, volutpat vitae ex sit amet, ultricies imperdiet odio. Pellentesque vel mauris sodales nibh imperdiet gravida nec sit amet lorem. Maecenas finibus risus purus, sagittis congue nunc dapibus finibus. Ut tempor aliquam urna vehicula tristique.
+    </string>
+
+    <string-array name="update_intervals">
+        <item>10 minuti</item>
+        <item>30 minuti</item>
+        <item>1 ora</item>
+        <item>3 ore</item>
+        <item>5 secondi TEST</item>
+    </string-array>
+
+</resources>
