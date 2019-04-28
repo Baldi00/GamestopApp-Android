@@ -1,9 +1,11 @@
-<h1>GamestopApp Android v0.16</h1>
+<h1>GamestopApp-Android v0.17</h1>
 
-This app is a wishlist for Gamestop.it games (https://www.gamestop.it)
+This is the android app for the program by https://github.com/Brankale/GamestopApp<br><br>
 
-It's based on https://github.com/Brankale/GamestopApp
+It is a videogame wishlist.<br>
+You can insert games and follow their prices provided by https://www.gamestop.it<br><br>
 
-Download apk: https://github.com/Baldi00/GamestopApp-Android/raw/master/app-debug.apk
+This project started in January 2019<br>
+The dates of the commits are all of the same day because the repository has been remade in order to organize it better<br><br>
 
 Made with AndroidStudio 3.2.1
