@@ -29,7 +29,14 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
         GamePreview g = (GamePreview) parent.getItemAtPosition(position);
 
         Intent i = new Intent(view.getContext(), ActivityGamePage.class);
-        i.putExtra("url",g.getURL());
+        i.putExtra("source",source);
+
+        if(source.equals("wishlist")) {
+            i.putExtra("id",g.getId());
+        }
+        else if(source.equals("search")){
+            i.putExtra("url", g.getURL());
+        }
 
         main.startActivity(i);
     }

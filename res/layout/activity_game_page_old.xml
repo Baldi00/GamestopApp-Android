@@ -29,7 +29,7 @@
 
             <ImageButton
                 android:id="@+id/add"
-                android:onClick="addToList"
+                android:onClick="addToWishist"
                 android:layout_width="39dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
@@ -43,7 +43,7 @@
 
             <ImageButton
                 android:id="@+id/remove"
-                android:onClick="removeFromList"
+                android:onClick="removeFromWishlist"
                 android:layout_width="39dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"

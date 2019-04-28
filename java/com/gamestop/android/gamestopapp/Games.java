@@ -41,9 +41,9 @@ public class Games extends ArrayList<Game> {
         return str;
     }
 
-    public void exportBinary() throws IOException
+    public void exportBinary(MainActivity main) throws IOException
     {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("userData/wishlist.dat"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DirectoryManager.getWishlistDir(main) + "wishlist.dat"));
 
         for( int game=0; game<this.size(); ++game ){
             oos.writeObject( this.get(game) );
@@ -53,9 +53,9 @@ public class Games extends ArrayList<Game> {
         oos.close();
     }
 
-    public static Games importBinary() throws FileNotFoundException, IOException, ClassNotFoundException
+    public static Games importBinary(MainActivity main) throws FileNotFoundException, IOException, ClassNotFoundException
     {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("userData/wishlist.dat"));
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DirectoryManager.getWishlistDir(main) + "wishlist.dat"));
 
         Games wishlist = new Games();
         boolean eof = false;
@@ -92,5 +92,4 @@ public class Games extends ArrayList<Game> {
     public void sortByReleaseDate () {
         Collections.sort( this, new GameReleaseDateComparator() );
     }
-
 }

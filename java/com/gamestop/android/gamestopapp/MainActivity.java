@@ -1,25 +1,20 @@
 package com.gamestop.android.gamestopapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -28,6 +23,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,8 +59,6 @@ public class MainActivity extends AppCompatActivity{
 
     //Searcher bar in the "Searcher" page
     private EditText gameToSearch;
-
-    //OTHER ATTRIBUTES
 
 
     /*********************************************************************************************************************************/
@@ -105,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
         navigation.setOnNavigationItemSelectedListener(new MyOnNavigationItemSelectedListener(newsPage,wishlistPage,searchPage,goToSearch,this));
 
         wishlistView.setOnItemClickListener(new MyOnItemClickListener(this,"wishlist"));
-        searchedGameListView.setOnItemClickListener(new MyOnItemClickListener(this,"searchGameList"));
+        searchedGameListView.setOnItemClickListener(new MyOnItemClickListener(this,"search"));
 
         pullToRefresh.setOnRefreshListener(new MyOnRefreshListener(pullToRefresh,this));
 
@@ -127,55 +121,53 @@ public class MainActivity extends AppCompatActivity{
         wishlistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getApplicationContext(), R.style.DialogActivityGamePage);
-                dialog.setMessage("Vuoi aggiungere i giochi selezionati alla wishlist?");
-                dialog.setPositiveButton(
-                        "Si",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-
-                dialog.setNegativeButton(
-                        "No",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                dialog.show();
-                return false;
+                removeFromWishlist(view,position,getApplicationContext());
+                return true;
             }
         });
 
         searchedGameListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                addToList(view,position);
+                addToWishlistSearchPage(view,position);
                 return true;
             }
         });
 
-        //Add data, ************* TEST *************
-        /*Downloader downloader1 = new Downloader(this,"https://www.gamestop.it/PS4/Games/110143/detroit-become-human");
-        Downloader downloader2 = new Downloader(this,"https://www.gamestop.it/PS4/Games/97544/horizon-zero-dawn");
-        Downloader downloader3 = new Downloader(this,"https://www.gamestop.it/PS4/Games/34052/gta-v");
-        downloader1.execute();
-        downloader2.execute();
-        downloader3.execute();*/
-
-        //TEST
-        /*
-        searchedGameListData.add(new Game("https://www.gamestop.it/PS4/Games/110143/detroit-become-human"));
-        searchedGameListData.add(new Game("https://www.gamestop.it/PS4/Games/97544/horizon-zero-dawn"));
-        searchedGameListData.add(new Game("https://www.gamestop.it/PC/Games/34054/gta-v"));*/
-
-
         //Set "Wishlist" page as first page
         navigation.setSelectedItemId(R.id.navigation_wishlist);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        File f = new File(DirectoryManager.getTempDir(this));
+        deleteFolderRecursive(f);
     }
 
     @Override
@@ -198,7 +190,7 @@ public class MainActivity extends AppCompatActivity{
     /**********   OTHER METHODS   ************/
     /*****************************************/
 
-    //RESEARCH A GAME ON GAMESTOP WEBSITE
+    //RESEARCH AND DOWNLOAD A GAME ON GAMESTOP WEBSITE
 
     //Checks if game is set
     public void searchGame(View v){
@@ -230,6 +222,7 @@ public class MainActivity extends AppCompatActivity{
                 searchedGameListData.add(g);
             }
             searchedGameListAdapter.notifyDataSetChanged();
+            searchedGameListView.setSelection(0);
         }else{
             Toast.makeText(this,"Nessun risultato trovato", Toast.LENGTH_SHORT).show();
         }
@@ -237,6 +230,99 @@ public class MainActivity extends AppCompatActivity{
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.VISIBLE);
         gameToSearch.setEnabled(true);
 
+    }
+
+    //Called when download of game finishes. Add downloaded game into wishlist
+    public void onEndDownload(Object g){
+        if(g!=null) {
+            wishlistData.add((GamePreview) g);
+            wishlistAdapter.notifyDataSetChanged();
+        }
+    }
+
+
+
+    //ADD AND REMOVE SYSTEM
+
+    //Add a game into wishlist if caller is a game from search list
+    public void addToWishlistSearchPage(View v, final int position){
+        String titolo = ((TextView)v.findViewById(R.id.title)).getText().toString();
+        //titolo = titolo.substring(0,titolo.length()-2);             //Remove strange space at the end
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
+        dialog.setMessage("Vuoi aggiungere " + titolo + " alla wishlist?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(getApplicationContext(),ActivityGamePage.class);
+                        i.putExtra("url",((GamePreview)searchedGameListAdapter.getItem(position)).getURL());
+                        i.putExtra("source","toAdd");
+                        startActivity(i);
+                        dialog.cancel();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
+
+    //Remove a game from wishlist if caller is a game from wishlist
+    public void removeFromWishlist(View v, final int position, final Context main){
+        String titolo = ((TextView)v.findViewById(R.id.title)).getText().toString();
+        titolo = titolo.substring(0,titolo.length()-2);             //Remove strange space at the end
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
+        dialog.setMessage("Vuoi rimuovere " + titolo + " dalla wishlist?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir(main) + ((GamePreview)wishlistAdapter.getItem(position)).getId() + "/"));
+                        wishlistData.remove((GamePreview)wishlistAdapter.getItem(position));
+                        wishlistAdapter.notifyDataSetChanged();
+                        dialog.cancel();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
+
+    //Add a game into wishlist if caller is a game from ActivityGamePage
+    public static void addToWishlistGamePage(Game g){
+        wishlistData.add(g);
+        wishlistAdapter.notifyDataSetChanged();
+    }
+
+    //Remove a game from wishlist if caller is a game from ActivityGamePage
+    public static void removeFromWishlistGamePage(Game g, Context main){
+        wishlistData.remove(g);
+        wishlistAdapter.notifyDataSetChanged();
+        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir(main) + g.getId() + "/"));
+    }
+
+
+
+    //ACTION BAR BUTTONS
+
+    //Called when user press on add button in wishlist page
+    public void goToSearch(View v){
+        navigation.setSelectedItemId(R.id.navigation_search);
     }
 
     //Show the menu on more options button
@@ -287,47 +373,9 @@ public class MainActivity extends AppCompatActivity{
         popup.show();
     }
 
-    //Add games into wishlist if caller is a game from search list
-    public void addToList(View v, final int position){
-        String titolo = ((TextView)v.findViewById(R.id.title)).getText().toString();
-        //titolo = titolo.substring(0,titolo.length()-2);             //Remove strange space at the end
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-        dialog.setMessage("Vuoi aggiungere " + titolo + " alla wishlist?");
-        dialog.setPositiveButton(
-                "Si",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        wishlistData.add((GamePreview)searchedGameListView.getAdapter().getItem(position));
-                        wishlistAdapter.notifyDataSetChanged();
-                        dialog.cancel();
-                    }
-                });
 
-        dialog.setNegativeButton(
-                "No",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        dialog.show();
-    }
 
-    //Remove games from wishlist if caller is a game from wishlist
-    public void removeFromList(View v){
-
-    }
-
-    //Set default background color to every view
-    private void setDefaultBackgroundColorToAllListViews(@NonNull ListView list){
-        for(int i=0;i<list.getAdapter().getCount();i++){
-            list.getAdapter().getView(i,null, wishlistView).setBackgroundColor(Color.parseColor("#EEEEEE"));
-        }
-
-        ((ArrayAdapter)list.getAdapter()).notifyDataSetChanged();
-    }
+    //PROMO PAGE
 
     public void promoPlaystation(View v){
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gamestop.it/playstation?utm_source=Pulsante&utm_medium=Homepage&utm_campaign=PlayStationPromo"));
@@ -344,32 +392,28 @@ public class MainActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
+
+
+    //GETTERS AND SETTERS
+
     public ListView getWishlistView() {
         return wishlistView;
     }
 
-    public ListView getSearchedGameListView() {
-        return searchedGameListView;
-    }
 
-    public static void addGameFromGamePage(GamePreview g){
-        wishlistData.add(g);
-        wishlistAdapter.notifyDataSetChanged();
-    }
 
-    public static void removeGameFromGamePage(Game g){
-        wishlistData.remove(g);
-        wishlistAdapter.notifyDataSetChanged();
-    }
+    //OTHER METHODS
 
-    public void onEndDownload(Object g){
-        if(g!=null) {
-            wishlistData.add((GamePreview) g);
-            wishlistAdapter.notifyDataSetChanged();
+    //Delete a folder with its content
+    public static void deleteFolderRecursive(File f){
+        Log.d("EBBENE",f.getAbsolutePath());
+        if(f.isDirectory()){
+            File[] files = f.listFiles();
+            for (File file : files){
+                deleteFolderRecursive(file);
+            }
         }
-    }
 
-    public void goToSearch(View v){
-        navigation.setSelectedItemId(R.id.navigation_search);
+        f.delete();
     }
 }

@@ -1,14 +1,20 @@
 package com.gamestop.android.gamestopapp;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-import com.gamestop.android.gamestopapp.DirectoryManager;
-import com.gamestop.android.gamestopapp.Log;
-
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.SocketTimeoutException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +25,6 @@ import org.jsoup.select.Elements;
 
 public class GamePreview implements Comparable<GamePreview> {
 
-    private MainActivity main;
-
     protected String id;
     protected String title;
     protected String publisher;
@@ -29,6 +33,7 @@ public class GamePreview implements Comparable<GamePreview> {
     protected Double newPrice;
     protected Double usedPrice;
     protected Double preorderPrice;
+    protected Double digitalPrice;
     protected List<Double> olderNewPrices;
     protected List<Double> olderUsedPrices;
 
@@ -40,7 +45,7 @@ public class GamePreview implements Comparable<GamePreview> {
     }
 
     public String getTitle() {
-        return title;
+        return title.trim();
     }
 
     public String getPublisher() {
@@ -73,6 +78,14 @@ public class GamePreview implements Comparable<GamePreview> {
 
     public boolean hasPreorderPrice() {
         return preorderPrice != null;
+    }
+
+    public Double getDigitalPrice() {
+        return digitalPrice;
+    }
+
+    public boolean hasDigitalPrice() {
+        return digitalPrice != null;
     }
 
     public List<Double> getOlderNewPrices() {
@@ -111,12 +124,12 @@ public class GamePreview implements Comparable<GamePreview> {
         return "http://www.gamestop.it/Platform/Games/" + id;
     }
 
-    public String getGameDirectory() {
+    public String getGameDirectory(Activity main) {
         return DirectoryManager.getDirectory(id,main) + id + "/";
     }
 
-    public String getCover() {
-        return getGameDirectory() + "cover.jpg";
+    public String getCover(Activity main) {
+        return getGameDirectory(main) + "coverGP.jpg";
     }
 
     @Override
@@ -143,7 +156,7 @@ public class GamePreview implements Comparable<GamePreview> {
 
     @Override
     public String toString() {
-        return "GamePreview{" + "id=" + id + ", title=" + title + ", publisher=" + publisher + ", platform=" + platform + ", newPrice=" + newPrice + ", usedPrice=" + usedPrice + ", preorderPrice=" + preorderPrice + ", olderNewPrices=" + olderNewPrices + ", olderUsedPrices=" + olderUsedPrices + '}';
+        return "GamePreview{" + "id=" + id + ", title=" + title + ", publisher=" + publisher + ", platform=" + platform + ", newPrice=" + newPrice + ", usedPrice=" + usedPrice + ", preorderPrice=" + preorderPrice + ", digitalPrice=" + digitalPrice + ", olderNewPrices=" + olderNewPrices + ", olderUsedPrices=" + olderUsedPrices + ", pegi=" + pegi + ", releaseDate=" + releaseDate + '}';
     }
 
     @Override
@@ -153,38 +166,167 @@ public class GamePreview implements Comparable<GamePreview> {
 
     public static List<GamePreview> searchGame(String searchedGameName, MainActivity main) throws UnsupportedEncodingException, IOException {
 
-        List<GamePreview> searchedGames = new ArrayList();
+        String url = "https://www.gamestop.it/SearchResult/QuickSearch?q=" + URLEncoder.encode(searchedGameName, "UTF-8");
 
-        String site = "https://www.gamestop.it";
-        String path = "/SearchResult/QuickSearch";
-        String query = "?q=" + URLEncoder.encode(searchedGameName, "UTF-8");
-        String url = site + path + query;
-
-        Document doc = null;
-
-        try {
-            doc = Jsoup.connect(url).get();
-        } catch (SocketTimeoutException ste) {
-            Log.error("GamePreview","SocketTimeoutException", url);
-            return null;
-        }
-
+        Document doc = Jsoup.connect(url).get();
         Element body = doc.body();
 
         Elements gamesList = body.getElementsByClass("singleProduct");
         Log.info("GamePreview", "search completed", gamesList.size()+" results" );
 
-        for ( Element game : gamesList ) {
+        // if there are no games
+        if ( gamesList.isEmpty() ){
+            return null;
+        }
+
+        List<GamePreview> searchedGames = new ArrayList();
+
+        for ( Element game : gamesList )
+        {
             GamePreview gamePreview = new GamePreview();
 
-            String gameImageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).absUrl("data-llsrc");
-            gamePreview.id = game.getElementsByTag("h3").get(0).getElementsByTag("a").get(0).absUrl("href").split("/")[5];
+            gamePreview.id = game.getElementsByClass("prodImg").get(0).attr("href").split("/")[3];
             gamePreview.title = game.getElementsByTag("h3").get(0).text();
-            gamePreview.platform = game.getElementsByTag("h3").get(0).getElementsByTag("a").get(0).absUrl("href").split("/")[3];
+            gamePreview.publisher = game.getElementsByTag("h4").get(0).getElementsByTag("strong").text();
+            gamePreview.platform = game.getElementsByTag("h4").get(0).textNodes().get(0).text().trim();
+
+            Elements e = game.getElementsByClass("buyNew");
+            if ( !e.isEmpty() ){
+                if ( e.get(0).getElementsByClass("discounted").isEmpty() ){
+                    String price = e.get(0).text();
+                    System.out.println(price);
+                    gamePreview.newPrice = stringToPrice(price);
+                } else {
+                    /*
+                    String price = e.get(0).text();
+                    gamePreview.newPrice = stringToPrice(price);
+                    gamePreview.olderNewPrices = new ArrayList<>();
+                    gamePreview.olderNewPrices.add(stringToPrice(price));
+                    */
+                }
+            }
+
+            e = game.getElementsByClass("buyUsed");
+            if ( !e.isEmpty() ){
+                if ( e.get(0).getElementsByClass("discounted").isEmpty() ){
+                    String price = e.get(0).text();
+                    gamePreview.usedPrice = stringToPrice(price);
+                } else {
+                    /*
+                    String price = e.get(0).text();
+                    gamePreview.newPrice = stringToPrice(price);
+                    gamePreview.olderNewPrices = new ArrayList<>();
+                    gamePreview.olderNewPrices.add(stringToPrice(price));
+                    */
+                }
+            }
+
+            /*
+            e = game.getElementsByClass("buyUsed");
+            if ( !e.isEmpty() ){
+                String price = e.get(0).text();
+                gamePreview.usedPrice = stringToPrice(price);
+            }*/
+
+            e = game.getElementsByClass("buyPresell");
+            if ( !e.isEmpty() ){
+                String price = e.get(0).text();
+                gamePreview.preorderPrice = stringToPrice(price);
+            }
+
+            e = game.getElementsByClass("buyDLC");
+            if ( !e.isEmpty() ){
+                String price = e.get(0).text();
+                gamePreview.digitalPrice = stringToPrice(price);
+            }
+
+
+            //gamePreview.olderNewPrices;
+            //gamePreview.olderUsedPrices;
+
+            gamePreview.pegi = new ArrayList<>();
+            gamePreview.pegi.add( game.getElementsByTag("p").get(0).text() );
+            gamePreview.releaseDate = game.getElementsByTag("li").get(0).text().split(": ")[1];
+
+            // create the necessary directories
+            gamePreview.mkdir(main);
+
+            // download the cover
+            String imageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).attr("data-llsrc");
+            String imageName = imageUrl.split("/")[6];
+            downloadImage("coverGP.jpg", imageUrl, gamePreview.getGameDirectory(main));
+
             searchedGames.add(gamePreview);
         }
 
         return searchedGames;
+    }
+
+    protected static double stringToPrice(String price) {
+
+        if(price.split(" ").length > 1)
+            price = price.split(" ")[1];        // <-- example "Nuovo 19.99€"
+        price = price.replace(".", "");     // <-- to handle prices over 999,99€ like 1.249,99€
+        price = price.replace(',', '.');    // <-- to convert the price in a string that can be parsed
+        price = price.replace("€", "");     // <-- remove unecessary characters
+        price = price.replace("CHF", "");   // <-- remove unecessary characters
+        price = price.trim();               // <-- remove remaning spaces
+
+        return Double.parseDouble(price);
+    }
+
+    protected static void downloadImage(String name, String imgUrl, String imgPath) throws MalformedURLException, IOException {
+        imgPath = imgPath + name;
+        File f = new File(imgPath);
+
+        // if the image already exists
+        if (f.exists()) {
+            Log.warning("GamePreview", "img already exists", imgPath);
+            return;
+        }
+
+        Bitmap image = getBitmapFromURL(imgUrl);
+
+
+        try (FileOutputStream out = new FileOutputStream(imgPath)) {
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.info("GamePreview", "image downloaded", imgUrl);
+    }
+
+    protected void mkdir(Activity main) {
+        // create userData folder if doesn't exist
+
+        File dir = new File(DirectoryManager.getTempDir(main));
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        // create the game folder if doesn't exist
+        dir = new File( getGameDirectory(main) );
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+    }
+
+    protected static Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

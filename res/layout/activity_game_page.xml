@@ -34,7 +34,7 @@
 
             <ImageButton
                 android:id="@+id/add"
-                android:onClick="addToList"
+                android:onClick="addToWishist"
                 android:layout_width="39dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
@@ -48,7 +48,7 @@
 
             <ImageButton
                 android:id="@+id/remove"
-                android:onClick="removeFromList"
+                android:onClick="removeFromWishlist"
                 android:layout_width="39dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
@@ -203,6 +203,7 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/titleLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -228,6 +229,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/publisherLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -253,6 +255,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/platformLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -278,6 +281,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/genresLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -303,6 +307,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/releaseDateLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -328,6 +333,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/playersLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
@@ -352,283 +358,307 @@
                         android:textStyle="bold" />
 
                 </LinearLayout>
+
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/pegiLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pegi"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:textSize="21dp"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="10dp"/>
+                android:orientation="vertical">
 
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp">
-
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:paddingLeft="10dp">
+                    android:layout_height="wrap_content"
+                    android:text="@string/pegi"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:textSize="21dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginLeft="10dp"/>
 
-                    <ImageView
-                        android:id="@+id/pegi18"
-                        android:visibility="gone"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi18" />
-
-                    <ImageView
-                        android:id="@+id/pegi16"
-                        android:visibility="gone"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi16" />
-
-                    <ImageView
-                        android:id="@+id/pegi12"
-                        android:visibility="gone"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi12" />
-
-                    <ImageView
-                        android:id="@+id/pegi7"
-                        android:visibility="gone"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi7" />
-
-                    <ImageView
-                        android:id="@+id/pegi3"
-                        android:visibility="gone"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi3" />
-
-                    <ImageView
-                        android:id="@+id/pegiBadLanguage"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/bad_language"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiDiscrimination"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/discrimination"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiDrugs"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/drugs" />
-
-                    <ImageView
-                        android:id="@+id/pegiFear"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/fear"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiGambling"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/gambling"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiSex"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/sex"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiViolence"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/violence"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-
-                    <ImageView
-                        android:id="@+id/pegiOnline"
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/online"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/gallery"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:textSize="21dp"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="10dp"/>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/gallery"
+                <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_height="60dp">
 
-                    <!--<ImageView
-                        android:id="@+id/gallery1"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"
-                        android:onClick="enlargeImage"/>
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginBottom="10dp"
+                        android:paddingLeft="10dp">
 
-                    <ImageView
-                        android:id="@+id/gallery2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegi18"
+                            android:visibility="gone"
+                            android:layout_width="43dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/pegi18" />
 
-                    <ImageView
-                        android:id="@+id/gallery3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegi16"
+                            android:visibility="gone"
+                            android:layout_width="43dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/pegi16" />
 
-                    <ImageView
-                        android:id="@+id/gallery4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegi12"
+                            android:visibility="gone"
+                            android:layout_width="43dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/pegi12" />
 
-                    <ImageView
-                        android:id="@+id/gallery5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegi7"
+                            android:visibility="gone"
+                            android:layout_width="43dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/pegi7" />
 
-                    <ImageView
-                        android:id="@+id/gallery6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegi3"
+                            android:visibility="gone"
+                            android:layout_width="43dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/pegi3" />
 
-                    <ImageView
-                        android:id="@+id/gallery7"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegiBadLanguage"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/bad_language"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
 
-                    <ImageView
-                        android:id="@+id/gallery8"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegiDiscrimination"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/discrimination"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
 
-                    <ImageView
-                        android:id="@+id/gallery9"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        <ImageView
+                            android:id="@+id/pegiDrugs"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/drugs" />
 
-                    <ImageView
-                        android:id="@+id/gallery10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"/>-->
+                        <ImageView
+                            android:id="@+id/pegiFear"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/fear"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
 
-                </LinearLayout>
+                        <ImageView
+                            android:id="@+id/pegiGambling"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/gambling"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
 
-            </HorizontalScrollView>
+                        <ImageView
+                            android:id="@+id/pegiSex"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/sex"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
 
-            <TextView
+                        <ImageView
+                            android:id="@+id/pegiViolence"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/violence"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
+
+
+                        <ImageView
+                            android:id="@+id/pegiOnline"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/online"
+                            android:adjustViewBounds="true"
+                            android:layout_marginRight="5dp"/>
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/galleryLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/description"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:textSize="21dp"
-                android:background="@drawable/game_page_info_background"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/description"
-                android:padding="10dp"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gallery"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:textSize="21dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginLeft="10dp"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/gallery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp">
+
+                        <!--<ImageView
+                            android:id="@+id/gallery1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"
+                            android:onClick="openGallery"/>
+
+                        <ImageView
+                            android:id="@+id/gallery2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery9"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"/>
+
+                        <ImageView
+                            android:id="@+id/gallery10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/no_image_gallery"
+                            android:adjustViewBounds="true"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"/>-->
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/descriptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lorem_ipsum"
-                android:textSize="17dp"
-                />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:textSize="21dp"
+                    android:background="@drawable/game_page_info_background"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/description"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lorem_ipsum"
+                    android:textSize="17dp"
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
 

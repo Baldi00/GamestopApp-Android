@@ -1,13 +1,14 @@
 package com.gamestop.android.gamestopapp;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.io.File;
 
 public class DirectoryManager {
 
-    public static final String TEMP_DIR = "tmp/";               // the temporary folder for the app
-    public static final String WISHLIST_DIR = "userData/";      // the folder of the saved games
+    private static final String TEMP_DIR = "tmp/";               // the temporary folder for the app
+    private static final String WISHLIST_DIR = "userData/";      // the folder of the saved games
 
     /**
      * @param id id of the game
@@ -35,7 +36,11 @@ public class DirectoryManager {
         return applicationDir + TEMP_DIR;
     }
 
-    public static String getTempDir(Activity main){
+    public static String getTempDir(Context main){
         return main.getApplicationContext().getFilesDir() + TEMP_DIR;
+    }
+
+    public static String getWishlistDir(Context main){
+        return main.getApplicationContext().getFilesDir() + WISHLIST_DIR;
     }
 }

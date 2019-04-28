@@ -23,14 +23,14 @@ import java.util.List;
 
 public class GameAdapter extends ArrayAdapter<GamePreview>{
     private List<GamePreview> list;
-    Context mContext;
+    MainActivity main;
     private TextView title, platform, newPrice, publisher, oldNewPrice, usedPrice, oldUsedPrice;
     private ImageView image;
 
-    public GameAdapter(List<GamePreview> list, Context context) {
-        super(context, R.layout.gamepreview_compact, list);
+    public GameAdapter(List<GamePreview> list, MainActivity main) {
+        super(main, R.layout.gamepreview_compact, list);
         this.list = list;
-        this.mContext=context;
+        this.main=main;
     }
 
     @Override
@@ -42,6 +42,8 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
         publisher = (TextView)convertView.findViewById(R.id.publisher);
         newPrice = (TextView)convertView.findViewById(R.id.newPrice);
         usedPrice = (TextView)convertView.findViewById(R.id.usedPrice);
+        oldNewPrice = (TextView)convertView.findViewById(R.id.oldNewPrice);
+        oldUsedPrice = (TextView)convertView.findViewById(R.id.oldUsedPrice);
         image = (ImageView) convertView.findViewById(R.id.image);
 
         GamePreview game = getItem(position);
@@ -49,11 +51,21 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
         title.setText(game.getTitle());
         platform.setText(game.getPlatform());
         publisher.setText(game.getPublisher());
-        newPrice.setText(String.valueOf(game.getNewPrice()) + "€");
-        usedPrice.setText(String.valueOf(game.getUsedPrice()) + "€");
-        //image.setImageURI(Uri.fromFile(new File(game.getCover())));
 
-        usedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if(!String.valueOf(game.getNewPrice()).equals("null"))
+            newPrice.setText(String.valueOf(game.getNewPrice()) + "€");
+        else
+            newPrice.setText("NO INFO");
+
+        if(!String.valueOf(game.getUsedPrice()).equals("null"))
+            usedPrice.setText(String.valueOf(game.getUsedPrice()) + "€");
+        else
+            usedPrice.setText("NO INFO");
+
+        image.setImageURI(Uri.fromFile(new File(game.getCover(main))));
+
+        oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
     }
