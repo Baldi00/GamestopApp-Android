@@ -46,7 +46,7 @@ public class BackgroundService extends Service {
 
     private void searchInBackgroundAndNotify(){
         while (true){
-            int millisecondsToSleep = 600000;
+            int millisecondsToSleep = 5000; //TODO: TEST, to be changed with 600000
             ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
@@ -65,10 +65,11 @@ public class BackgroundService extends Service {
                             if(gs!=null) {
                                 for (GamePreview gp : gs) {
                                     Game game = (Game) gp;
-                                    List<String> notifications = game.update();
+                                    //List<String> notifications = game.update();
 
-                                    /*List<String> notifications = new ArrayList<String>();
-                                    notifications.add("Gioco in sconto");*/
+                                    //TODO
+                                    List<String> notifications = new ArrayList<String>();
+                                    notifications.add("Gioco in sconto");
 
                                     if (notifications != null) {
 
