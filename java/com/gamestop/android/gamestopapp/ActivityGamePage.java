@@ -58,12 +58,16 @@ public class ActivityGamePage extends Activity {
             findViewById(R.id.wholePage).setVisibility(View.GONE);
             progressBarOnDownlaod.setVisibility(View.VISIBLE);
 
+            findViewById(R.id.remove).setVisibility(View.GONE);
+            findViewById(R.id.add).setVisibility(View.VISIBLE);
         } else {
             title.setText(caller.getStringExtra("title"));
             platform.setText(caller.getStringExtra("platform"));
             publisher.setText(caller.getStringExtra("publisher"));
             newPrice.setText(String.valueOf(caller.getDoubleExtra("newPrice",-1)) + "€");
             usedPrice.setText(String.valueOf(caller.getDoubleExtra("usedPrice",-1)) + "€");
+            findViewById(R.id.add).setVisibility(View.GONE);
+            findViewById(R.id.remove).setVisibility(View.VISIBLE);
 
             String coverPath = caller.getStringExtra("cover");
             Context context = cover.getContext();
@@ -91,6 +95,52 @@ public class ActivityGamePage extends Activity {
         cover.setImageResource(id);
     }
 
+    //MENU TOOLBAR
 
+    public void addToList(View v){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.AlertDialogActivityGamePage);
+        dialog.setMessage("Vuoi aggiungere " + title.getText().toString() + " alla wishlist?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
+
+    public void removeFromList(View v){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.AlertDialogActivityGamePage);
+        dialog.setMessage("Vuoi rimuovere " + title.getText().toString() + " dalla wishlist?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
 
 }

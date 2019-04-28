@@ -1,5 +1,7 @@
 package com.gamestop.android.gamestopapp;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -7,23 +9,33 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
+    private ImageButton add,remove,more;
 
     private SwipeRefreshLayout pullToRefresh;
     private LinearLayout newsPage, wishlistPage, searchPage;
@@ -31,10 +43,19 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener;
 
+    private Games wishlistData;
+    private GameAdapter adapter;
+    private ListView wishistView, searchedGameList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        add = (ImageButton)findViewById(R.id.add);
+        remove = (ImageButton)findViewById(R.id.remove);
+        more = (ImageButton)findViewById(R.id.more);
 
         newsPage = (LinearLayout)findViewById(R.id.newsPage);
         wishlistPage = (LinearLayout)findViewById(R.id.wishlistPage);
@@ -45,27 +66,32 @@ public class MainActivity extends AppCompatActivity {
         mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(adapter!=null) adapter.setSelecting(false);
+                if(adapter!=null) adapter.notifyDataSetChanged();
+
                 switch (item.getItemId()) {
                     case R.id.navigation_news:
                         wishlistPage.setVisibility(View.GONE);
                         searchPage.setVisibility(View.GONE);
                         newsPage.setVisibility(View.VISIBLE);
-                        if(findViewById(R.id.addGameToWishlist)!=null) findViewById(R.id.addGameToWishlist).setVisibility(View.GONE);
-                        if(findViewById(R.id.deleteGameFromWishlist)!=null) findViewById(R.id.deleteGameFromWishlist).setVisibility(View.GONE);
+                        add.setVisibility(View.GONE);
+                        remove.setVisibility(View.GONE);
                         return true;
                     case R.id.navigation_wishlist:
                         newsPage.setVisibility(View.GONE);
                         searchPage.setVisibility(View.GONE);
                         wishlistPage.setVisibility(View.VISIBLE);
-                        if(findViewById(R.id.addGameToWishlist)!=null) findViewById(R.id.addGameToWishlist).setVisibility(View.GONE);
-                        if(findViewById(R.id.deleteGameFromWishlist)!=null) findViewById(R.id.deleteGameFromWishlist).setVisibility(View.VISIBLE);
+                        add.setVisibility(View.GONE);
+                        remove.setVisibility(View.VISIBLE);
+
                         return true;
                     case R.id.navigation_search:
                         newsPage.setVisibility(View.GONE);
                         wishlistPage.setVisibility(View.GONE);
                         searchPage.setVisibility(View.VISIBLE);
-                        if(findViewById(R.id.addGameToWishlist)!=null) findViewById(R.id.addGameToWishlist).setVisibility(View.VISIBLE);
-                        if(findViewById(R.id.deleteGameFromWishlist)!=null) findViewById(R.id.deleteGameFromWishlist).setVisibility(View.GONE);
+                        remove.setVisibility(View.GONE);
+                        add.setVisibility(View.VISIBLE);
+
                         return true;
                 }
                 return false;
@@ -74,16 +100,17 @@ public class MainActivity extends AppCompatActivity {
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setSelectedItemId(R.id.navigation_wishlist);
 
         //Add
-        Games wishlistData = new Games();
+        wishlistData = new Games();
         wishlistData.add(new Game("Detroit: Become Human","PS4", "Quantic Dream",70.98, 40.98,"test1.jpg"));
         wishlistData.add(new Game("Horizon Zero Dawn","PS4","Guerrilla Games",70.98, 40.98, "test2.jpg"));
         wishlistData.add(new Game("GTA V","PC","Rockstar Games",50.98, 34.98,"test3.jpg"));
 
         //List with listener (wishlist & searchedGame lists)
-        ListView wishistView = (ListView)findViewById(R.id.wishlistView);
-        ListView searchedGameList = (ListView)findViewById(R.id.searchedGameList);
+        wishistView = (ListView)findViewById(R.id.wishlistView);
+        searchedGameList = (ListView)findViewById(R.id.searchedGameList);
 
         wishistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -99,14 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("newPrice",g.getNewPrice());
                 i.putExtra("usedPrice",g.getUsedPrice());
                 startActivity(i);
-            }
-        });
-
-        wishistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                Toast.makeText(arg1.getContext(),"pos: " + pos,Toast.LENGTH_SHORT).show();
-                return true;
             }
         });
 
@@ -128,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Adapters
-        GameAdapter adapter = new GameAdapter(wishlistData,this);
+        adapter = new GameAdapter(wishlistData,this);
         wishistView.setAdapter(adapter);
         searchedGameList.setAdapter(adapter);
 
@@ -175,27 +194,65 @@ public class MainActivity extends AppCompatActivity {
 
     //MENU TOOLBAR
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_activity_game_page, menu);
-        navigation.setSelectedItemId(R.id.navigation_wishlist);
-        return true;
-    }
+    public void addToList(View v){
+        if(findViewById(R.id.resultsOfSearchLayout).getVisibility() == View.VISIBLE) {
+            if (adapter.isSelecting()) {
+                //CHECK CHECKED ITEMS
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setMessage("Vuoi aggiungere N giochi alla wishlist?");
+                dialog.setPositiveButton(
+                        "Si",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                adapter.setSelecting(false);
+                                dialog.cancel();
+                            }
+                        });
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.addGameToWishlist:
-                Toast.makeText(this,"Io aggiungo giochi", Toast.LENGTH_SHORT).show();
-            case R.id.deleteGameFromWishlist:
-                Toast.makeText(this,"Io cancello giochi", Toast.LENGTH_SHORT).show();
+                dialog.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                adapter.setSelecting(false);
+                                dialog.cancel();
+                            }
+                        });
+                dialog.show();
+            } else {
+                adapter.setSelecting(true);
+            }
         }
-        return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    public void removeFromList(View v){
+        if (adapter.isSelecting()) {
+            //CHECK CHECKED ITEMS
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setMessage("Vuoi rimuovere N giochi dalla wishlist?");
+            dialog.setPositiveButton(
+                    "Si",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.setSelecting(false);
+                            dialog.cancel();
+                        }
+                    });
+
+            dialog.setNegativeButton(
+                    "No",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.setSelecting(false);
+                            dialog.cancel();
+                        }
+                    });
+            dialog.show();
+        } else {
+            adapter.setSelecting(true);
+        }
     }
 }
