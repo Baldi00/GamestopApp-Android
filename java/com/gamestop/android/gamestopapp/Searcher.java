@@ -2,10 +2,10 @@ package com.gamestop.android.gamestopapp;
 
 import android.os.AsyncTask;
 
-public class DownloadGamePage extends AsyncTask {
+public class Searcher extends AsyncTask {
 
-    private ActivityGamePage main;
-    public DownloadGamePage(ActivityGamePage main) {
+    private MainActivity main;
+    public Searcher(MainActivity main) {
         this.main = main;
     }
 
@@ -19,6 +19,6 @@ public class DownloadGamePage extends AsyncTask {
 
     @Override
     protected void onPostExecute(Object ris) {
-        main.onEndDownload(ris);
+        main.onEndSearch(ris);
     }
 }

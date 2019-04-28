@@ -17,21 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class GameAdapter extends ArrayAdapter<Game>{
-    private Games wishlist;
+    private Games list;
     Context mContext;
     private TextView title, platform, newPrice, publisher, oldNewPrice, usedPrice, oldUsedPrice;
-    private CheckBox checkBox;
     private ImageView image;
 
-    private boolean selecting;
-
-    public GameAdapter(Games wishlist, Context context) {
-        super(context, R.layout.gamepreview_compact, wishlist);
-        this.wishlist = wishlist;
+    public GameAdapter(Games list, Context context) {
+        super(context, R.layout.gamepreview_compact, list);
+        this.list = list;
         this.mContext=context;
-        selecting = false;
     }
 
     @Override
@@ -45,15 +42,6 @@ public class GameAdapter extends ArrayAdapter<Game>{
         usedPrice = (TextView)convertView.findViewById(R.id.usedPrice);
         image = (ImageView) convertView.findViewById(R.id.image);
 
-        if(selecting){
-            checkBox = (CheckBox)convertView.findViewById(R.id.checkbox);
-            checkBox.setSelected(false);
-            checkBox.setVisibility(View.VISIBLE);
-        }else{
-            checkBox = convertView.findViewById(R.id.checkbox);
-            checkBox.setVisibility(View.GONE);
-        }
-
         Game game = getItem(position);
 
         title.setText(game.getTitle());
@@ -66,14 +54,5 @@ public class GameAdapter extends ArrayAdapter<Game>{
         image.setImageResource(id);
 
         return convertView;
-    }
-
-    public void setSelecting(boolean selecting) {
-        this.selecting = selecting;
-        this.notifyDataSetChanged();
-    }
-
-    public boolean isSelecting() {
-        return selecting;
     }
 }
