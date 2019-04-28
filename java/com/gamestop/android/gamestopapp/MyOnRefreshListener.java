@@ -15,10 +15,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
     //Call the update for the games in wishlist
     @Override
     public void onRefresh() {
-        if(!main.isSelecting()) {
-            pullToRefresh.setRefreshing(false);
-        } else {
-            pullToRefresh.setRefreshing(false);
-        }
+
+        pullToRefresh.setRefreshing(false);
     }
 }

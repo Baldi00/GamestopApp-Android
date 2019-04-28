@@ -34,6 +34,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityGamePage extends Activity {
 
@@ -53,12 +54,12 @@ public class ActivityGamePage extends Activity {
     //Progress bar shown when searching
     private ProgressBar progressBarOnDownlaod;
 
+    private Game gameOfThePage;
+
 
     //OTHER ATTRIBUTES
 
     private Intent caller;
-
-    private int version;
 
     /*********************************************************************************************************************************/
 
@@ -70,22 +71,7 @@ public class ActivityGamePage extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //VERSION
-        File versionFile = new File(getFilesDir(),"version.txt");
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(versionFile));
-            version = Integer.parseInt(bufferedReader.readLine());
-            if(version == 1){
-                setContentView(R.layout.activity_game_page_old);
-            } else {
-                setContentView(R.layout.activity_game_page);
-            }
-        }catch (Exception e){
-            Toast.makeText(this,"Impossibile leggere file di configurazione",Toast.LENGTH_LONG).show();
-            version = 2;
-            setContentView(R.layout.activity_game_page);
-        }
+        setContentView(R.layout.activity_game_page);
 
         //GET ALL VIEWS FROM APP GRAPHIC
 
@@ -107,85 +93,84 @@ public class ActivityGamePage extends Activity {
 
         //Get the intent
         caller = getIntent();
+        progressBarOnDownlaod.setVisibility(View.VISIBLE);
+        findViewById(R.id.wholePage).setVisibility(View.GONE);
+        findViewById(R.id.remove).setVisibility(View.GONE);
+        findViewById(R.id.add).setVisibility(View.GONE);
+
+        titleHeader.setText("Downloading...");
+        Downloader downloader = new Downloader(this,caller.getStringExtra("url"));
+        downloader.execute();
 
         usedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        //If caller is a game from search list before download game
-        /*if(((String)caller.getStringExtra("source")).equals("searchGameList")) {
 
-            DownloadGamePage downloadGamePage = new DownloadGamePage(this);     //NOT IMPLEMENTED YET
-            downloadGamePage.execute();
 
-            findViewById(R.id.wholePage).setVisibility(View.GONE);
-            progressBarOnDownlaod.setVisibility(View.VISIBLE);
+        findViewById(R.id.add).setVisibility(View.GONE);
+    }
 
-            findViewById(R.id.remove).setVisibility(View.GONE);
-            findViewById(R.id.add).setVisibility(View.VISIBLE);
+    //If caller is a game from search list, after download set attributes
+    public void onEndDownload(Object result){
+        gameOfThePage = (Game)result;
 
-        }*/
-        //Else if caller is a game from wishlist immediatly set attributes
-        //else {
-            if(version==2) titleHeader.setText(caller.getStringExtra("title"));
-            title.setText(caller.getStringExtra("title"));
-            platform.setText(caller.getStringExtra("platform"));
-            publisher.setText(caller.getStringExtra("publisher"));
-            releaseDate.setText(caller.getStringExtra("releaseDate"));
-            numberOfPlayers.setText(caller.getStringExtra("players"));
-            description.setText(caller.getStringExtra("description"));
+        progressBarOnDownlaod.setVisibility(View.GONE);
 
-            genres.setText(caller.getStringArrayListExtra("genres").get(0));
-            for(int i = 1; i<caller.getStringArrayListExtra("genres").size();i++){
-                genres.setText(genres.getText().toString() + ", " + caller.getStringArrayListExtra("genres").get(i));
+        titleHeader.setText(gameOfThePage.getTitle());
+        title.setText(gameOfThePage.getTitle());
+        platform.setText(gameOfThePage.getPlatform());
+        publisher.setText(gameOfThePage.getPublisher());
+        releaseDate.setText(gameOfThePage.getReleaseDate());
+        numberOfPlayers.setText(gameOfThePage.getPlayers());
+        description.setText(gameOfThePage.getDescription());
+
+        genres.setText(gameOfThePage.getGenres().get(0));
+        for(int i = 1; i<gameOfThePage.getGenres().size();i++){
+            genres.setText(genres.getText().toString() + ", " + gameOfThePage.getGenres().get(i));
+        }
+
+        List<String> pegiData = gameOfThePage.getPegi();
+        for(int i=0;i<pegiData.size();i++){
+            if(pegiData.get(i).equals("pegi18")) {
+                findViewById(R.id.pegi18).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("pegi16")) {
+                findViewById(R.id.pegi16).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("pegi12")) {
+                findViewById(R.id.pegi12).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("pegi7")) {
+                findViewById(R.id.pegi7).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("pegi3")) {
+                findViewById(R.id.pegi3).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("bad-language")) {
+                findViewById(R.id.pegiBadLanguage).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("violence")) {
+                findViewById(R.id.pegiViolence).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("online")) {
+                findViewById(R.id.pegiOnline).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("sex")) {
+                findViewById(R.id.pegiSex).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("fear")) {
+                findViewById(R.id.pegiFear).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("drugs")) {
+                findViewById(R.id.pegiDrugs).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("discrimination")) {
+                findViewById(R.id.pegiDiscrimination).setVisibility(View.VISIBLE);
+            } else if(pegiData.get(i).equals("gambling")) {
+                findViewById(R.id.pegiGambling).setVisibility(View.VISIBLE);
             }
+        }
 
-            ArrayList<String> pegiData = caller.getStringArrayListExtra("pegi");
-            for(int i=0;i<pegiData.size();i++){
-                if(pegiData.get(i).equals("pegi18")) {
-                    findViewById(R.id.pegi18).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("pegi16")) {
-                    findViewById(R.id.pegi16).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("pegi12")) {
-                    findViewById(R.id.pegi12).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("pegi7")) {
-                    findViewById(R.id.pegi7).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("pegi3")) {
-                    findViewById(R.id.pegi3).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("bad-language")) {
-                    findViewById(R.id.pegiBadLanguage).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("violence")) {
-                    findViewById(R.id.pegiViolence).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("online")) {
-                    findViewById(R.id.pegiOnline).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("sex")) {
-                    findViewById(R.id.pegiSex).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("fear")) {
-                    findViewById(R.id.pegiFear).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("drugs")) {
-                    findViewById(R.id.pegiDrugs).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("discrimination")) {
-                    findViewById(R.id.pegiDiscrimination).setVisibility(View.VISIBLE);
-                } else if(pegiData.get(i).equals("gambling")) {
-                    findViewById(R.id.pegiGambling).setVisibility(View.VISIBLE);
-                }
-            }
-
-            newPrice.setText(String.valueOf(caller.getDoubleExtra("newPrice",-1)) + "€");
-            usedPrice.setText(String.valueOf(caller.getDoubleExtra("usedPrice",-1)) + "€");
-            cover.setImageURI(Uri.fromFile(new File(caller.getStringExtra("cover"))));
-
-            findViewById(R.id.add).setVisibility(View.GONE);
-            findViewById(R.id.remove).setVisibility(View.VISIBLE);
-
-        //}
+        newPrice.setText(String.valueOf(gameOfThePage.getNewPrice()));
+        usedPrice.setText(String.valueOf(gameOfThePage.getUsedPrice()));
+        cover.setImageURI(Uri.fromFile(new File(gameOfThePage.getCover())));
 
         //Add images to gallery
-        if(version == 2) {
-            LinearLayout gallery = (LinearLayout) findViewById(R.id.gallery);
-            File [] galleryImages = new File(caller.getStringExtra("galleryDir")).listFiles();
+        LinearLayout gallery = (LinearLayout) findViewById(R.id.gallery);
+        File [] galleryImages = new File(gameOfThePage.getGameGalleryDirectory()).listFiles();
+        if(galleryImages!=null) {
             for (int i = 0; i < galleryImages.length; i++) {
                 ImageView galleryImage = new ImageView(getBaseContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                if (i == galleryImages.length-1) {
+                if (i == galleryImages.length - 1) {
                     layoutParams.setMargins(10, 0, 10, 0);
                 } else {
                     layoutParams.setMargins(10, 0, 0, 0);
@@ -202,23 +187,10 @@ public class ActivityGamePage extends Activity {
                 gallery.addView(galleryImage);
             }
         }
-    }
 
-    //If caller is a game from search list, after download set attributes
-    public void onEndDownload(Object result){
-        progressBarOnDownlaod.setVisibility(View.GONE);
+
         findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
-
-        title.setText(caller.getStringExtra("title"));
-        platform.setText(caller.getStringExtra("platform"));
-        publisher.setText(caller.getStringExtra("publisher"));
-        newPrice.setText(String.valueOf(caller.getDoubleExtra("newPrice",-1)) + "€");
-        usedPrice.setText(String.valueOf(caller.getDoubleExtra("usedPrice",-1)) + "€");
-
-        String coverPath = caller.getStringExtra("cover");
-        Context context = cover.getContext();
-        int id = context.getResources().getIdentifier(coverPath.substring(0,coverPath.lastIndexOf(".")), "drawable", context.getPackageName());
-        cover.setImageResource(id);
+        findViewById(R.id.add).setVisibility(View.VISIBLE);
     }
 
 
@@ -238,12 +210,6 @@ public class ActivityGamePage extends Activity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            MainActivity.addGameFromGamePage(new Game("https://www.gamestop.it/PC/Games/34054/gta-v",null));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(getApplicationContext(),title.getText().toString()+" è stato aggiunto alla wishlist",Toast.LENGTH_SHORT).show();
                         dialog.cancel();
                         finish();
                     }
@@ -323,5 +289,4 @@ public class ActivityGamePage extends Activity {
         imageView.setImageDrawable(caller.getDrawable());
         imageDialog.show();
     }
-
 }

@@ -6,11 +6,11 @@ import android.util.Log;
 import java.io.IOException;
 
 public class Downloader extends AsyncTask {
-    private MainActivity main;
+    private ActivityGamePage main;
 
     private String url;
 
-    public Downloader(MainActivity main,String url) {
+    public Downloader(ActivityGamePage main,String url) {
         this.main = main;
         this.url = url;
     }

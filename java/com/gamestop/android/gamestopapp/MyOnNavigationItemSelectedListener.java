@@ -10,19 +10,18 @@ import android.widget.LinearLayout;
 public class MyOnNavigationItemSelectedListener implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     //Toolbar buttons
-    private ImageButton add,remove;
+    private ImageButton goToSearch;
 
     //The 3 pages
     private LinearLayout newsPage, wishlistPage, searchPage;
 
     private MainActivity main;
 
-    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton add, ImageButton remove, MainActivity main) {
+    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton goToSearch, MainActivity main) {
         this.newsPage = newsPage;
         this.wishlistPage = wishlistPage;
         this.searchPage = searchPage;
-        this.add = add;
-        this.remove = remove;
+        this.goToSearch = goToSearch;
         this.main = main;
     }
 
@@ -33,26 +32,19 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
                 wishlistPage.setVisibility(View.GONE);
                 searchPage.setVisibility(View.GONE);
                 newsPage.setVisibility(View.VISIBLE);
-                add.setVisibility(View.GONE);
-                remove.setVisibility(View.GONE);
-                main.setSelecting(false,main.getWishlistView());
-                main.setSelecting(false,main.getSearchedGameListView());
+                goToSearch.setVisibility(View.GONE);
                 return true;
             case R.id.navigation_wishlist:
                 newsPage.setVisibility(View.GONE);
                 searchPage.setVisibility(View.GONE);
                 wishlistPage.setVisibility(View.VISIBLE);
-                add.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.VISIBLE);
-                main.setSelecting(false,main.getSearchedGameListView());
+                goToSearch.setVisibility(View.VISIBLE);
                 return true;
             case R.id.navigation_search:
                 newsPage.setVisibility(View.GONE);
                 wishlistPage.setVisibility(View.GONE);
                 searchPage.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.GONE);
-                add.setVisibility(View.VISIBLE);
-                main.setSelecting(false,main.getWishlistView());
+                goToSearch.setVisibility(View.GONE);
                 return true;
         }
         return false;

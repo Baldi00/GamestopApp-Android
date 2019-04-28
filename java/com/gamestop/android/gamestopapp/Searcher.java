@@ -1,8 +1,10 @@
 package com.gamestop.android.gamestopapp;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Searcher extends AsyncTask {
@@ -17,7 +19,7 @@ public class Searcher extends AsyncTask {
     //Search in background the game NOT IMPLEMENTED YET
     @Override
     protected Object doInBackground(Object[] params) {
-        Games gamesFound;
+        List<GamePreview> gamesFound;
         try {
             gamesFound = GamePreview.searchGame(gameToSearch,main);
         } catch (IOException e) {

@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity{
     //GRAPHICS VIEWS
 
     //Toolbar buttons
-    private ImageButton add,remove,more;
+    private ImageButton goToSearch,more;
 
     //The 3 pages
     private LinearLayout newsPage, wishlistPage, searchPage;
@@ -54,8 +55,8 @@ public class MainActivity extends AppCompatActivity{
     private SwipeRefreshLayout pullToRefresh;
 
     //Lists
-    private static Games wishlistData;                  //Data
-    private Games searchedGameListData;
+    private static List<GamePreview> wishlistData;                  //Data
+    private List<GamePreview> searchedGameListData;
     private ListView wishlistView, searchedGameListView; //View
     private static GameAdapter wishlistAdapter;         //Adapter
     private GameAdapter searchedGameListAdapter;
@@ -64,9 +65,6 @@ public class MainActivity extends AppCompatActivity{
     private EditText gameToSearch;
 
     //OTHER ATTRIBUTES
-
-    private boolean selecting;
-    private boolean sorting;
 
 
     /*********************************************************************************************************************************/
@@ -85,8 +83,7 @@ public class MainActivity extends AppCompatActivity{
 
         //GET ALL VIEWS FROM APP GRAPHIC
 
-        add = (ImageButton)findViewById(R.id.add);
-        remove = (ImageButton)findViewById(R.id.remove);
+        goToSearch = (ImageButton)findViewById(R.id.goToSearch);
         more = (ImageButton) findViewById(R.id.more);
 
         newsPage = (LinearLayout)findViewById(R.id.newsPage);
@@ -105,7 +102,7 @@ public class MainActivity extends AppCompatActivity{
 
         //LISTENERS
 
-        navigation.setOnNavigationItemSelectedListener(new MyOnNavigationItemSelectedListener(newsPage,wishlistPage,searchPage,add,remove,this));
+        navigation.setOnNavigationItemSelectedListener(new MyOnNavigationItemSelectedListener(newsPage,wishlistPage,searchPage,goToSearch,this));
 
         wishlistView.setOnItemClickListener(new MyOnItemClickListener(this,"wishlist"));
         searchedGameListView.setOnItemClickListener(new MyOnItemClickListener(this,"searchGameList"));
@@ -115,8 +112,8 @@ public class MainActivity extends AppCompatActivity{
 
         //OPERATIONS
 
-        wishlistData = new Games();
-        searchedGameListData = new Games();
+        wishlistData = new ArrayList();
+        searchedGameListData = new ArrayList();
 
         //Adapters
         //Maybe 2 different adapter classes in the future
@@ -130,8 +127,26 @@ public class MainActivity extends AppCompatActivity{
         wishlistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setBackgroundColor(Color.parseColor("#FBD1D0"));   //Set temp color to let user see something has changed
-                setSelecting(true,wishlistView);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getApplicationContext(), R.style.DialogActivityGamePage);
+                dialog.setMessage("Vuoi aggiungere i giochi selezionati alla wishlist?");
+                dialog.setPositiveButton(
+                        "Si",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                dialog.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                dialog.show();
                 return false;
             }
         });
@@ -139,9 +154,8 @@ public class MainActivity extends AppCompatActivity{
         searchedGameListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setBackgroundColor(Color.parseColor("#FBD1D0"));   //Set temp color to let user see something has changed
-                setSelecting(true,searchedGameListView);
-                return false;
+                addToList(view,position);
+                return true;
             }
         });
 
@@ -166,14 +180,6 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-
-        //Check if it is selecting
-        if(isSelecting()){
-            setSelecting(false,wishlistView);
-            setSelecting(false,searchedGameListView);
-
-            return;
-        }
 
         //Check if it is on the first page
         if(navigation.getSelectedItemId() != R.id.navigation_wishlist){
@@ -220,7 +226,7 @@ public class MainActivity extends AppCompatActivity{
     //Receive research results and enable TextView
     public void onEndSearch(Object result){
         if(result!=null){
-            for(Game g : (Games)result){
+            for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
             }
             searchedGameListAdapter.notifyDataSetChanged();
@@ -282,119 +288,36 @@ public class MainActivity extends AppCompatActivity{
     }
 
     //Add games into wishlist if caller is a game from search list
-    public void addToList(View v){
-        if(navigation.getSelectedItemId() == R.id.navigation_wishlist){
-            navigation.setSelectedItemId(R.id.navigation_search);
-            return;
-        }
+    public void addToList(View v, final int position){
+        String titolo = ((TextView)v.findViewById(R.id.title)).getText().toString();
+        //titolo = titolo.substring(0,titolo.length()-2);             //Remove strange space at the end
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
+        dialog.setMessage("Vuoi aggiungere " + titolo + " alla wishlist?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        wishlistData.add((GamePreview)searchedGameListView.getAdapter().getItem(position));
+                        wishlistAdapter.notifyDataSetChanged();
+                        dialog.cancel();
+                    }
+                });
 
-        if(findViewById(R.id.resultsOfSearchLayout).getVisibility() == View.GONE){
-            Toast.makeText(this,"Prima cerca un gioco",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(selecting) {
-
-            final ArrayList<Integer> toAdd = new ArrayList();
-            for(int i=0;i<searchedGameListData.size();i++){
-                if(((Game)searchedGameListView.getItemAtPosition(i)).isSelected()){
-                    toAdd.add(i);
-                }
-            }
-
-            if(toAdd.size()==0) {
-                Toast.makeText(getApplicationContext(), "Non hai selezionato nessun gioco da aggiungere", Toast.LENGTH_SHORT).show();
-                setSelecting(false,searchedGameListView);
-                return;
-            }
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-            dialog.setMessage("Vuoi aggiungere i giochi selezionati alla wishlist?");
-            dialog.setPositiveButton(
-                    "Si",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            for(int i=0;i<toAdd.size();i++){
-                                wishlistData.add(searchedGameListData.get(Integer.parseInt(toAdd.get(i).toString())));
-                            }
-
-                            wishlistAdapter.notifyDataSetChanged();
-
-                            Toast.makeText(getApplicationContext(),"I giochi selezionati sono stati aggiunti alla wishlist",Toast.LENGTH_SHORT).show();
-
-                            setSelecting(false,searchedGameListView);
-                            dialog.cancel();
-                        }
-                    });
-
-            dialog.setNegativeButton(
-                    "No",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            setSelecting(false,searchedGameListView);
-                            dialog.cancel();
-                        }
-                    });
-            dialog.show();
-        }else{
-            setSelecting(true,searchedGameListView);
-            Toast.makeText(this,"Seleziona i giochi da aggiungere",Toast.LENGTH_SHORT).show();
-        }
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
     }
 
     //Remove games from wishlist if caller is a game from wishlist
     public void removeFromList(View v){
-        if(selecting) {
 
-            final ArrayList<Integer> toRemove = new ArrayList();
-            for(int i=0;i<wishlistData.size();i++){
-                if(((Game) wishlistView.getItemAtPosition(i)).isSelected()){
-                    toRemove.add(i);
-                }
-            }
-
-            if(toRemove.size()==0) {
-                Toast.makeText(getApplicationContext(), "Non hai selezionato nessun gioco da rimuovere", Toast.LENGTH_SHORT).show();
-                setSelecting(false, wishlistView);
-                return;
-            }
-
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-            dialog.setMessage("Vuoi rimuovere i giochi selezionati dalla wishlist?");
-            dialog.setPositiveButton(
-                    "Si",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            for(int i=toRemove.size()-1;i>=0;i--){
-                                wishlistData.remove(Integer.parseInt(toRemove.get(i).toString()));
-                            }
-
-                            wishlistAdapter.notifyDataSetChanged();
-                            Toast.makeText(getApplicationContext(),"I giochi selezionati sono stati rimossi dalla wishlist",Toast.LENGTH_SHORT).show();
-
-                            setSelecting(false, wishlistView);
-                            dialog.cancel();
-                        }
-                    });
-
-            dialog.setNegativeButton(
-                    "No",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            setSelecting(false, wishlistView);
-                            dialog.cancel();
-                        }
-                    });
-            dialog.show();
-        } else {
-            setSelecting(true, wishlistView);
-            Toast.makeText(this,"Seleziona i giochi da rimuovere",Toast.LENGTH_SHORT).show();
-        }
     }
 
     //Set default background color to every view
@@ -404,62 +327,6 @@ public class MainActivity extends AppCompatActivity{
         }
 
         ((ArrayAdapter)list.getAdapter()).notifyDataSetChanged();
-    }
-
-    public void setSelecting(boolean selecting, ListView list) {
-        this.selecting = selecting;
-        if(!selecting){
-            setDefaultBackgroundColorToAllListViews(list);
-
-            if(wishlistData!=null) {
-                for (Game g : wishlistData) {
-                    g.setSelected(false);
-                }
-            }
-
-            if(searchedGameListData!=null) {
-                for (Game g : searchedGameListData) {
-                    g.setSelected(false);
-                }
-            }
-
-            more.setVisibility(View.VISIBLE);
-            findViewById(R.id.action_bar).setBackgroundResource(R.color.colorPrimary);
-
-            if(list == wishlistView) {
-                remove.setBackgroundResource(R.color.colorPrimary);
-                add.setVisibility(View.VISIBLE);
-            } else {
-                add.setBackgroundResource(R.color.colorPrimary);
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
-            }
-        } else {
-            more.setVisibility(View.GONE);
-            findViewById(R.id.action_bar).setBackgroundColor(Color.parseColor("#838383"));
-
-            if(list == wishlistView) {
-                add.setVisibility(View.GONE);
-                remove.setBackgroundColor(Color.parseColor("#838383"));
-            }else{
-                remove.setVisibility(View.GONE);
-                add.setBackgroundColor(Color.parseColor("#838383"));
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(Color.parseColor("#838383"));
-            }
-        }
-    }
-
-    public boolean isSelecting() {
-        return selecting;
     }
 
     public void promoPlaystation(View v){
@@ -485,7 +352,7 @@ public class MainActivity extends AppCompatActivity{
         return searchedGameListView;
     }
 
-    public static void addGameFromGamePage(Game g){
+    public static void addGameFromGamePage(GamePreview g){
         wishlistData.add(g);
         wishlistAdapter.notifyDataSetChanged();
     }
@@ -497,8 +364,12 @@ public class MainActivity extends AppCompatActivity{
 
     public void onEndDownload(Object g){
         if(g!=null) {
-            wishlistData.add((Game) g);
+            wishlistData.add((GamePreview) g);
             wishlistAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void goToSearch(View v){
+        navigation.setSelectedItemId(R.id.navigation_search);
     }
 }

@@ -19,14 +19,15 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-public class GameAdapter extends ArrayAdapter<Game>{
-    private Games list;
+public class GameAdapter extends ArrayAdapter<GamePreview>{
+    private List<GamePreview> list;
     Context mContext;
     private TextView title, platform, newPrice, publisher, oldNewPrice, usedPrice, oldUsedPrice;
     private ImageView image;
 
-    public GameAdapter(Games list, Context context) {
+    public GameAdapter(List<GamePreview> list, Context context) {
         super(context, R.layout.gamepreview_compact, list);
         this.list = list;
         this.mContext=context;
@@ -43,14 +44,14 @@ public class GameAdapter extends ArrayAdapter<Game>{
         usedPrice = (TextView)convertView.findViewById(R.id.usedPrice);
         image = (ImageView) convertView.findViewById(R.id.image);
 
-        Game game = getItem(position);
+        GamePreview game = getItem(position);
 
         title.setText(game.getTitle());
         platform.setText(game.getPlatform());
         publisher.setText(game.getPublisher());
         newPrice.setText(String.valueOf(game.getNewPrice()) + "€");
         usedPrice.setText(String.valueOf(game.getUsedPrice()) + "€");
-        image.setImageURI(Uri.fromFile(new File(game.getCover())));
+        //image.setImageURI(Uri.fromFile(new File(game.getCover())));
 
         usedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 

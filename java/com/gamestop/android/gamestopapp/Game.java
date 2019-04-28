@@ -30,7 +30,7 @@ import org.jsoup.select.Elements;
 
 public class Game implements Comparable<Game>, Serializable {
 
-    private MainActivity main;
+    private ActivityGamePage main;
 
     private String id;
     private String title;
@@ -54,18 +54,28 @@ public class Game implements Comparable<Game>, Serializable {
     private List<Promo> promo;
     private String description;
 
-    private boolean selected;
-
-    public Game(String url, MainActivity main) throws IOException {
+    public Game(String url, ActivityGamePage main) throws IOException {
         this.main = main;
         this.id = url.split("/")[5];
-
 
         Document html = Jsoup.connect(url).get();
         Element body = html.body();
 
         // these three methods are necessary to create a Game
         updateMainInfo(body);
+
+        updateMainInfo(body);
+
+        // elimino tutti gli articoli che non mi interessano
+        if ( this.platform.equals("Gadget") )
+            throw new IsJustAFuckingGadgetException();
+        if ( this.platform.equals("Varie") )
+            throw new IsJustAFuckingGadgetException();
+        if ( this.platform.equals("Cards") )
+            throw new IsJustAFuckingGadgetException();
+        if ( this.platform.equals("Telefonia") )
+            throw new IsJustAFuckingGadgetException();
+
         updateMetadata(body);
         updatePrices(body);
 
@@ -181,7 +191,7 @@ public class Game implements Comparable<Game>, Serializable {
      * @return the game's directory
      */
     public String getGameDirectory () {
-        return main.getApplicationContext().getFilesDir() + getDirectory() + getID() + "/";
+        return DirectoryManager.getDirectory(id,main) + id + "/";
     }
 
     /**
@@ -656,7 +666,7 @@ public class Game implements Comparable<Game>, Serializable {
      */
     private void mkdir() {
         // create userData folder if doesn't exist
-        File dir = new File( main.getApplicationContext().getFilesDir() + getDirectory() );
+        File dir = new File(DirectoryManager.getTempDir(main));
 
         if (!dir.exists()) {
             dir.mkdir();
@@ -833,14 +843,6 @@ public class Game implements Comparable<Game>, Serializable {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 
     public String getCover(){

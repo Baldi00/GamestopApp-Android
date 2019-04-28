@@ -38,29 +38,6 @@
             android:layout_weight="7"
             android:gravity="center_vertical"
             android:textSize="15dp"
-            android:text="Usa nuova versione game page"/>
-
-        <CheckBox
-            android:id="@+id/checkboxVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:onClick="changeVersion"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7"
-            android:gravity="center_vertical"
-            android:textSize="15dp"
             android:text="Aggiorna dati all'avvio dell'applicazione"/>
 
         <Switch
