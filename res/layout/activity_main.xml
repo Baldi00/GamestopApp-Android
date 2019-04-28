@@ -44,7 +44,8 @@
                 android:scaleType="fitCenter"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"
-                android:src="@drawable/ic_add_circle_outline_black_70dp" />
+                android:src="@drawable/ic_add_circle_outline_black_70dp"
+                android:onClick="addToList"/>
 
             <ImageButton
                 android:id="@+id/remove"
@@ -57,7 +58,8 @@
                 android:scaleType="fitCenter"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"
-                android:src="@drawable/ic_remove_circle_outline_black_70dp" />
+                android:src="@drawable/ic_remove_circle_outline_black_70dp"
+                android:onClick="removeFromList" />
 
             <ImageButton
                 android:id="@+id/more"
@@ -68,7 +70,9 @@
                 android:adjustViewBounds="true"
                 android:background="@color/colorPrimary"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_more_vert_black_70dp" />
+                android:src="@drawable/ic_more_vert_black_70dp"
+                android:onClick="showMoreOptionsMenu"
+                />
 
         </LinearLayout>
 
@@ -82,6 +86,34 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/promo_playstation"
+            android:onClick="promoPlaystation">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/promo_nintendo"
+            android:onClick="promoNintendo">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/promo_xbox"
+            android:onClick="promoXbox">
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -127,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_weight="1"
-                android:hint="Inserisci gioco da cercare"
+                android:hint="@string/game_to_search_hint"
                 android:inputType="text"
                 android:maxLines="1"
                 android:shadowColor="@color/redGamestop"
@@ -159,6 +191,7 @@
             android:id="@+id/resultsOfSearchLayout"
             android:visibility="gone">
 
+            <!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -208,6 +241,7 @@
 
                 </LinearLayout>
             </LinearLayout>
+            -->
 
             <ListView
                 android:layout_width="match_parent"

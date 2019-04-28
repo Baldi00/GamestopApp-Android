@@ -9,12 +9,14 @@ public class DownloadGamePage extends AsyncTask {
         this.main = main;
     }
 
+    //Downloads in background of the game info, if not present NOT IMPLEMENTED YET
     @Override
     protected Object doInBackground(Object[] params) {
+        //TODO Download the game
         try{
             Thread.sleep(1000);
         }catch(Exception e){};
-        return "xxxxxx"; // restitisco il risultato
+        return "xxxxxx";
     }
 
     @Override

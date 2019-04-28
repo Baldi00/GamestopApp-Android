@@ -9,12 +9,14 @@ public class Searcher extends AsyncTask {
         this.main = main;
     }
 
+    //Searhc in background the game NOT IMPLEMENTED YET
     @Override
     protected Object doInBackground(Object[] params) {
+        //TODO Search the game
         try{
             Thread.sleep(1000);
         }catch(Exception e){};
-        return "xxxxxx"; // restitisco il risultato
+        return "xxxxxx";
     }
 
     @Override

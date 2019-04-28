@@ -64,7 +64,8 @@
                 android:adjustViewBounds="true"
                 android:background="@color/colorPrimary"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_more_vert_black_70dp" />
+                android:src="@drawable/ic_more_vert_black_70dp"
+                android:onClick="showMoreOptionsMenu"/>
 
         </LinearLayout>
 
@@ -85,7 +86,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TITLE"
+                android:text="@string/no_info"
                 android:textStyle="bold"
                 android:textColor="#000"
                 android:textSize="25dp"
@@ -119,7 +120,7 @@
                         android:textColor="#FFF"
                         android:textStyle="bold"
                         android:textSize="17dp"
-                        android:text="NUOVO: "/>
+                        android:text="@string/newPrice"/>
 
                     <TextView
                         android:id="@+id/newPrice"
@@ -128,7 +129,7 @@
                         android:textColor="#FFF"
                         android:textSize="17dp"
                         android:textStyle="bold"
-                        android:text="00.00"/>
+                        android:text=""/>
 
                     <TextView
                         android:id="@+id/oldNewPrice"
@@ -156,7 +157,7 @@
                         android:textColor="#FFF"
                         android:textSize="17dp"
                         android:textStyle="bold"
-                        android:text="USATO: "/>
+                        android:text="@string/usedPrice"/>
 
                     <TextView
                         android:id="@+id/usedPrice"
@@ -165,7 +166,7 @@
                         android:textColor="#FFF"
                         android:textSize="17dp"
                         android:textStyle="bold"
-                        android:text="00.00"/>
+                        android:text=""/>
 
                     <TextView
                         android:id="@+id/oldUsedPrice"
@@ -191,7 +192,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="INFORMAZIONI"
+                    android:text="@string/info"
                     android:gravity="center"
                     android:textSize="18dp"
                     android:textColor="#000"
@@ -205,14 +206,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Publisher:"
+                        android:text="@string/publisher"
                         android:textSize="17dp"/>
 
                     <TextView
                         android:id="@+id/publisher"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PUBLISHER"
+                        android:text="@string/no_info"
                         android:textStyle="bold"
                         android:textSize="17dp"
                         android:gravity="right"/>
@@ -227,14 +228,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Platform:"
+                        android:text="@string/platform"
                         android:textSize="17dp"/>
 
                     <TextView
                         android:id="@+id/platform"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PLATFORM"
+                        android:text="@string/no_info"
                         android:textStyle="bold"
                         android:textSize="17dp"
                         android:gravity="right"/>
@@ -249,14 +250,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Genres:"
+                        android:text="@string/genres"
                         android:textSize="17dp"/>
 
                     <TextView
                         android:id="@+id/genres"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="GENRES, GENRES"
+                        android:text="@string/no_info"
                         android:textStyle="bold"
                         android:textSize="17dp"
                         android:gravity="right"/>
@@ -271,14 +272,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Released:"
+                        android:text="@string/date"
                         android:textSize="17dp"/>
 
                     <TextView
                         android:id="@+id/releaseDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="01/01/1970"
+                        android:text="@string/no_info"
                         android:textStyle="bold"
                         android:textSize="17dp"
                         android:gravity="right"/>
@@ -293,7 +294,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Number of players:"
+                        android:text="@string/players"
                         android:textSize="17dp"
                         android:gravity="center"/>
 
@@ -301,7 +302,7 @@
                         android:id="@+id/players"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1"
+                        android:text="@string/no_info"
                         android:textStyle="bold"
                         android:textSize="17dp"
                         android:gravity="right"/>

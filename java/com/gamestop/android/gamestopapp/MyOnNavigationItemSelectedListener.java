@@ -15,12 +15,15 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
     //The 3 pages
     private LinearLayout newsPage, wishlistPage, searchPage;
 
-    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton add, ImageButton remove) {
+    private MainActivity main;
+
+    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton add, ImageButton remove, MainActivity main) {
         this.newsPage = newsPage;
         this.wishlistPage = wishlistPage;
         this.searchPage = searchPage;
         this.add = add;
         this.remove = remove;
+        this.main = main;
     }
 
     @Override
@@ -32,14 +35,16 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
                 newsPage.setVisibility(View.VISIBLE);
                 add.setVisibility(View.GONE);
                 remove.setVisibility(View.GONE);
+                main.setSelecting(false,main.getWishistView());
+                main.setSelecting(false,main.getSearchedGameListView());
                 return true;
             case R.id.navigation_wishlist:
                 newsPage.setVisibility(View.GONE);
                 searchPage.setVisibility(View.GONE);
                 wishlistPage.setVisibility(View.VISIBLE);
-                add.setVisibility(View.GONE);
+                add.setVisibility(View.VISIBLE);
                 remove.setVisibility(View.VISIBLE);
-
+                main.setSelecting(false,main.getSearchedGameListView());
                 return true;
             case R.id.navigation_search:
                 newsPage.setVisibility(View.GONE);
@@ -47,7 +52,7 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
                 searchPage.setVisibility(View.VISIBLE);
                 remove.setVisibility(View.GONE);
                 add.setVisibility(View.VISIBLE);
-
+                main.setSelecting(false,main.getWishistView());
                 return true;
         }
         return false;

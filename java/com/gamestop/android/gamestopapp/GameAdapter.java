@@ -1,6 +1,7 @@
 package com.gamestop.android.gamestopapp;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.text.method.Touch;
 import android.util.Log;
@@ -52,6 +53,8 @@ public class GameAdapter extends ArrayAdapter<Game>{
         final Context context = image.getContext();
         int id = context.getResources().getIdentifier(game.getCover().substring(0,game.getCover().lastIndexOf(".")), "drawable", context.getPackageName());
         image.setImageResource(id);
+
+        usedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
     }

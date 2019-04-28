@@ -4,7 +4,7 @@
     <item
         android:id="@+id/navigation_news"
         android:icon="@drawable/ic_new_releases_black_24dp"
-        android:title="@string/title_news" />
+        android:title="@string/title_promo" />
 
     <item
         android:id="@+id/navigation_wishlist"
