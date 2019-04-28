@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="10 Minuti">10 minuti</item>
+    <item android:title="30 Minuti">30 minuti</item>
+    <item android:title="1 Ora">1 ora</item>
+    <item android:title="3 Ore">3 ore</item>
+    <item android:title="Mai">Mai</item>
+</menu>

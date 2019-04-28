@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import java.io.Serializable;
+
 public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
 
     private MainActivity main;
@@ -21,9 +23,8 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Game g = (Game) parent.getItemAtPosition(position);
         if(!main.isSelecting()) {
-            Game g = (Game) parent.getItemAtPosition(position);
-
             Intent i = new Intent(view.getContext(), ActivityGamePage.class);
             i.putExtra("source", source);
             i.putExtra("title", g.getTitle());
@@ -32,6 +33,7 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
             i.putExtra("cover", g.getCover());
             i.putExtra("newPrice", g.getNewPrice());
             i.putExtra("usedPrice", g.getUsedPrice());
+
             main.startActivity(i);
         } else {
 
@@ -43,8 +45,10 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
 
             if(color == Color.parseColor("#FBD2D0")) {
                 view.setBackgroundColor(Color.parseColor("#FAFAFA"));
+                g.setSelected(false);
             }else{
                 view.setBackgroundColor(Color.parseColor("#FBD2D0"));
+                g.setSelected(true);
             }
         }
     }

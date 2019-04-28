@@ -26,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity{
 
     /*********************************************************************************************************************************/
@@ -50,9 +52,11 @@ public class MainActivity extends AppCompatActivity{
     private SwipeRefreshLayout pullToRefresh;
 
     //Lists
-    private Games wishlistData, searchedGameListData;               //Data
-    private ListView wishistView, searchedGameListView;             //View
-    private GameAdapter wishlistAdapter, searchedGameListAdapter;   //Adapter
+    private static Games wishlistData;                  //Data
+    private Games searchedGameListData;
+    private ListView wishistView, searchedGameListView; //View
+    private static GameAdapter wishlistAdapter;         //Adapter
+    private GameAdapter searchedGameListAdapter;
 
     //Searcher bar in the "Searcher" page
     private EditText gameToSearch;
@@ -115,18 +119,21 @@ public class MainActivity extends AppCompatActivity{
         wishlistData.add(new Game("Horizon Zero Dawn","PS4","Guerrilla Games",70.98, 40.98, "test2.jpg"));
         wishlistData.add(new Game("GTA V","PC","Rockstar Games",50.98, 34.98,"test3.jpg"));
 
+        //TEST
+        searchedGameListData = new Games();
+        searchedGameListData.add(new Game("Detroit: Become Human","PS4", "Quantic Dream",70.98, 40.98,"test1.jpg"));
+        searchedGameListData.add(new Game("Horizon Zero Dawn","PS4","Guerrilla Games",70.98, 40.98, "test2.jpg"));
+        searchedGameListData.add(new Game("GTA V","PC","Rockstar Games",50.98, 34.98,"test3.jpg"));
+
 
         //Adapters
         //Maybe 2 different adapter classes in the future
 
         wishlistAdapter = new GameAdapter(wishlistData,this);
-        //searchedGameListAdapter = new GameAdapter(searchedGameListData,this);
+        searchedGameListAdapter = new GameAdapter(searchedGameListData,this);
 
         wishistView.setAdapter(wishlistAdapter);
-        //searchedGameListView.setAdapter(searchedGameListAdapter);
-
-        //TEMP, ONLY FOR TEST
-        searchedGameListView.setAdapter(wishlistAdapter);
+        searchedGameListView.setAdapter(searchedGameListAdapter);
 
         wishistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -231,7 +238,8 @@ public class MainActivity extends AppCompatActivity{
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gamestop.it/"));
                     startActivity(intent);
                 }else if(item.getTitle().toString().equals(getString(R.string.more_options_settings))){
-                    Toast.makeText(getApplicationContext(),"Non ancora implementato",Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
+                    startActivity(i);
                 }
                 return false;
             }
@@ -275,14 +283,35 @@ public class MainActivity extends AppCompatActivity{
         }
 
         if(selecting) {
+
+            final ArrayList<Integer> toAdd = new ArrayList();
+            for(int i=0;i<searchedGameListData.size();i++){
+                if(((Game)searchedGameListView.getItemAtPosition(i)).isSelected()){
+                    toAdd.add(i);
+                }
+            }
+
+            if(toAdd.size()==0) {
+                Toast.makeText(getApplicationContext(), "Non hai selezionato nessun gioco da aggiungere", Toast.LENGTH_SHORT).show();
+                setSelecting(false,searchedGameListView);
+                return;
+            }
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-            dialog.setMessage("Vuoi aggiungere N giochi alla wishlist?");
+            dialog.setMessage("Vuoi aggiungere i giochi selezionati alla wishlist?");
             dialog.setPositiveButton(
                     "Si",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //TODO Add game into wishlist
+                            for(int i=0;i<toAdd.size();i++){
+                                wishlistData.add(searchedGameListData.get(Integer.parseInt(toAdd.get(i).toString())));
+                            }
+
+                            wishlistAdapter.notifyDataSetChanged();
+
+                            Toast.makeText(getApplicationContext(),"I giochi selezionati sono stati aggiunti alla wishlist",Toast.LENGTH_SHORT).show();
+
                             setSelecting(false,searchedGameListView);
                             dialog.cancel();
                         }
@@ -307,14 +336,35 @@ public class MainActivity extends AppCompatActivity{
     //Remove games from wishlist if caller is a game from wishlist
     public void removeFromList(View v){
         if(selecting) {
+
+            final ArrayList<Integer> toRemove = new ArrayList();
+            for(int i=0;i<wishlistData.size();i++){
+                if(((Game)wishistView.getItemAtPosition(i)).isSelected()){
+                    toRemove.add(i);
+                }
+            }
+
+            if(toRemove.size()==0) {
+                Toast.makeText(getApplicationContext(), "Non hai selezionato nessun gioco da rimuovere", Toast.LENGTH_SHORT).show();
+                setSelecting(false,wishistView);
+                return;
+            }
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-            dialog.setMessage("Vuoi rimuovere N giochi dalla wishlist?");
+            dialog.setMessage("Vuoi rimuovere i giochi selezionati dalla wishlist?");
             dialog.setPositiveButton(
                     "Si",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //TODO Remove game from wishlist
+
+                            for(int i=toRemove.size()-1;i>=0;i--){
+                                wishlistData.remove(Integer.parseInt(toRemove.get(i).toString()));
+                            }
+
+                            wishlistAdapter.notifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(),"I giochi selezionati sono stati rimossi dalla wishlist",Toast.LENGTH_SHORT).show();
+
                             setSelecting(false,wishistView);
                             dialog.cancel();
                         }
@@ -349,6 +399,18 @@ public class MainActivity extends AppCompatActivity{
         this.selecting = selecting;
         if(!selecting){
             setDefaultBackgroundColorToAllListViews(list);
+
+            if(wishlistData!=null) {
+                for (Game g : wishlistData) {
+                    g.setSelected(false);
+                }
+            }
+
+            if(searchedGameListData!=null) {
+                for (Game g : searchedGameListData) {
+                    g.setSelected(false);
+                }
+            }
         }
     }
 
@@ -377,5 +439,15 @@ public class MainActivity extends AppCompatActivity{
 
     public ListView getSearchedGameListView() {
         return searchedGameListView;
+    }
+
+    public static void addGameFromGamePage(Game g){
+        wishlistData.add(g);
+        wishlistAdapter.notifyDataSetChanged();
+    }
+
+    public static void removeGameFromGamePage(Game g){
+        wishlistData.remove(g);
+        wishlistAdapter.notifyDataSetChanged();
     }
 }

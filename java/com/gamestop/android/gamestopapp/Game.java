@@ -2,6 +2,7 @@ package com.gamestop.android.gamestopapp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Game {
     private String title;                   // it contains the title of the game
@@ -18,6 +19,8 @@ public class Game {
     private String officialSite;            // it contains the URL of the official site of the Game
     private short players;                  // it contains the number of players that can play the game at the same time
     private String releaseDate;             // it contains the release date of the game
+
+    private boolean selected;
 
     private Game() {
         this.title = null;
@@ -67,5 +70,32 @@ public class Game {
 
     public String getCover(){
         return cover;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return Double.compare(game.newPrice, newPrice) == 0 &&
+                Double.compare(game.usedPrice, usedPrice) == 0 &&
+                Objects.equals(title, game.title) &&
+                Objects.equals(publisher, game.publisher) &&
+                Objects.equals(platform, game.platform) &&
+                Objects.equals(cover, game.cover);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(title, publisher, platform, cover, newPrice, usedPrice);
     }
 }

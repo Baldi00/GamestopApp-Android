@@ -12,25 +12,20 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/titleHeader"
-            android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:paddingLeft="20dp"
-            android:text="@string/no_info"
+            android:text="@string/app_name"
             android:textColor="#fff"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:ellipsize="end"
-            android:maxLines="1"/>
+            android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="right"
-            android:layout_weight="1">
+            android:gravity="right">
 
             <ImageButton
                 android:id="@+id/add"
@@ -87,38 +82,44 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/no_info"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="25dp"
+                android:gravity="center"/>
+
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="300dp"
                 android:src="@drawable/no_image"
-                android:adjustViewBounds="true"
                 android:padding="10dp"
-                android:onClick="enlargeImage"/>
-
+                android:adjustViewBounds="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="10dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:padding="3dp"
-                    android:layout_marginRight="5dp">
+                    android:padding="3dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
                         android:textStyle="bold"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:text="@string/newPrice"/>
 
                     <TextView
@@ -126,37 +127,35 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:textStyle="bold"
                         android:text=""/>
 
                     <TextView
                         android:id="@+id/oldNewPrice"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:textStyle="bold"
                         android:text=""/>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:gravity="center"
                     android:padding="3dp"
-                    android:layout_marginLeft="5dp">
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:textStyle="bold"
                         android:text="@string/usedPrice"/>
 
@@ -165,17 +164,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:textStyle="bold"
                         android:text=""/>
 
                     <TextView
                         android:id="@+id/oldUsedPrice"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
-                        android:textSize="18dp"
+                        android:textSize="17dp"
                         android:textStyle="bold"
                         android:text=""/>
 
@@ -195,45 +193,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/info"
-                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textSize="18dp"
                     android:textColor="#000"
-                    android:textSize="21dp"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="30dp"
-                    android:paddingBottom="10dp"/>
+                    android:textStyle="bold"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/title"
-                        android:textSize="17dp"/>
-
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/no_info"
-                        android:textStyle="bold"
-                        android:textSize="17dp"
-                        android:gravity="right"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -255,10 +223,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -280,10 +245,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -305,10 +267,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -330,10 +289,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/game_page_info_background"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -353,244 +309,96 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/pegiAge"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pegi"
-                        android:textSize="17dp"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-
-
+                    android:layout_height="120dp"
+                    android:src="@drawable/pegi18"
+                    android:padding="10dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"/>
             </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_gravity="center">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="10dp">
-
-                    <ImageView
-                        android:id="@+id/pegiAge"
-                        android:layout_width="43dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/pegi18" />
-
-                    <ImageView
-                        android:id="@+id/pegiBadLanguage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/bad_language"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiDiscrimination"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/discrimination"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiDrugs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/drugs" />
-
-                    <ImageView
-                        android:id="@+id/pegiFear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/fear"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiGambling"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/gambling"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiOnline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/online"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiSex"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/sex"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="5dp"/>
-
-                    <ImageView
-                        android:id="@+id/pegiViolence"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/violence"
-                        android:adjustViewBounds="true"
-                        android:layout_marginRight="10dp"/>
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/gallery"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:textSize="21dp"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="10dp"/>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/gallery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <!--<ImageView
-                        android:id="@+id/gallery1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"
-                        android:onClick="enlargeImage"/>
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
 
                     <ImageView
-                        android:id="@+id/gallery2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiBadLanguage"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/bad_language"
                         android:adjustViewBounds="true"
+                        android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiDiscrimination"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/discrimination"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginRight="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiDrugs"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginRight="10dp"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:src="@drawable/drugs" />
 
                     <ImageView
-                        android:id="@+id/gallery5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiFear"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/fear"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginRight="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiGambling"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/gambling"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginRight="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery7"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiOnline"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/online"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginRight="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery8"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiSex"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/sex"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
+                        android:layout_marginRight="10dp"/>
 
                     <ImageView
-                        android:id="@+id/gallery9"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
+                        android:id="@+id/pegiViolence"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/violence"
                         android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"/>
-
-                    <ImageView
-                        android:id="@+id/gallery10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_image_gallery"
-                        android:adjustViewBounds="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"/>-->
+                        android:layout_marginRight="10dp"/>
 
                 </LinearLayout>
 
             </HorizontalScrollView>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/description"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:textSize="21dp"
-                android:background="@drawable/game_page_info_background"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
-
-            <TextView
-                android:id="@+id/description"
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/lorem_ipsum"
-                android:textSize="17dp"
-                />
 
         </LinearLayout>
 
