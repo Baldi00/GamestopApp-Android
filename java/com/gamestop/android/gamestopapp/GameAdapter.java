@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameAdapter extends ArrayAdapter<GamePreview>{
-    private List<GamePreview> list;
+    private Games list;
     MainActivity main;
     private TextView title, platform, newPrice, publisher, oldNewPrice, usedPrice, oldUsedPrice;
     private ImageView image;
 
-    public GameAdapter(List<GamePreview> list, MainActivity main) {
-        super(main, R.layout.gamepreview_compact, list);
+    public GameAdapter(Games list, MainActivity main) {
+        super(main, R.layout.gamepreview_compact, (List)list);
         this.list = list;
         this.main=main;
     }

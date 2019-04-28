@@ -13,6 +13,15 @@
     <item
         android:id="@+id/sortDate"
         android:title="@string/sort_by_date" />
+
+    <item
+        android:id="@+id/sortNewPrice"
+        android:title="@string/sort_by_new_price" />
+
+    <item
+        android:id="@+id/sortUsedPrice"
+        android:title="@string/sort_by_used_price" />
+
     <item
         android:id="@+id/sortCustom"
         android:title="@string/sort_custom" />

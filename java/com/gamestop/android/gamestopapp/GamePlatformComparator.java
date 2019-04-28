@@ -12,10 +12,10 @@ import java.util.Comparator;
  *
  * @author android
  */
-public class GamePlatformComparator implements Comparator<Game> {
+public class GamePlatformComparator implements Comparator<GamePreview> {
 
     @Override
-    public int compare(Game game1, Game game2) {
+    public int compare(GamePreview game1, GamePreview game2) {
         return game1.getPlatform().compareTo( game2.getPlatform() );
     }
 

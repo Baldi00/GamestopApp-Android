@@ -28,7 +28,7 @@ import org.jsoup.select.Elements;
 
 public class Game extends GamePreview implements Serializable {
 
-    private ActivityGamePage main;
+    private transient ActivityGamePage main;
 
     private List<String> genres;
     private String officialSite;
@@ -682,5 +682,4 @@ public class Game extends GamePreview implements Serializable {
         Log.info("Game", "imported from binary");
         return game;
     }
-
 }

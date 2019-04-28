@@ -7,17 +7,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Games extends ArrayList<Game> {
+public class Games extends ArrayList<GamePreview> implements Serializable {
 
     private static final String SCHEMA_PATH = "schema.xsd";
 
     @Override
-    public boolean add ( Game game ) {
+    public boolean add ( GamePreview game ) {
 
-        for ( Game g : this ){
+        for ( GamePreview g : this ){
             if ( g.equals(game) ){
                 // it's a warning because equals() requires a revision
                 Log.warning("Games", "the game already exist", game.getTitle() );
@@ -62,7 +63,7 @@ public class Games extends ArrayList<Game> {
 
         while(!eof){
             try{
-                Game g = (Game)ois.readObject();
+                GamePreview g = (GamePreview) ois.readObject();
                 wishlist.add(g);
             }catch(EOFException e){
                 eof = true;

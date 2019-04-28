@@ -5,10 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
-public class GameReleaseDateComparator implements Comparator<Game> {
+public class GameReleaseDateComparator implements Comparator<GamePreview> {
 
     @Override
-    public int compare(Game game1, Game game2) {
+    public int compare(GamePreview game1, GamePreview game2) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date d1, d2;

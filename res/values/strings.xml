@@ -35,6 +35,8 @@
     <string name="sort_by_aplhabet" tools:ignore="ExtraTranslation">Alfabeto</string>
     <string name="sort_by_platform" tools:ignore="ExtraTranslation">Piattaforma</string>
     <string name="sort_by_date" tools:ignore="ExtraTranslation">Data di uscita</string>
+    <string name="sort_by_new_price" tools:ignore="ExtraTranslation">Prezzo nuovo</string>
+    <string name="sort_by_used_price" tools:ignore="ExtraTranslation">Prezzo usato</string>
     <string name="sort_custom" tools:ignore="ExtraTranslation">Personalizzato</string>
 
 

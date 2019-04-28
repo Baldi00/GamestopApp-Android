@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -54,11 +55,11 @@ public class MainActivity extends AppCompatActivity{
     private SwipeRefreshLayout pullToRefresh;
 
     //Lists
-    private static List<GamePreview> wishlistData;                  //Data
-    private List<GamePreview> searchedGameListData;
+    private static Games wishlistData;                  //Data
+    private static Games searchedGameListData;
     private ListView wishlistView, searchedGameListView; //View
     private static GameAdapter wishlistAdapter;         //Adapter
-    private GameAdapter searchedGameListAdapter;
+    private static GameAdapter searchedGameListAdapter;
 
     //Searcher bar in the "Searcher" page
     private EditText gameToSearch;
@@ -120,8 +121,8 @@ public class MainActivity extends AppCompatActivity{
 
         //OPERATIONS
 
-        wishlistData = new ArrayList();
-        searchedGameListData = new ArrayList();
+        wishlistData = new Games();
+        searchedGameListData = new Games();
 
         //Adapters
         //Maybe 2 different adapter classes in the future
@@ -155,6 +156,16 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStart() {
         super.onStart();
+        /*try {
+            Games temp = Games.importBinary(this);
+            for(GamePreview gp : temp){
+                wishlistData.add(gp);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this,"Errore durante importazione dei giochi", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        wishlistAdapter.notifyDataSetChanged();*/
     }
 
     @Override
@@ -175,6 +186,12 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
+        /*try {
+            wishlistData.exportBinary(this);
+        } catch (IOException e) {
+            Toast.makeText(this,"Errore durante il salvataggio dei giochi",Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }*/
     }
 
     @Override
@@ -418,14 +435,25 @@ public class MainActivity extends AppCompatActivity{
 
         if(navigation.getSelectedItemId() == R.id.navigation_wishlist) {
             inflater.inflate(R.menu.more_options_menu_sort_whishlist, popup.getMenu());
-        } else if (navigation.getSelectedItemId() == R.id.navigation_search){
-            inflater.inflate(R.menu.more_options_menu_sort_search, popup.getMenu());
         }
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(getApplicationContext(),"Non ancora implementato",Toast.LENGTH_SHORT).show();
+                if (item.getTitle().toString().equals(getString(R.string.sort_by_aplhabet))) {
+                    wishlistData.sortbyName();
+                } else if (item.getTitle().toString().equals(getString(R.string.sort_by_platform))) {
+                    wishlistData.sortByPlatform();
+                } else if (item.getTitle().toString().equals(getString(R.string.sort_by_date))) {
+                    wishlistData.sortByReleaseDate();
+                } else if (item.getTitle().toString().equals(getString(R.string.sort_by_new_price))) {
+                    wishlistData.sortByNewPrice();
+                } else if (item.getTitle().toString().equals(getString(R.string.sort_by_used_price))) {
+                    wishlistData.sortByUsedPrice();
+                } else if (item.getTitle().toString().equals(getString(R.string.sort_custom))) {
+                    Toast.makeText(getApplicationContext(),"Non ancora implementato",Toast.LENGTH_SHORT).show();
+                }
+                wishlistAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -474,5 +502,16 @@ public class MainActivity extends AppCompatActivity{
         }
 
         f.delete();
+    }
+
+    public static void resetAll(){
+        wishlistData.clear();
+        wishlistAdapter.notifyDataSetChanged();
+        resetSearch();
+    }
+
+    public static void resetSearch(){
+        searchedGameListData.clear();
+        searchedGameListAdapter.notifyDataSetChanged();
     }
 }

@@ -30,8 +30,11 @@ public class ActivitySettings extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteFolderRecursive(new File(DirectoryManager.getTempDir(getApplicationContext())));
                         dialog.cancel();
+                        deleteFolderRecursive(new File(DirectoryManager.getTempDir(getApplicationContext())));
+                        MainActivity.resetSearch();
+                        Toast.makeText(getApplicationContext(),"File temporanei cancellati",Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
 
@@ -54,9 +57,12 @@ public class ActivitySettings extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                         deleteFolderRecursive(new File(DirectoryManager.getTempDir(getApplicationContext())));
                         deleteFolderRecursive(new File(DirectoryManager.getWishlistDir(getApplicationContext())));
-                        dialog.cancel();
+                        MainActivity.resetAll();
+                        Toast.makeText(getApplicationContext(),"Tutti i file cancellati",Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
 
