@@ -9,8 +9,6 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
@@ -110,9 +108,35 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/gamestop_bunny_wishlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Inizia subito ad aggiungere giochi!"
+                android:textSize="20dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:gravity="center"/>
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gamestop_bunny"/>
+
+        </LinearLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
+            android:visibility="visible"
             android:id="@+id/pullToRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -126,7 +150,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/searchPage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -174,11 +198,25 @@
             android:visibility="gone"/>
 
         <LinearLayout
+            android:id="@+id/gamestop_bunny_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gamestop_bunny"
+                android:scaleX="-1"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/resultsOfSearchLayout"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <!--
             <LinearLayout
@@ -242,6 +280,7 @@
 
 
     </LinearLayout>
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

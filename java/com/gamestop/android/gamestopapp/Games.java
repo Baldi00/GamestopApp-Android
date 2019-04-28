@@ -44,9 +44,10 @@ public class Games extends ArrayList<GamePreview> implements Serializable {
 
     public void exportBinary(MainActivity main) throws IOException
     {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DirectoryManager.getWishlistDir(main) + "wishlist.dat"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DirectoryManager.getWishlistDir() + "wishlist.dat"));
 
         for( int game=0; game<this.size(); ++game ){
+            ((Game)this.get(game)).exportBinary();
             oos.writeObject( this.get(game) );
         }
 
@@ -56,7 +57,7 @@ public class Games extends ArrayList<GamePreview> implements Serializable {
 
     public static Games importBinary(MainActivity main) throws FileNotFoundException, IOException, ClassNotFoundException
     {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DirectoryManager.getWishlistDir(main) + "wishlist.dat"));
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DirectoryManager.getWishlistDir() + "wishlist.dat"));
 
         Games wishlist = new Games();
         boolean eof = false;

@@ -1,8 +1,9 @@
 package com.gamestop.android.gamestopapp;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Promo {
+public class Promo implements Serializable {
 
     private String header;
     private String validity;

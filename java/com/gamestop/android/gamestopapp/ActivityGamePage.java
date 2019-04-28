@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +39,7 @@ public class ActivityGamePage extends Activity {
     //GRAPHICS VIEWS
 
     //Game info
-    private TextView titleHeader,title,platform,publisher,newPrice,oldNewPrice,usedPrice,oldUsedPrice,genres,releaseDate,numberOfPlayers,description;
+    private TextView titleHeader,title,platform,publisher,newPrice,oldNewPrice,usedPrice,oldUsedPrice,digitalPrice,preorderPrice,genres,releaseDate,numberOfPlayers,officialSite,description;
     private ImageView cover;
 
     //Progress bar shown when searching
@@ -73,9 +74,12 @@ public class ActivityGamePage extends Activity {
         oldNewPrice = (TextView) findViewById(R.id.oldNewPrice);
         usedPrice = (TextView) findViewById(R.id.usedPrice);
         oldUsedPrice = (TextView) findViewById(R.id.oldUsedPrice);
+        digitalPrice = (TextView) findViewById(R.id.digitalPrice);
+        preorderPrice = (TextView) findViewById(R.id.preorderPrice);
         genres = (TextView) findViewById(R.id.genres);
         releaseDate = (TextView) findViewById(R.id.releaseDate);
         numberOfPlayers = (TextView) findViewById(R.id.players);
+        officialSite = (TextView) findViewById(R.id.officialSite);
         description = (TextView) findViewById(R.id.description);
         cover = (ImageView) findViewById(R.id.image);
 
@@ -97,7 +101,6 @@ public class ActivityGamePage extends Activity {
             Downloader downloader = new Downloader(this, caller.getStringExtra("url"));
             downloader.execute();
 
-
             oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -105,7 +108,14 @@ public class ActivityGamePage extends Activity {
             findViewById(R.id.remove).setVisibility(View.VISIBLE);
             findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
 
-            gameOfThePage = null;
+            Log.d("EBBENE","son qui");
+            try {
+                gameOfThePage = Game.importBinary(caller.getStringExtra("path"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
 
             if(gameOfThePage!=null)
                 setGameOfThePageGraphic();
@@ -204,7 +214,6 @@ public class ActivityGamePage extends Activity {
 
     //Set all informations and images in the page
     public void setGameOfThePageGraphic(){
-
         titleHeader.setText(gameOfThePage.getTitle());
 
         if(gameOfThePage.getTitle()!=null && !gameOfThePage.getTitle().equals(""))
@@ -232,10 +241,26 @@ public class ActivityGamePage extends Activity {
         else
             findViewById(R.id.playersLayout).setVisibility(View.GONE);
 
+        if(gameOfThePage.getOfficialSite()!=null && !gameOfThePage.getOfficialSite().equals(""))
+            officialSite.setText(gameOfThePage.getOfficialSite());
+        else
+            findViewById(R.id.officialSiteLayout).setVisibility(View.GONE);
+
         if(gameOfThePage.getDescription()!=null && !gameOfThePage.getDescription().equals(""))
             description.setText(gameOfThePage.getDescription());
         else
             findViewById(R.id.descriptionLayout).setVisibility(View.GONE);
+
+        if(gameOfThePage.isValidForPromotions()){
+            findViewById(R.id.validForPromotions).setVisibility(View.VISIBLE);
+        }
+
+        if(gameOfThePage.hasPromo()){
+            findViewById(R.id.promoLayout).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.promoHeader)).setText(gameOfThePage.getPromo().get(0).getHeader());
+            ((TextView)findViewById(R.id.promoValidity)).setText(gameOfThePage.getPromo().get(0).getValidity());
+            ((TextView)findViewById(R.id.promoMessage)).setText(gameOfThePage.getPromo().get(0).getMessage());
+        }
 
         if(gameOfThePage.getGenres()!=null && gameOfThePage.getGenres().size()>0) {
             genres.setText(gameOfThePage.getGenres().get(0));
@@ -283,15 +308,41 @@ public class ActivityGamePage extends Activity {
 
         DecimalFormat df = new DecimalFormat("#.00");
 
-        if(!String.valueOf(gameOfThePage.getNewPrice()).equals("null"))
-            newPrice.setText(String.valueOf(df.format(gameOfThePage.getNewPrice())) + "€");
-        else
-            newPrice.setText("NO INFO");
+        if(!String.valueOf(gameOfThePage.getPreorderPrice()).equals("null")){
+            preorderPrice.setText(String.valueOf(df.format(gameOfThePage.getPreorderPrice())) + "€");
+            findViewById(R.id.preorderPriceLayout).setVisibility(View.VISIBLE);
+            findViewById(R.id.newPriceLayout).setVisibility(View.GONE);
+            findViewById(R.id.usedPriceLayout).setVisibility(View.GONE);
+        } else if(!String.valueOf(gameOfThePage.getDigitalPrice()).equals("null")){
+            digitalPrice.setText(String.valueOf(df.format(gameOfThePage.getDigitalPrice())) + "€");
+            findViewById(R.id.digitalPriceLayout).setVisibility(View.VISIBLE);
+            findViewById(R.id.newPriceLayout).setVisibility(View.GONE);
+            findViewById(R.id.usedPriceLayout).setVisibility(View.GONE);
+        } else {
+            if (!String.valueOf(gameOfThePage.getNewPrice()).equals("null"))
+                newPrice.setText(String.valueOf(df.format(gameOfThePage.getNewPrice())) + "€");
+            else
+                findViewById(R.id.newPriceLayout).setVisibility(View.GONE);
 
-        if(!String.valueOf(gameOfThePage.getUsedPrice()).equals("null"))
-            usedPrice.setText(String.valueOf(df.format(gameOfThePage.getUsedPrice())) + "€");
-        else
-            usedPrice.setText("NO INFO");
+            if (!String.valueOf(gameOfThePage.getUsedPrice()).equals("null"))
+                usedPrice.setText(String.valueOf(df.format(gameOfThePage.getUsedPrice())) + "€");
+            else
+                findViewById(R.id.usedPriceLayout).setVisibility(View.GONE);
+        }
+
+        if(gameOfThePage.getOlderNewPrices()!=null && gameOfThePage.getOlderNewPrices().size()>0){
+            oldNewPrice.setText(" " + String.valueOf(df.format(gameOfThePage.getOlderNewPrices().get(0))) + "€");
+            for(int i=1;i<gameOfThePage.getOlderNewPrices().size();i++){
+                oldNewPrice.setText(oldNewPrice.getText().toString() + ", " + String.valueOf(df.format(gameOfThePage.getOlderNewPrices().get(i))) + "€");
+            }
+        }
+
+        if(gameOfThePage.getOlderUsedPrices()!=null && gameOfThePage.getOlderUsedPrices().size()>0){
+            oldUsedPrice.setText(" " + String.valueOf(df.format(gameOfThePage.getOlderUsedPrices().get(0))) + "€");
+            for(int i=1;i<gameOfThePage.getOlderUsedPrices().size();i++){
+                oldUsedPrice.setText(oldUsedPrice.getText().toString() + ", " + String.valueOf(df.format(gameOfThePage.getOlderUsedPrices().get(i))) + "€");
+            }
+        }
 
         cover.setImageURI(Uri.fromFile(new File(gameOfThePage.getCover())));
 
@@ -303,9 +354,9 @@ public class ActivityGamePage extends Activity {
                 ImageView galleryImage = new ImageView(getBaseContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 if (i == galleryImages.length - 1) {
-                    layoutParams.setMargins(10, 0, 10, 0);
+                    layoutParams.setMargins(15, 0, 15, 0);
                 } else {
-                    layoutParams.setMargins(10, 0, 0, 0);
+                    layoutParams.setMargins(15, 0, 0, 0);
                 }
                 galleryImage.setTag(i);
                 galleryImage.setImageURI(Uri.fromFile(galleryImages[i]));
@@ -342,6 +393,17 @@ public class ActivityGamePage extends Activity {
         startActivity(i);
     }
 
+    public void enlargeCover(View v){
+        String[] images = new String[1];
+
+        images[0] = "file://" + gameOfThePage.getCover();
+
+        Intent i = new Intent(this,ActivityGallery.class);
+        i.putExtra("images",images);
+        i.putExtra("position",0);
+        startActivity(i);
+    }
+
     //Show the menu on more options button
     public void showMoreOptionsMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
@@ -368,7 +430,7 @@ public class ActivityGamePage extends Activity {
     //Copy the game from temp into userData
     public boolean copyIntoUserDataFolder(){
         try {
-            return copyDirectory(new File(DirectoryManager.getTempDir(this)+gameOfThePage.getId()+"/"), new File(DirectoryManager.getWishlistDir(this)+gameOfThePage.getId()+"/"));
+            return copyDirectory(new File(DirectoryManager.getTempDir()+gameOfThePage.getId()+"/"), new File(DirectoryManager.getWishlistDir()+gameOfThePage.getId()+"/"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -413,6 +475,18 @@ public class ActivityGamePage extends Activity {
         }
 
         return true;
+    }
+
+    //Open the official site of the game
+    public void goToGameOfficialSite(View v){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gameOfThePage.getOfficialSite()));
+        startActivity(intent);
+    }
+
+    //Open the official site of the game
+    public void goToPromoMessageUrl(View v){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gameOfThePage.getPromo().get(0).getMessageURL()));
+        startActivity(intent);
     }
 }
 

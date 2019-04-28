@@ -19,7 +19,7 @@ public class Downloader extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         try {
-            return new Game(url, main);
+            return new Game(url);
         } catch (IOException e) {
             e.printStackTrace();
         }

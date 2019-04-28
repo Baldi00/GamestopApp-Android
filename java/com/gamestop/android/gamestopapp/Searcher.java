@@ -21,7 +21,7 @@ public class Searcher extends AsyncTask {
     protected Object doInBackground(Object[] params) {
         List<GamePreview> gamesFound;
         try {
-            gamesFound = GamePreview.searchGame(gameToSearch,main);
+            gamesFound = GamePreview.searchGame(gameToSearch);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

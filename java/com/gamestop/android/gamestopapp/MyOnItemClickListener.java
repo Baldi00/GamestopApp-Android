@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,7 +33,7 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
         i.putExtra("source",source);
 
         if(source.equals("wishlist")) {
-            i.putExtra("id",g.getId());
+            i.putExtra("path",DirectoryManager.getWishlistDir()+g.getId()+"/data.dat");
         }
         else if(source.equals("search")){
             i.putExtra("url", g.getURL());

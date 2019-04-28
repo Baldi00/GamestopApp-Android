@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity{
 
     //The 3 pages
     private LinearLayout newsPage, wishlistPage, searchPage;
+
+    //Gamestop bunny
+    private static LinearLayout bunnyWishlist, bunnySearch;
 
     //Bottom bar, 3 pages switch management
     private BottomNavigationView navigation;
@@ -87,6 +91,9 @@ public class MainActivity extends AppCompatActivity{
         newsPage = (LinearLayout)findViewById(R.id.newsPage);
         wishlistPage = (LinearLayout)findViewById(R.id.wishlistPage);
         searchPage = (LinearLayout)findViewById(R.id.searchPage);
+
+        bunnyWishlist = (LinearLayout)findViewById(R.id.gamestop_bunny_wishlist);
+        bunnySearch = (LinearLayout)findViewById(R.id.gamestop_bunny_search);
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity{
         wishlistView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                removeFromWishlist(view,position,getApplicationContext());
+                removeFromWishlist(view,position);
                 return true;
             }
         });
@@ -156,26 +163,30 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        /*try {
+        try {
             Games temp = Games.importBinary(this);
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+        } catch (Exception e){
             Toast.makeText(this,"Errore durante importazione dei giochi", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-        wishlistAdapter.notifyDataSetChanged();*/
+        wishlistAdapter.notifyDataSetChanged();
+        checkAndSetGamestopBunnyWishlist();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        checkAndSetGamestopBunnyWishlist();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        checkAndSetGamestopBunnyWishlist();
     }
 
     @Override
@@ -186,18 +197,19 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        /*try {
+        try {
             wishlistData.exportBinary(this);
+        } catch (FileNotFoundException e) {
         } catch (IOException e) {
             Toast.makeText(this,"Errore durante il salvataggio dei giochi",Toast.LENGTH_SHORT).show();
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        File f = new File(DirectoryManager.getTempDir(this));
+        File f = new File(DirectoryManager.getTempDir());
         deleteFolderRecursive(f);
     }
 
@@ -243,7 +255,7 @@ public class MainActivity extends AppCompatActivity{
         gameToSearch.setEnabled(false);
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.GONE);
         findViewById(R.id.progressBarOnSearch).setVisibility(View.VISIBLE);
-
+        bunnySearch.setVisibility(View.GONE);
     }
 
     //Receive research results and enable TextView
@@ -261,7 +273,7 @@ public class MainActivity extends AppCompatActivity{
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.VISIBLE);
         gameToSearch.setEnabled(true);
         searchedGameListView.smoothScrollToPosition(0);
-
+        checkAndSetGamestopBunnySearch();
     }
 
     //Called when download of game finishes. Add downloaded game into wishlist
@@ -307,7 +319,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     //Remove a game from wishlist if caller is a game from wishlist
-    public void removeFromWishlist(View v, final int position, final Context main){
+    public void removeFromWishlist(View v, final int position){
         String titolo = ((TextView)v.findViewById(R.id.title)).getText().toString();
         titolo = titolo.substring(0,titolo.length()-2);             //Remove strange space at the end
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
@@ -317,9 +329,10 @@ public class MainActivity extends AppCompatActivity{
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir(main) + ((GamePreview)wishlistAdapter.getItem(position)).getId() + "/"));
+                        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir() + ((GamePreview)wishlistAdapter.getItem(position)).getId() + "/"));
                         wishlistData.remove((GamePreview)wishlistAdapter.getItem(position));
                         wishlistAdapter.notifyDataSetChanged();
+                        checkAndSetGamestopBunnyWishlist();
                         dialog.cancel();
                     }
                 });
@@ -337,15 +350,22 @@ public class MainActivity extends AppCompatActivity{
 
     //Add a game into wishlist if caller is a game from ActivityGamePage
     public static void addToWishlistGamePage(Game g){
+        try {
+            g.exportBinary();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         wishlistData.add(g);
         wishlistAdapter.notifyDataSetChanged();
+        checkAndSetGamestopBunnyWishlist();
     }
 
     //Remove a game from wishlist if caller is a game from ActivityGamePage
     public static void removeFromWishlistGamePage(Game g, Context main){
         wishlistData.remove(g);
         wishlistAdapter.notifyDataSetChanged();
-        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir(main) + g.getId() + "/"));
+        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir() + g.getId() + "/"));
+        checkAndSetGamestopBunnyWishlist();
     }
 
 
@@ -488,6 +508,14 @@ public class MainActivity extends AppCompatActivity{
         return wishlistView;
     }
 
+    public static Games getWishlistData() {
+        return wishlistData;
+    }
+
+    public static GameAdapter getWishlistAdapter() {
+        return wishlistAdapter;
+    }
+
 
 
     //OTHER METHODS
@@ -513,5 +541,21 @@ public class MainActivity extends AppCompatActivity{
     public static void resetSearch(){
         searchedGameListData.clear();
         searchedGameListAdapter.notifyDataSetChanged();
+    }
+
+    public static void checkAndSetGamestopBunnyWishlist(){
+        if(wishlistData.size()==0){
+            bunnyWishlist.setVisibility(View.VISIBLE);
+        }else{
+            bunnyWishlist.setVisibility(View.GONE);
+        }
+    }
+
+    public static void checkAndSetGamestopBunnySearch(){
+        if(searchedGameListData.size()==0){
+            bunnySearch.setVisibility(View.VISIBLE);
+        }else{
+            bunnySearch.setVisibility(View.GONE);
+        }
     }
 }

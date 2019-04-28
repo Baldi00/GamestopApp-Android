@@ -93,25 +93,23 @@
                 android:layout_height="350dp"
                 android:src="@drawable/no_image"
                 android:adjustViewBounds="true"
-                android:padding="10dp"/>
-
-
+                android:padding="15dp"
+                android:onClick="enlargeCover"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:orientation="vertical"
+                android:padding="15dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:id="@+id/newPriceLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:padding="3dp"
-                    android:layout_marginRight="5dp">
+                    android:padding="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -132,7 +130,7 @@
 
                     <TextView
                         android:id="@+id/oldNewPrice"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
@@ -143,14 +141,14 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:id="@+id/usedPriceLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:padding="3dp"
-                    android:layout_marginLeft="5dp">
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -171,13 +169,154 @@
 
                     <TextView
                         android:id="@+id/oldUsedPrice"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
                         android:textSize="18dp"
                         android:textStyle="bold"
                         android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/digitalPriceLayout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/redGamestop"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:text="@string/digitalPrice"/>
+
+                    <TextView
+                        android:id="@+id/digitalPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/preorderPriceLayout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/redGamestop"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:text="@string/preorderPrice"/>
+
+                    <TextView
+                        android:id="@+id/preorderPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/validForPromotions"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_valid_for_promotions"
+
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:text="@string/validForPromotions"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/promoLayout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:background="#d7d7d7"
+                    android:padding="7dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#313131"
+
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/promoHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#fff"
+                            android:textSize="16dp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="5dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/promoValidity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#fff"
+                            android:textSize="13dp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="5dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/promoMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:onClick="goToPromoMessageUrl"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"/>
 
                 </LinearLayout>
 
@@ -188,8 +327,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -359,6 +498,34 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/officialSiteLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/game_page_info_background"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/officialSite"
+                        android:textSize="17dp" />
+
+                    <TextView
+                        android:id="@+id/officialSite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="@string/no_info"
+                        android:textSize="17dp"
+                        android:textColor="@color/redGamestop"
+                        android:onClick="goToGameOfficialSite"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -376,7 +543,7 @@
                     android:textSize="21dp"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="15dp"/>
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
@@ -388,7 +555,7 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_marginBottom="10dp"
-                        android:paddingLeft="10dp">
+                        android:paddingLeft="15dp">
 
                         <ImageView
                             android:id="@+id/pegi18"
@@ -527,7 +694,7 @@
                     android:textSize="21dp"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="15dp"/>
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -646,12 +813,12 @@
                     android:background="@drawable/game_page_info_background"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"/>
 
                 <TextView
                     android:id="@+id/description"
-                    android:padding="10dp"
+                    android:padding="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/lorem_ipsum"

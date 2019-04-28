@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -23,7 +24,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class GamePreview implements Comparable<GamePreview> {
+public class GamePreview implements Comparable<GamePreview>, Serializable {
 
     protected String id;
     protected String title;
@@ -124,16 +125,16 @@ public class GamePreview implements Comparable<GamePreview> {
         return "http://www.gamestop.it/Platform/Games/" + id;
     }
 
-    public String getGameDirectory(Activity main) {
-        return DirectoryManager.getDirectory(id, main) + id + "/";
+    public String getGameDirectory() {
+        return DirectoryManager.getDirectory(id) + id + "/";
     }
 
-    public String getCover(Activity main) {
-        return getGameDirectory(main) + "preview.jpg";
+    public String getCover() {
+        return getGameDirectory() + "preview.jpg";
     }
 
-    public boolean hasCover(Activity main) {
-        return new File(getCover(main)).exists();
+    public boolean hasCover() {
+        return new File(getCover()).exists();
     }
 
     @Override
@@ -209,7 +210,7 @@ public class GamePreview implements Comparable<GamePreview> {
         return title.compareTo(gamePreview.getTitle());
     }
 
-    public static List<GamePreview> searchGame(String searchedGameName, MainActivity main) throws UnsupportedEncodingException, IOException {
+    public static List<GamePreview> searchGame(String searchedGameName) throws UnsupportedEncodingException, IOException {
 
         String url = "https://www.gamestop.it/SearchResult/QuickSearch?q=" + URLEncoder.encode(searchedGameName, "UTF-8");
 
@@ -307,12 +308,12 @@ public class GamePreview implements Comparable<GamePreview> {
             gamePreview.releaseDate = game.getElementsByTag("li").get(0).text().split(": ")[1];
 
             // create the necessary directories
-            gamePreview.mkdir(main);
+            gamePreview.mkdir();
 
             // download the cover
             String imageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).attr("data-llsrc");
             String imageName = imageUrl.split("/")[6];
-            downloadImage("", imageUrl, gamePreview.getCover(main));
+            downloadImage("", imageUrl, gamePreview.getCover());
 
             searchedGames.add(gamePreview);
         }
@@ -376,16 +377,16 @@ public class GamePreview implements Comparable<GamePreview> {
         }
     }
 
-    protected void mkdir(Activity main) {
+    protected void mkdir() {
         // create userData folder if doesn't exist
-        File dir = new File(DirectoryManager.getTempDir(main));
+        File dir = new File(DirectoryManager.getTempDir());
 
         if (!dir.exists()) {
             dir.mkdir();
         }
 
         // create the game folder if doesn't exist
-        dir = new File( getGameDirectory(main) );
+        dir = new File( getGameDirectory() );
 
         if (!dir.exists()) {
             dir.mkdir();

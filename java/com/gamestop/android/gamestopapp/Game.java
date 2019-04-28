@@ -28,8 +28,6 @@ import org.jsoup.select.Elements;
 
 public class Game extends GamePreview implements Serializable {
 
-    private transient ActivityGamePage main;
-
     private List<String> genres;
     private String officialSite;
     private String players;
@@ -38,8 +36,7 @@ public class Game extends GamePreview implements Serializable {
     private List<Promo> promo;
     private String description;
 
-    public Game(String url, ActivityGamePage main) throws IOException {
-        this.main = main;
+    public Game(String url) throws IOException {
 
         this.id = url.split("/")[5];
 
@@ -58,7 +55,7 @@ public class Game extends GamePreview implements Serializable {
         updateBonus(body);
         updateDescription(body);
 
-        mkdir(main);
+        mkdir();
         updateCover(body);
         updateGallery(body);
     }
@@ -117,11 +114,11 @@ public class Game extends GamePreview implements Serializable {
     }
 
     public String getGalleryDirectory() {
-        return getGameDirectory(main) + "gallery/";
+        return getGameDirectory() + "gallery/";
     }
 
     public String getCover() {
-        return getGameDirectory(main) + "cover.jpg";
+        return getGameDirectory() + "cover.jpg";
     }
 
     public boolean hasCover() {
@@ -510,7 +507,7 @@ public class Game extends GamePreview implements Serializable {
             // se la promozione contiene un link per personalizzare l'acquisto
             if ( p.size() > 1 ) {
                 message = p.get(1).text();
-                messageURL = "www.gamestop.it" + p.get(1).getElementsByTag("a").attr("href");
+                messageURL = "https://www.gamestop.it" + p.get(1).getElementsByTag("a").attr("href");
             }
 
             promo.add(new Promo(header, validity, message, messageURL));
@@ -576,7 +573,7 @@ public class Game extends GamePreview implements Serializable {
         }
 
         String imgUrl = prodImgMax.attr("href");
-        String imgPath = getGameDirectory(main);
+        String imgPath = getGameDirectory();
 
         try {
             downloadImage("cover.jpg", imgUrl, imgPath);
@@ -656,7 +653,7 @@ public class Game extends GamePreview implements Serializable {
 
     public void exportBinary() throws IOException
     {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream( getGameDirectory(main) + "data.dat"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream( getGameDirectory() + "data.dat"));
 
         oos.writeObject( this );
 
@@ -666,6 +663,7 @@ public class Game extends GamePreview implements Serializable {
 
     public static Game importBinary( String path ) throws FileNotFoundException, IOException, ClassNotFoundException
     {
+        File f = new File("path");
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
 
         Game game = null;

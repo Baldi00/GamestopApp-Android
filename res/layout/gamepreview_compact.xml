@@ -79,16 +79,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="bottom"
-                android:layout_marginTop="10dp">
+                android:gravity="bottom">
 
                 <LinearLayout
+                    android:id="@+id/priceNew"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:padding="3dp">
+                    android:padding="3dp"
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -116,6 +117,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/priceUsed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
@@ -146,6 +148,63 @@
                         android:textColor="#FFF"
                         android:textStyle="bold"
                         android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/priceDigital"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/redGamestop"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textStyle="bold"
+                        android:text="@string/digitalPrice"/>
+
+                    <TextView
+                        android:id="@+id/digitalPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textStyle="bold"
+                        android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/pricePreorder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/redGamestop"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textStyle="bold"
+                        android:text="@string/preorderPrice"/>
+
+                    <TextView
+                        android:id="@+id/preorderPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF"
+                        android:textStyle="bold"
+                        android:text=""/>
+
 
                 </LinearLayout>
 
