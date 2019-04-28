@@ -231,7 +231,7 @@ public class ActivityMain extends AppCompatActivity{
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
                 bw.write("true"); //Notification service enabled (background)
                 bw.newLine();
-                bw.write("5000"); //Notification service sleep time (600000ms = 10min) TODO: TEST, to be changed with 600000
+                bw.write("600000"); //Notification service sleep time (600000ms = 10min)
                 bw.newLine();
                 bw.write("true"); //Update games on app start
                 bw.newLine();
