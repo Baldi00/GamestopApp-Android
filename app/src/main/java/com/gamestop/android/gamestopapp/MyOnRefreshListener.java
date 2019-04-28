@@ -92,11 +92,16 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                     if(gs!=null) {
                         for (GamePreview gp : gs) {
                             Game game = (Game) gp;
-                            //List<String> notifications = game.update();
+                            List<String> notifications = null;
+                            try {
+                                notifications = game.update();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-                            //TODO
-                            List<String> notifications = new ArrayList<String>();
-                            notifications.add("Gioco in sconto");
+
+                            /*List<String> notifications = new ArrayList<String>();
+                            notifications.add("Gioco in sconto");*/
 
                             if (notifications != null) {
 

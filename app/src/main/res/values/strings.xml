@@ -52,7 +52,7 @@
         <item>30 minuti</item>
         <item>1 ora</item>
         <item>3 ore</item>
-        <item>5 secondi TEST</item>
+        <!--<item>5 secondi TEST</item>-->
     </string-array>
 
 </resources>
