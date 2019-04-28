@@ -3,30 +3,21 @@ package com.gamestop.android.gamestopapp;
 import android.content.Context;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.text.method.Touch;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameAdapter extends ArrayAdapter<GamePreview>{
     private TextView title, platform, publisher, newPrice, oldNewPrice, usedPrice, oldUsedPrice, digitalPrice, preorderPrice;
     private ImageView image;
 
-    public GameAdapter(Games list, MainActivity main) {
+    public GameAdapter(Games list, ActivityMain main) {
         super(main, R.layout.gamepreview_compact, list);
     }
 
@@ -77,14 +68,14 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
         }
 
         if(game.getOlderNewPrices()!=null && game.getOlderNewPrices().size()>0){
-            oldNewPrice.setText(" " + String.valueOf(df.format(game.getOlderNewPrices().get(0))) + "€");
+            oldNewPrice.setText(String.valueOf(df.format(game.getOlderNewPrices().get(0))) + "€");
             for(int i=1;i<game.getOlderNewPrices().size();i++){
                 oldNewPrice.setText(oldNewPrice.getText().toString() + ", " + String.valueOf(df.format(game.getOlderNewPrices().get(i))) + "€");
             }
         }
 
         if(game.getOlderUsedPrices()!=null && game.getOlderUsedPrices().size()>0){
-            oldUsedPrice.setText(" " + String.valueOf(df.format(game.getOlderUsedPrices().get(0))) + "€");
+            oldUsedPrice.setText(String.valueOf(df.format(game.getOlderUsedPrices().get(0))) + "€");
             for(int i=1;i<game.getOlderUsedPrices().size();i++){
                 oldUsedPrice.setText(oldUsedPrice.getText().toString() + ", " + String.valueOf(df.format(game.getOlderUsedPrices().get(i))) + "€");
             }

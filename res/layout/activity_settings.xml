@@ -106,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancella dati temporanei"
-            android:onClick="deleteTempDir"/>
+            android:onClick="deleteTempGames"/>
 
     </LinearLayout>
 
@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reset dei dati"
-            android:onClick="deleteAll"/>
+            android:onClick="deleteAllGames"/>
 
     </LinearLayout>
 

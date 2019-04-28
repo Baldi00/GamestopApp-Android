@@ -1,26 +1,15 @@
 package com.gamestop.android.gamestopapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 
 public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
 
-    private MainActivity main;
+    private ActivityMain main;
     private String source;
 
-    public MyOnItemClickListener(MainActivity main, String source){
+    public MyOnItemClickListener(ActivityMain main, String source){
         this.main = main;
         this.source = source;
     }
@@ -33,7 +22,7 @@ public class MyOnItemClickListener implements AdapterView.OnItemClickListener {
         i.putExtra("source",source);
 
         if(source.equals("wishlist")) {
-            i.putExtra("path",DirectoryManager.getWishlistDir()+g.getId()+"/data.dat");
+            i.putExtra("id",g.getId());
         }
         else if(source.equals("search")){
             i.putExtra("url", g.getURL());

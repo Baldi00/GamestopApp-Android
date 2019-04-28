@@ -1,15 +1,25 @@
 package com.gamestop.android.gamestopapp;
 
+import org.xml.sax.SAXException;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 public class Games extends ArrayList<GamePreview> implements Serializable {
 
@@ -40,39 +50,6 @@ public class Games extends ArrayList<GamePreview> implements Serializable {
             str += this.get(game).toString()+"\n\n";
         }
         return str;
-    }
-
-    public void exportBinary(MainActivity main) throws IOException
-    {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DirectoryManager.getWishlistDir() + "wishlist.dat"));
-
-        for( int game=0; game<this.size(); ++game ){
-            ((Game)this.get(game)).exportBinary();
-            oos.writeObject( this.get(game) );
-        }
-
-        Log.info("Games", "exported to binary");
-        oos.close();
-    }
-
-    public static Games importBinary(MainActivity main) throws FileNotFoundException, IOException, ClassNotFoundException
-    {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DirectoryManager.getWishlistDir() + "wishlist.dat"));
-
-        Games wishlist = new Games();
-        boolean eof = false;
-
-        while(!eof){
-            try{
-                GamePreview g = (GamePreview) ois.readObject();
-                wishlist.add(g);
-            }catch(EOFException e){
-                eof = true;
-            }
-        }
-
-        Log.info("Games", "imported from binary");
-        return wishlist;
     }
 
     public void sortbyName () {

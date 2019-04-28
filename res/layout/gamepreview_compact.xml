@@ -112,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
                         android:textStyle="bold"
-                        android:text=""/>
+                        android:text=""
+                        android:layout_marginLeft="5dp"/>
 
                 </LinearLayout>
 
@@ -147,7 +148,8 @@
                         android:layout_height="wrap_content"
                         android:textColor="#FFF"
                         android:textStyle="bold"
-                        android:text=""/>
+                        android:text=""
+                        android:layout_marginLeft="5dp"/>
 
                 </LinearLayout>
 

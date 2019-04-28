@@ -25,16 +25,35 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+import org.w3c.dom.CDATASection;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 public class Game extends GamePreview implements Serializable {
 
-    private List<String> genres;
-    private String officialSite;
-    private String players;
-    private boolean validForPromotions;
+    protected List<String> genres;
+    protected String officialSite;
+    protected String players;
+    protected boolean validForPromotions;
 
-    private List<Promo> promo;
-    private String description;
+    protected List<Promo> promo;
+    protected String description;
+
+    protected Game() {
+        // used by importXML
+    }
 
     public Game(String url) throws IOException {
 
@@ -649,35 +668,5 @@ public class Game extends GamePreview implements Serializable {
             Log.debug("Game", getTitle() + ": Promo has changed");
         }
 
-    }
-
-    public void exportBinary() throws IOException
-    {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream( getGameDirectory() + "data.dat"));
-
-        oos.writeObject( this );
-
-        Log.info("Game", "exported to binary");
-        oos.close();
-    }
-
-    public static Game importBinary( String path ) throws FileNotFoundException, IOException, ClassNotFoundException
-    {
-        File f = new File("path");
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-
-        Game game = null;
-        boolean eof = false;
-
-        while(!eof){
-            try{
-                game = (Game)ois.readObject();
-            }catch(EOFException e){
-                eof = true;
-            }
-        }
-
-        Log.info("Game", "imported from binary");
-        return game;
     }
 }

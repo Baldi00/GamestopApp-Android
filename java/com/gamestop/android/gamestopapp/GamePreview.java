@@ -109,6 +109,12 @@ public class GamePreview implements Comparable<GamePreview>, Serializable {
         return pegi;
     }
 
+    public boolean hasPegi() {
+        if ( pegi == null )
+            return false;
+        return pegi.size() > 0;
+    }
+
     public String getReleaseDate() {
         return releaseDate;
     }
@@ -126,7 +132,7 @@ public class GamePreview implements Comparable<GamePreview>, Serializable {
     }
 
     public String getGameDirectory() {
-        return DirectoryManager.getDirectory(id) + id + "/";
+        return DirectoryManager.getGameDirectory(id);
     }
 
     public String getCover() {
@@ -379,7 +385,7 @@ public class GamePreview implements Comparable<GamePreview>, Serializable {
 
     protected void mkdir() {
         // create userData folder if doesn't exist
-        File dir = new File(DirectoryManager.getTempDir());
+        File dir = new File(DirectoryManager.getGamesDirectory());
 
         if (!dir.exists()) {
             dir.mkdir();

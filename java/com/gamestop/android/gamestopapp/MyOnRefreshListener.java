@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout pullToRefresh;
-    private MainActivity main;
+    private ActivityMain main;
 
-    public MyOnRefreshListener(SwipeRefreshLayout pullToRefresh, MainActivity main) {
+    public MyOnRefreshListener(SwipeRefreshLayout pullToRefresh, ActivityMain main) {
         this.pullToRefresh = pullToRefresh;
         this.main = main;
     }
@@ -37,10 +37,10 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
     }
 
     private class Updater extends AsyncTask{
-        private MainActivity main;
+        private ActivityMain main;
         MyOnRefreshListener refreshListener;
 
-        public Updater(MainActivity main, MyOnRefreshListener refreshListener){
+        public Updater(ActivityMain main, MyOnRefreshListener refreshListener){
             this.main = main;
             this.refreshListener = refreshListener;
         }

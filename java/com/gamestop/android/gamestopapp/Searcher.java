@@ -1,17 +1,15 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Searcher extends AsyncTask {
 
-    private MainActivity main;
+    private ActivityMain main;
     private String gameToSearch;
-    public Searcher(MainActivity main, String gameToSearch) {
+    public Searcher(ActivityMain main, String gameToSearch) {
         this.main = main;
         this.gameToSearch = gameToSearch;
     }

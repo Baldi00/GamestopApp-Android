@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 public class ActivityGamePage extends Activity {
 
@@ -88,6 +93,9 @@ public class ActivityGamePage extends Activity {
         findViewById(R.id.remove).setVisibility(View.GONE);
         findViewById(R.id.add).setVisibility(View.GONE);
 
+        oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
         //Get the intent
         caller = getIntent();
 
@@ -101,19 +109,19 @@ public class ActivityGamePage extends Activity {
             Downloader downloader = new Downloader(this, caller.getStringExtra("url"));
             downloader.execute();
 
-            oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
         }else if(source.equals("wishlist")){
             findViewById(R.id.remove).setVisibility(View.VISIBLE);
             findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
 
-            Log.d("EBBENE","son qui");
             try {
-                gameOfThePage = Game.importBinary(caller.getStringExtra("path"));
+                gameOfThePage = DirectoryManager.importGame(caller.getStringExtra("id"));
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -141,8 +149,9 @@ public class ActivityGamePage extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(copyIntoUserDataFolder()) {
-                            MainActivity.addToWishlistGamePage(gameOfThePage);
+                            ActivityMain.addToWishlistGamePage(gameOfThePage);
                             Toast.makeText(getApplicationContext(), titolo + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
+
                         }else{
                             Toast.makeText(getApplicationContext(), titolo + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
                         }
@@ -172,7 +181,7 @@ public class ActivityGamePage extends Activity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.removeFromWishlistGamePage(gameOfThePage,getApplicationContext());
+                        ActivityMain.removeFromWishlistGamePage(gameOfThePage);
                         Toast.makeText(getApplicationContext(),titolo + " è stato rimosso dalla wishlist",Toast.LENGTH_SHORT).show();
                         dialog.cancel();
                         finish();
@@ -197,7 +206,7 @@ public class ActivityGamePage extends Activity {
         if(caller.getStringExtra("source").equals("toAdd")){
             String titolo = gameOfThePage.getTitle().substring(0,gameOfThePage.getTitle().length()-2);    //Remove strange space at the end
             if(copyIntoUserDataFolder()) {
-                MainActivity.addToWishlistGamePage(gameOfThePage);
+                ActivityMain.addToWishlistGamePage(gameOfThePage);
                 Toast.makeText(getApplicationContext(), titolo + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getApplicationContext(), titolo + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
@@ -331,14 +340,14 @@ public class ActivityGamePage extends Activity {
         }
 
         if(gameOfThePage.getOlderNewPrices()!=null && gameOfThePage.getOlderNewPrices().size()>0){
-            oldNewPrice.setText(" " + String.valueOf(df.format(gameOfThePage.getOlderNewPrices().get(0))) + "€");
+            oldNewPrice.setText(String.valueOf(df.format(gameOfThePage.getOlderNewPrices().get(0))) + "€");
             for(int i=1;i<gameOfThePage.getOlderNewPrices().size();i++){
                 oldNewPrice.setText(oldNewPrice.getText().toString() + ", " + String.valueOf(df.format(gameOfThePage.getOlderNewPrices().get(i))) + "€");
             }
         }
 
         if(gameOfThePage.getOlderUsedPrices()!=null && gameOfThePage.getOlderUsedPrices().size()>0){
-            oldUsedPrice.setText(" " + String.valueOf(df.format(gameOfThePage.getOlderUsedPrices().get(0))) + "€");
+            oldUsedPrice.setText(String.valueOf(df.format(gameOfThePage.getOlderUsedPrices().get(0))) + "€");
             for(int i=1;i<gameOfThePage.getOlderUsedPrices().size();i++){
                 oldUsedPrice.setText(oldUsedPrice.getText().toString() + ", " + String.valueOf(df.format(gameOfThePage.getOlderUsedPrices().get(i))) + "€");
             }
@@ -353,10 +362,12 @@ public class ActivityGamePage extends Activity {
             for (int i = 0; i < galleryImages.length; i++) {
                 ImageView galleryImage = new ImageView(getBaseContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                int marginInPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+                int marginInPixelRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
                 if (i == galleryImages.length - 1) {
-                    layoutParams.setMargins(15, 0, 15, 0);
+                    layoutParams.setMargins(marginInPixel, 0, marginInPixelRight, 0);
                 } else {
-                    layoutParams.setMargins(15, 0, 0, 0);
+                    layoutParams.setMargins(marginInPixel, 0, 0, 0);
                 }
                 galleryImage.setTag(i);
                 galleryImage.setImageURI(Uri.fromFile(galleryImages[i]));
@@ -429,12 +440,7 @@ public class ActivityGamePage extends Activity {
 
     //Copy the game from temp into userData
     public boolean copyIntoUserDataFolder(){
-        try {
-            return copyDirectory(new File(DirectoryManager.getTempDir()+gameOfThePage.getId()+"/"), new File(DirectoryManager.getWishlistDir()+gameOfThePage.getId()+"/"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return true;
     }
 
     //Copy directory if game not exists

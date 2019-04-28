@@ -5,14 +5,9 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 
 public class ActivitySettings extends AppCompatActivity {
 
@@ -22,7 +17,7 @@ public class ActivitySettings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
     }
 
-    public void deleteTempDir(View v){
+    public void deleteTempGames(View v){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
         dialog.setMessage("Sei sicuro di voler cancellare i file temporanei?");
         dialog.setPositiveButton(
@@ -31,8 +26,12 @@ public class ActivitySettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        deleteFolderRecursive(new File(DirectoryManager.getTempDir()));
-                        MainActivity.resetSearch();
+                        try {
+                            DirectoryManager.deleteTempGames();
+                            ActivityMain.resetResearh();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getApplicationContext(),"File temporanei cancellati",Toast.LENGTH_SHORT).show();
                         finish();
                     }
@@ -49,7 +48,7 @@ public class ActivitySettings extends AppCompatActivity {
         dialog.show();
     }
 
-    public void deleteAll(View v){
+    public void deleteAllGames(View v){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
         dialog.setMessage("Tutti i giochi verranno cancellati! Sei sicuro di voler resettare l'applicazione?");
         dialog.setPositiveButton(
@@ -58,9 +57,12 @@ public class ActivitySettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        deleteFolderRecursive(new File(DirectoryManager.getTempDir()));
-                        deleteFolderRecursive(new File(DirectoryManager.getWishlistDir()));
-                        MainActivity.resetAll();
+                        try {
+                            DirectoryManager.deleteAllGames();
+                            ActivityMain.resetAll();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getApplicationContext(),"Tutti i file cancellati",Toast.LENGTH_SHORT).show();
                         finish();
                     }
@@ -75,17 +77,5 @@ public class ActivitySettings extends AppCompatActivity {
                     }
                 });
         dialog.show();
-    }
-
-    //Delete a folder with its content
-    public static void deleteFolderRecursive(File f){
-        if(f.isDirectory()){
-            File[] files = f.listFiles();
-            for (File file : files){
-                deleteFolderRecursive(file);
-            }
-        }
-
-        f.delete();
     }
 }

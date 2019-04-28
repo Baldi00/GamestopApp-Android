@@ -15,9 +15,9 @@ public class MyOnNavigationItemSelectedListener implements BottomNavigationView.
     //The 3 pages
     private LinearLayout newsPage, wishlistPage, searchPage;
 
-    private MainActivity main;
+    private ActivityMain main;
 
-    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton goToSearch, MainActivity main) {
+    public MyOnNavigationItemSelectedListener(LinearLayout newsPage, LinearLayout wishlistPage, LinearLayout searchPage, ImageButton goToSearch, ActivityMain main) {
         this.newsPage = newsPage;
         this.wishlistPage = wishlistPage;
         this.searchPage = searchPage;

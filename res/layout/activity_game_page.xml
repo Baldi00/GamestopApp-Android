@@ -136,7 +136,8 @@
                         android:textColor="#FFF"
                         android:textSize="18dp"
                         android:textStyle="bold"
-                        android:text=""/>
+                        android:text=""
+                        android:layout_marginLeft="5dp"/>
 
                 </LinearLayout>
 
@@ -175,7 +176,8 @@
                         android:textColor="#FFF"
                         android:textSize="18dp"
                         android:textStyle="bold"
-                        android:text=""/>
+                        android:text=""
+                        android:layout_marginLeft="5dp"/>
 
                 </LinearLayout>
 
@@ -707,89 +709,8 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp">
-
-                        <!--<ImageView
-                            android:id="@+id/gallery1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"
-                            android:onClick="openGallery"/>
-
-                        <ImageView
-                            android:id="@+id/gallery2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery6"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery8"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery9"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"/>
-
-                        <ImageView
-                            android:id="@+id/gallery10"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/no_image_gallery"
-                            android:adjustViewBounds="true"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginRight="10dp"/>-->
+                        android:layout_marginBottom="10dp"
+                        android:paddingLeft="5dp">
 
                     </LinearLayout>
 
