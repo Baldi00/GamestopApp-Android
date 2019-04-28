@@ -1,17 +1,20 @@
 package com.gamestop.android.gamestopapp;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
-public class ActivityGallery extends AppCompatActivity {
+public class ActivityGallery extends Activity {
 
     ViewPager viewPager;
     ViewPagerAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
@@ -22,12 +25,17 @@ public class ActivityGallery extends AppCompatActivity {
         adapter = new ViewPagerAdapter(ActivityGallery.this,images);
         viewPager.setAdapter(adapter);
 
-        viewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                viewPager.setCurrentItem(caller.getIntExtra("position",0));
-            }
-        });
+        if(savedInstanceState==null) {
+            viewPager.setCurrentItem(caller.getIntExtra("position", 0));
+        }else{
+            viewPager.setCurrentItem(savedInstanceState.getInt("position"));
+        }
+
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("position",viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
+    }
 }

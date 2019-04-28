@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +53,15 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
         platform.setText(game.getPlatform());
         publisher.setText(game.getPublisher());
 
+
+        DecimalFormat df = new DecimalFormat("#.00");
         if(!String.valueOf(game.getNewPrice()).equals("null"))
-            newPrice.setText(String.valueOf(game.getNewPrice()) + "€");
+            newPrice.setText(String.valueOf(df.format(game.getNewPrice())) + "€");
         else
             newPrice.setText("NO INFO");
 
         if(!String.valueOf(game.getUsedPrice()).equals("null"))
-            usedPrice.setText(String.valueOf(game.getUsedPrice()) + "€");
+            usedPrice.setText(String.valueOf(df.format(game.getUsedPrice())) + "€");
         else
             usedPrice.setText("NO INFO");
 

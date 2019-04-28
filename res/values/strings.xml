@@ -29,6 +29,7 @@
     <string name="more_options_open_site" tools:ignore="ExtraTranslation">Apri GameStop</string>
     <string name="more_options_open_on_site" tools:ignore="ExtraTranslation">Apri su GameStop</string>
     <string name="more_options_settings" tools:ignore="ExtraTranslation">Impostazioni</string>
+    <string name="more_options_add_id" tools:ignore="ExtraTranslation">Aggiungi ID</string>
 
     <string name="sort_by_relevance" tools:ignore="ExtraTranslation">Rilevanza</string>
     <string name="sort_by_aplhabet" tools:ignore="ExtraTranslation">Alfabeto</string>

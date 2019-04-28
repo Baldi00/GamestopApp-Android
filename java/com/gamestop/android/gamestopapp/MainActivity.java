@@ -1,6 +1,5 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,9 +10,11 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity{
         gameToSearch = (EditText)findViewById(R.id.gameToSearch);
 
 
+
         //LISTENERS
 
         navigation.setOnNavigationItemSelectedListener(new MyOnNavigationItemSelectedListener(newsPage,wishlistPage,searchPage,goToSearch,this));
@@ -103,6 +107,16 @@ public class MainActivity extends AppCompatActivity{
 
         pullToRefresh.setOnRefreshListener(new MyOnRefreshListener(pullToRefresh,this));
 
+        gameToSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    searchGame(null);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         //OPERATIONS
 
@@ -222,13 +236,14 @@ public class MainActivity extends AppCompatActivity{
                 searchedGameListData.add(g);
             }
             searchedGameListAdapter.notifyDataSetChanged();
-            searchedGameListView.setSelection(0);
         }else{
             Toast.makeText(this,"Nessun risultato trovato", Toast.LENGTH_SHORT).show();
         }
+
         findViewById(R.id.progressBarOnSearch).setVisibility(View.GONE);
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.VISIBLE);
         gameToSearch.setEnabled(true);
+        searchedGameListView.smoothScrollToPosition(0);
 
     }
 
@@ -329,24 +344,69 @@ public class MainActivity extends AppCompatActivity{
     public void showMoreOptionsMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.more_options_menu, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        if(navigation.getSelectedItemId() == R.id.navigation_wishlist) {
+            inflater.inflate(R.menu.more_options_menu_wishlist, popup.getMenu());
 
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().toString().equals(getString(R.string.more_options_sort))){
-                    showSortByPopupMenu();
-                }else if(item.getTitle().toString().equals(getString(R.string.more_options_open_site))){
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gamestop.it/"));
-                    startActivity(intent);
-                }else if(item.getTitle().toString().equals(getString(R.string.more_options_settings))){
-                    Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
-                    startActivity(i);
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getTitle().toString().equals(getString(R.string.more_options_sort))) {
+                        showSortByPopupMenu();
+                    } else if (item.getTitle().toString().equals(getString(R.string.more_options_open_site))) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gamestop.it/"));
+                        startActivity(intent);
+                    } else if (item.getTitle().toString().equals(getString(R.string.more_options_settings))) {
+                        Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
+                        startActivity(i);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        } else if(navigation.getSelectedItemId() == R.id.navigation_search){
+            inflater.inflate(R.menu.more_options_menu_search, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getTitle().toString().equals(getString(R.string.more_options_add_id))) {
+                        Toast.makeText(getApplicationContext(),"Non ancora implementato",Toast.LENGTH_SHORT).show();
+                    } else if (item.getTitle().toString().equals(getString(R.string.more_options_open_on_site))) {
+                        Intent intent = null;
+                        try {
+                            if(!gameToSearch.getText().toString().equals("")) {
+                                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gamestop.it/SearchResult/QuickSearch?q=" + URLEncoder.encode(gameToSearch.getText().toString(), "UTF-8")));
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Gioco non inserito", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            Toast.makeText(getApplicationContext(),"Impossibile aprire su gamestop",Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (item.getTitle().toString().equals(getString(R.string.more_options_settings))) {
+                        Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
+                        startActivity(i);
+                    }
+                    return false;
+                }
+            });
+        } else {
+            inflater.inflate(R.menu.more_options_menu_promo, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getTitle().toString().equals(getString(R.string.more_options_settings))) {
+                        Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
+                        startActivity(i);
+                    }
+                    return false;
+                }
+            });
+        }
 
         popup.show();
     }
@@ -406,7 +466,6 @@ public class MainActivity extends AppCompatActivity{
 
     //Delete a folder with its content
     public static void deleteFolderRecursive(File f){
-        Log.d("EBBENE",f.getAbsolutePath());
         if(f.isDirectory()){
             File[] files = f.listFiles();
             for (File file : files){

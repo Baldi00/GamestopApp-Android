@@ -25,7 +25,8 @@
             android:name=".ActivityGamePage"
             android:screenOrientation="portrait" />
         <activity android:name=".ActivitySettings" />
-        <activity android:name=".ActivityGallery"></activity>
+        <activity android:name=".ActivityGallery"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"></activity>
     </application>
 
 </manifest>

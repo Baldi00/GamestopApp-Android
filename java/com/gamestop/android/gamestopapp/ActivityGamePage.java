@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ActivityGamePage extends Activity {
@@ -121,7 +122,7 @@ public class ActivityGamePage extends Activity {
 
     //Add the game into wishlist if caller is a game from search list
     public void addToWishist(View v){
-        final String titolo = title.getText().toString().substring(0,title.getText().length()-2);    //Remove strange space at the end
+        final String titolo = title.getText().toString();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.DialogActivityGamePage);
         dialog.setMessage("Vuoi aggiungere " + titolo + " alla wishlist?");
         dialog.setPositiveButton(
@@ -153,7 +154,7 @@ public class ActivityGamePage extends Activity {
 
     //Remove the game from wishlist if caller is a game from wishlist
     public void removeFromWishlist(View v){
-        final String titolo = title.getText().toString().substring(0,title.getText().length()-2);    //Remove strange space at the end
+        final String titolo = title.getText().toString();
         AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.DialogActivityGamePage);
         dialog.setMessage("Vuoi rimuovere " + titolo + " dalla wishlist?");
         dialog.setPositiveButton(
@@ -183,15 +184,8 @@ public class ActivityGamePage extends Activity {
     public void onEndDownload(Object result){
         gameOfThePage = (Game)result;
 
-        progressBarOnDownlaod.setVisibility(View.GONE);
-
-        setGameOfThePageGraphic();
-
-        findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
-        findViewById(R.id.add).setVisibility(View.VISIBLE);
-
         if(caller.getStringExtra("source").equals("toAdd")){
-            String titolo = title.getText().toString().substring(0,title.getText().length()-2);    //Remove strange space at the end
+            String titolo = gameOfThePage.getTitle().substring(0,gameOfThePage.getTitle().length()-2);    //Remove strange space at the end
             if(copyIntoUserDataFolder()) {
                 MainActivity.addToWishlistGamePage(gameOfThePage);
                 Toast.makeText(getApplicationContext(), titolo + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
@@ -199,15 +193,22 @@ public class ActivityGamePage extends Activity {
                 Toast.makeText(getApplicationContext(), titolo + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
             }
             finish();
+            return;
         }
+
+        setGameOfThePageGraphic();
+        progressBarOnDownlaod.setVisibility(View.GONE);
+        findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
+        findViewById(R.id.add).setVisibility(View.VISIBLE);
     }
 
     //Set all informations and images in the page
     public void setGameOfThePageGraphic(){
+
         titleHeader.setText(gameOfThePage.getTitle());
 
         if(gameOfThePage.getTitle()!=null && !gameOfThePage.getTitle().equals(""))
-            title.setText(gameOfThePage.getTitle());
+            title.setText(gameOfThePage.getTitle().substring(0,gameOfThePage.getTitle().length()-2));
         else
             findViewById(R.id.titleLayout).setVisibility(View.GONE);
 
@@ -280,13 +281,15 @@ public class ActivityGamePage extends Activity {
             findViewById(R.id.pegiLayout).setVisibility(View.GONE);
         }
 
+        DecimalFormat df = new DecimalFormat("#.00");
+
         if(!String.valueOf(gameOfThePage.getNewPrice()).equals("null"))
-            newPrice.setText(String.valueOf(gameOfThePage.getNewPrice()) + "€");
+            newPrice.setText(String.valueOf(df.format(gameOfThePage.getNewPrice())) + "€");
         else
             newPrice.setText("NO INFO");
 
         if(!String.valueOf(gameOfThePage.getUsedPrice()).equals("null"))
-            usedPrice.setText(String.valueOf(gameOfThePage.getUsedPrice()) + "€");
+            usedPrice.setText(String.valueOf(df.format(gameOfThePage.getUsedPrice())) + "€");
         else
             usedPrice.setText("NO INFO");
 
@@ -349,7 +352,8 @@ public class ActivityGamePage extends Activity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle().toString().equals(getString(R.string.more_options_open_on_site))){
-                    Toast.makeText(getApplicationContext(),"Non ancora implementato",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gameOfThePage.getURL()));
+                    startActivity(intent);
                 }else if(item.getTitle().toString().equals(getString(R.string.more_options_settings))){
                     Intent i = new Intent(getApplicationContext(), ActivitySettings.class);
                     startActivity(i);
