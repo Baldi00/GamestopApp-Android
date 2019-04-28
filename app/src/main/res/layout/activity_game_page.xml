@@ -78,9 +78,9 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/wholePage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/wholePage">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,10 +91,10 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
-                android:src="@drawable/no_image"
                 android:adjustViewBounds="true"
+                android:onClick="enlargeCover"
                 android:padding="15dp"
-                android:onClick="enlargeCover"/>
+                android:src="@drawable/no_image" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -107,37 +107,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/redGamestop"
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:padding="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/newPrice"
                         android:textColor="#FFF"
-                        android:textStyle="bold"
                         android:textSize="18dp"
-                        android:text="@string/newPrice"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/newPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text=""/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/oldNewPrice"
-                        android:visibility="visible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
                         android:textStyle="bold"
-                        android:text=""
-                        android:layout_marginLeft="5dp"/>
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -145,167 +145,167 @@
                     android:id="@+id/usedPriceLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@color/redGamestop"
-                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:layout_marginTop="10dp">
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/usedPrice"
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text="@string/usedPrice"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/usedPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text=""/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/oldUsedPrice"
-                        android:visibility="visible"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
                         android:textStyle="bold"
-                        android:text=""
-                        android:layout_marginLeft="5dp"/>
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/digitalPriceLayout"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@color/redGamestop"
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:padding="5dp"
-                    android:layout_marginTop="10dp">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/digitalPrice"
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text="@string/digitalPrice"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/digitalPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text=""/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/preorderPriceLayout"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@color/redGamestop"
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:padding="5dp"
-                    android:layout_marginTop="10dp">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/preorderPrice"
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text="@string/preorderPrice"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/preorderPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="#FFF"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text=""/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/validForPromotions"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/border_valid_for_promotions"
 
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:padding="5dp"
-                    android:layout_marginTop="10dp">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/validForPromotions"
                         android:textColor="#000"
                         android:textSize="18dp"
-                        android:textStyle="bold"
-                        android:text="@string/validForPromotions"/>
+                        android:textStyle="bold" />
 
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/promoLayout"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:layout_marginTop="15dp"
+
                     android:background="#d7d7d7"
-                    android:padding="7dp">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="7dp"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#313131"
 
-                        android:orientation="vertical"
                         android:gravity="center"
+                        android:orientation="vertical"
                         android:padding="5dp">
 
                         <TextView
                             android:id="@+id/promoHeader"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="5dp"
+                            android:gravity="center"
                             android:textColor="#fff"
                             android:textSize="16dp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="5dp"
-                            android:layout_gravity="center"
-                            android:gravity="center"/>
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/promoValidity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="5dp"
+                            android:gravity="center"
                             android:textColor="#fff"
                             android:textSize="13dp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="5dp"
-                            android:layout_gravity="center"
-                            android:gravity="center"/>
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
@@ -313,12 +313,12 @@
                         android:id="@+id/promoMessage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000"
-                        android:textSize="16dp"
-                        android:onClick="goToPromoMessageUrl"
                         android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:layout_marginTop="10dp"/>
+                        android:onClick="goToPromoMessageUrl"
+                        android:textColor="#000"
+                        android:textSize="16dp" />
 
                 </LinearLayout>
 
@@ -340,7 +340,7 @@
                     android:paddingBottom="10dp"
                     android:text="@string/info"
                     android:textColor="#000"
-                    android:textSize="21dp"
+                    android:textSize="20dp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -349,14 +349,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/title"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/title"
@@ -364,8 +364,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -375,14 +376,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/publisher"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/publisher"
@@ -390,8 +391,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -401,14 +403,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/platform"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/platform"
@@ -416,8 +418,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -427,14 +430,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/genres"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/genres"
@@ -442,8 +445,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -453,14 +457,14 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/date"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/releaseDate"
@@ -468,8 +472,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -479,15 +484,15 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/players"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/players"
@@ -495,8 +500,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -506,25 +512,25 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/game_page_info_background"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/officialSite"
-                        android:textSize="17dp" />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/officialSite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right"
+                        android:onClick="goToGameOfficialSite"
                         android:text="@string/no_info"
-                        android:textSize="17dp"
-                        android:textColor="@color/redGamestop"
-                        android:onClick="goToGameOfficialSite"/>
+                        android:textSize="16dp"
+                        android:textColor="#000"/>
 
                 </LinearLayout>
 
@@ -539,13 +545,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/pegi"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="21dp"
+                    android:layout_marginLeft="15dp"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="@string/pegi"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
@@ -554,128 +560,128 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center"
                         android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingLeft="15dp">
 
                         <ImageView
                             android:id="@+id/pegi18"
-                            android:visibility="gone"
                             android:layout_width="43dp"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/pegi18" />
+                            android:src="@drawable/pegi18"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegi16"
-                            android:visibility="gone"
                             android:layout_width="43dp"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/pegi16" />
+                            android:src="@drawable/pegi16"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegi12"
-                            android:visibility="gone"
                             android:layout_width="43dp"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/pegi12" />
+                            android:src="@drawable/pegi12"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegi7"
-                            android:visibility="gone"
                             android:layout_width="43dp"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/pegi7" />
+                            android:src="@drawable/pegi7"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegi3"
-                            android:visibility="gone"
                             android:layout_width="43dp"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/pegi3" />
+                            android:src="@drawable/pegi3"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegiBadLanguage"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/bad_language"
-                            android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
-
-                        <ImageView
-                            android:id="@+id/pegiDiscrimination"
-                            android:visibility="gone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/discrimination"
-                            android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
-
-                        <ImageView
-                            android:id="@+id/pegiDrugs"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:src="@drawable/drugs" />
+                            android:src="@drawable/bad_language"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/pegiDiscrimination"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/discrimination"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/pegiDrugs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/drugs"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegiFear"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/fear"
+                            android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
+                            android:src="@drawable/fear"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegiGambling"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/gambling"
+                            android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
+                            android:src="@drawable/gambling"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegiSex"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/sex"
+                            android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
+                            android:src="@drawable/sex"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/pegiViolence"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/violence"
+                            android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
+                            android:src="@drawable/violence"
+                            android:visibility="gone" />
 
 
                         <ImageView
                             android:id="@+id/pegiOnline"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/online"
+                            android:layout_marginRight="5dp"
                             android:adjustViewBounds="true"
-                            android:layout_marginRight="5dp"/>
+                            android:src="@drawable/online"
+                            android:visibility="gone" />
 
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -690,13 +696,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/gallery"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="21dp"
+                    android:layout_marginLeft="15dp"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="@string/gallery"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -706,10 +712,10 @@
                         android:id="@+id/gallery"
                         android:layout_width="wrap_content"
                         android:layout_height="100dp"
-                        android:orientation="horizontal"
-                        android:gravity="center"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingLeft="5dp">
 
                     </LinearLayout>
@@ -727,24 +733,23 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/description"
-                    android:textStyle="bold"
-                    android:textColor="#000"
-                    android:textSize="21dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
                     android:background="@drawable/game_page_info_background"
                     android:paddingTop="30dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"/>
+                    android:text="@string/description"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/description"
-                    android:padding="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="15dp"
                     android:text="@string/lorem_ipsum"
-                    android:textSize="17dp"
-                    />
+                    android:textSize="17dp" />
 
             </LinearLayout>
 
