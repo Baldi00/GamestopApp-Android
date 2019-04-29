@@ -48,130 +48,180 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7"
-            android:gravity="center_vertical"
-            android:textSize="15dp"
-            android:text="Servizio notifiche in background"/>
-
-        <Switch
-            android:id="@+id/backgroundService"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:checked="true"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textSize="15dp"
-            android:text="Intervallo di aggiornamento"/>
-
-        <Spinner
-            android:id="@+id/updateInterval"
-            android:layout_marginTop="10dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/update_intervals">
+            android:orientation="vertical">
 
-        </Spinner>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:text="Servizio notifiche in background"/>
+
+                <Switch
+                    android:id="@+id/backgroundService"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:checked="true"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:text="Intervallo di aggiornamento"/>
+
+                <Spinner
+                    android:id="@+id/updateInterval"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/update_intervals">
+
+                </Spinner>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:text="Notifica con suono"/>
+
+                <Switch
+                    android:id="@+id/notificationSound"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:checked="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:text="Aggiorna dati all'avvio dell'applicazione"/>
+
+                <Switch
+                    android:id="@+id/updateOnAppStart"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:checked="true"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:text="Visualizza Gamestop Bunny"/>
+
+                <Switch
+                    android:id="@+id/visualizeGamestopBunny"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:checked="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cancella file temporanei"
+                    android:onClick="deleteTempGames"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SVUOTA WISHLIST"
+                    android:onClick="deleteAllGames"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="RESET"
+                    android:onClick="resetAll"/>
+
+            </LinearLayout>
 
 
+        </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7"
-            android:gravity="center_vertical"
-            android:textSize="15dp"
-            android:text="Aggiorna dati all'avvio dell'applicazione"/>
-
-        <Switch
-            android:id="@+id/updateOnAppStart"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:checked="true"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7"
-            android:gravity="center_vertical"
-            android:textSize="15dp"
-            android:text="Visualizza Gamestop Bunny"/>
-
-        <Switch
-            android:id="@+id/visualizeGamestopBunny"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:checked="false"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cancella file temporanei"
-            android:onClick="deleteTempGames"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SVUOTA WISHLIST"
-            android:onClick="deleteAllGames"/>
-
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

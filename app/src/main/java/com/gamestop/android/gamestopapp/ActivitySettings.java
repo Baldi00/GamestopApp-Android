@@ -1,7 +1,10 @@
 package com.gamestop.android.gamestopapp;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +23,8 @@ import java.io.IOException;
 
 public class ActivitySettings extends AppCompatActivity {
 
+    private boolean toApplyChanges = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +39,7 @@ public class ActivitySettings extends AppCompatActivity {
                 int millisecondsToSleep = Integer.parseInt(br.readLine());
                 boolean updateOnAppStart = Boolean.parseBoolean(br.readLine());
                 boolean visualizeGamestopBunny = Boolean.parseBoolean(br.readLine());
+                boolean notificationSound = Boolean.parseBoolean(br.readLine());
 
                 if(!backgroundServiceEnabled){
                     ((Switch)findViewById(R.id.backgroundService)).setChecked(false);
@@ -66,8 +72,10 @@ public class ActivitySettings extends AppCompatActivity {
                     ((Switch)findViewById(R.id.visualizeGamestopBunny)).setChecked(true);
                 }
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                if(notificationSound){
+                    ((Switch)findViewById(R.id.notificationSound)).setChecked(true);
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,9 +83,10 @@ public class ActivitySettings extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        applyChanges(null);
-        super.onBackPressed();
+    public void onStop() {
+        super.onStop();
+        if(toApplyChanges)
+            applyChanges(null);
     }
 
     public void deleteTempGames(View v){
@@ -90,6 +99,7 @@ public class ActivitySettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         try {
+                            toApplyChanges = false;
                             DirectoryManager.deleteTempGames();
                             ActivityMain.resetResearh();
                         } catch (Exception e) {
@@ -121,6 +131,7 @@ public class ActivitySettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         try {
+                            toApplyChanges = false;
                             DirectoryManager.deleteAllGames();
                             ActivityMain.resetAll();
                         } catch (Exception e) {
@@ -128,6 +139,49 @@ public class ActivitySettings extends AppCompatActivity {
                         }
                         Toast.makeText(getApplicationContext(),"Wishlist svuotata",Toast.LENGTH_SHORT).show();
                         finish();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
+
+    public void resetAll(View v){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
+        dialog.setMessage("L'app verrà ripristinata e tutti i giochi verranno cancellati! Sei sicuro di voler ritornare allo stato iniziale?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        try {
+                            toApplyChanges = false;
+                            DirectoryManager.deleteAllGames();
+                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "config.txt"));
+                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "Game.xsd"));
+                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "notificationId.txt"));
+
+                            NotificationManager nManager = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+                            nManager.cancelAll();
+
+                            Intent i = getBaseContext().getPackageManager().
+                                    getLaunchIntentForPackage(getBaseContext().getPackageName());
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            finish();
+                            startActivity(i);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 
@@ -174,6 +228,9 @@ public class ActivitySettings extends AppCompatActivity {
             bw.newLine();
 
             bw.write(String.valueOf(((Switch)findViewById(R.id.visualizeGamestopBunny)).isChecked())); //Update games on app start
+            bw.newLine();
+
+            bw.write(String.valueOf(((Switch)findViewById(R.id.notificationSound)).isChecked())); //Notification sound
             bw.newLine();
 
             bw.close();

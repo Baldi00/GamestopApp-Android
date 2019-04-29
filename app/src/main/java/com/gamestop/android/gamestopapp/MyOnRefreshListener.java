@@ -5,9 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.widget.Toast;
@@ -47,13 +50,18 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
         //pullToRefresh.setRefreshing(false);
     }
 
-    private void onEndRefresh(){
+    private void onEndRefresh(Boolean result){
         pullToRefresh.setRefreshing(false);
         main.getWishlistAdapter().notifyDataSetChanged();
-        Toast.makeText(main,"Aggiornamento terminato correttamente",Toast.LENGTH_SHORT).show();
+
+        if(result!=null)
+            if(result)
+                Toast.makeText(main,"Aggiornamento terminato correttamente",Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(main,"Non sei connesso a internet",Toast.LENGTH_SHORT).show();
     }
 
-    private class Updater extends AsyncTask{
+    private class Updater extends AsyncTask {
         private ActivityMain main;
         MyOnRefreshListener refreshListener;
 
@@ -65,21 +73,30 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
         @Override
         protected Object doInBackground(Object[] objects) {
 
-
-            //TODO TEST
-            //Without this update is too fast
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(!DirectoryManager.wishlistExists()){
+                return null;
             }
-
 
             ConnectivityManager cm = (ConnectivityManager)main.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
             if(isConnected) {
+                boolean notificationSound = false;
+                BufferedReader brConfig = null;
+                try {
+                    brConfig = new BufferedReader(new FileReader(DirectoryManager.getAppDir() + "config.txt"));
+
+                    //Read unnecessary lines
+                    brConfig.readLine();
+                    brConfig.readLine();
+                    brConfig.readLine();
+                    brConfig.readLine();
+                    notificationSound = Boolean.parseBoolean(brConfig.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 if (DirectoryManager.wishlistExists()) {
                     Games gs = null;
 
@@ -99,10 +116,6 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                 e.printStackTrace();
                             }
 
-
-                            /*List<String> notifications = new ArrayList<String>();
-                            notifications.add("Gioco in sconto");*/
-
                             if (notifications != null) {
 
                                 for (String str : notifications) {
@@ -112,8 +125,6 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                     try {
                                         BufferedReader br = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
                                         notificationId = Integer.parseInt(br.readLine());
-                                    } catch (FileNotFoundException e) {
-                                        e.printStackTrace();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -123,8 +134,12 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                             .setContentTitle(game.getTitle())
                                             .setContentText(str);
 
+                                    if(notificationSound){
+                                        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                        notification.setSound(alarmSound);
+                                    }
+
                                     Intent intent = new Intent(main, ActivityMain.class);
-                                    intent.putExtra("from","notification");
                                     PendingIntent pendingIntent = PendingIntent.getActivity(main, 0, intent, 0);
                                     notification.setContentIntent(pendingIntent);
 
@@ -147,13 +162,15 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                         }
                     }
                 }
+                return true;
+            } else {
+                return false;
             }
-            return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
-            refreshListener.onEndRefresh();
+            refreshListener.onEndRefresh((Boolean)o);
         }
 
         /**

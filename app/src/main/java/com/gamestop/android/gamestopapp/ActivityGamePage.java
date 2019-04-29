@@ -109,7 +109,7 @@ public class ActivityGamePage extends Activity {
             Downloader downloader = new Downloader(this, caller.getStringExtra("url"));
             downloader.execute();
 
-        }else if(source.equals("wishlist")){
+        }else if(source.equals("wishlist") || source.equals("notification")){
             findViewById(R.id.remove).setVisibility(View.VISIBLE);
             findViewById(R.id.wholePage).setVisibility(View.VISIBLE);
 
@@ -148,13 +148,8 @@ public class ActivityGamePage extends Activity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(copyIntoUserDataFolder()) {
-                            ActivityMain.addToWishlistGamePage(gameOfThePage);
-                            Toast.makeText(getApplicationContext(), titolo + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
+                        ActivityMain.addToWishlistGamePage(gameOfThePage);
 
-                        }else{
-                            Toast.makeText(getApplicationContext(), titolo + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
-                        }
                         dialog.cancel();
                         finish();
                     }
@@ -204,13 +199,8 @@ public class ActivityGamePage extends Activity {
         gameOfThePage = (Game)result;
 
         if(caller.getStringExtra("source").equals("toAdd")){
-            String titolo = gameOfThePage.getTitle().substring(0,gameOfThePage.getTitle().length()-2);    //Remove strange space at the end
-            if(copyIntoUserDataFolder()) {
-                ActivityMain.addToWishlistGamePage(gameOfThePage);
-                Toast.makeText(getApplicationContext(), titolo + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(getApplicationContext(), titolo + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
-            }
+            ActivityMain.addToWishlistGamePage(gameOfThePage);
+
             finish();
             return;
         }
@@ -436,11 +426,6 @@ public class ActivityGamePage extends Activity {
         });
 
         popup.show();
-    }
-
-    //Copy the game from temp into userData
-    public boolean copyIntoUserDataFolder(){
-        return true;
     }
 
     //Copy directory if game not exists

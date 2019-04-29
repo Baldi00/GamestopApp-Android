@@ -73,7 +73,7 @@ public class ActivityMain extends AppCompatActivity{
     private static ImageView bunnyWishlistImage, bunnySearchImage;
 
     //Bottom bar, 3 pages switch management
-    private BottomNavigationView navigation;
+    private static BottomNavigationView navigation;
 
     //Swipe layout, update management
     private SwipeRefreshLayout pullToRefreshLayout;
@@ -83,12 +83,14 @@ public class ActivityMain extends AppCompatActivity{
     //Lists
     private static Games wishlistData;                  //Data
     private static Games searchedGameListData;
-    private ListView wishlistView, searchedGameListView; //View
+    private static ListView wishlistView, searchedGameListView; //View
     private static GameAdapter wishlistAdapter;         //Adapter
     private static GameAdapter searchedGameListAdapter;
 
     //Searcher bar in the "Searcher" page
     private EditText gameToSearch;
+
+    private static Context appContext;
 
 
     /*********************************************************************************************************************************/
@@ -237,6 +239,8 @@ public class ActivityMain extends AppCompatActivity{
                 bw.newLine();
                 bw.write("false"); //Visualize gamestop bunny
                 bw.newLine();
+                bw.write("false"); //Notification sound
+                bw.newLine();
                 bw.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -259,6 +263,9 @@ public class ActivityMain extends AppCompatActivity{
                 e.printStackTrace();
             }
         }
+
+        //Set application static context
+        appContext = getApplicationContext();
     }
 
     @Override
@@ -475,13 +482,24 @@ public class ActivityMain extends AppCompatActivity{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        wishlistData.add(g);
+        boolean result = wishlistData.add(g);
         wishlistAdapter.notifyDataSetChanged();
 
-        try {
-            DirectoryManager.exportGames(wishlistData);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(result) {
+            Toast.makeText(appContext, g.getTitle().substring(0,g.getTitle().length()-2) + " è stato aggiunto alla wishlist", Toast.LENGTH_SHORT).show();
+
+            try {
+                DirectoryManager.exportGames(wishlistData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //Go to wishlist at the last position
+            navigation.setSelectedItemId(R.id.navigation_wishlist);
+            wishlistView.smoothScrollToPosition(wishlistAdapter.getCount()-1);
+
+        } else {
+            Toast.makeText(appContext, g.getTitle().substring(0,g.getTitle().length()-2) + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
         }
 
         checkAndSetGamestopBunnyWishlist();

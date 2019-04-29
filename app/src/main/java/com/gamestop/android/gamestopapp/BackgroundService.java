@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -51,79 +53,92 @@ public class BackgroundService extends Service {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
-            if(isConnected) {
-                File f = new File(DirectoryManager.getAppDir() + "config.txt");
+            //Check immediately when goes online
+            while (!isConnected){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                activeNetwork = cm.getActiveNetworkInfo();
+                isConnected = activeNetwork != null && activeNetwork.isConnected();
+            }
 
-                if (f.exists()) {
-                    try {
-                        BufferedReader br = new BufferedReader(new FileReader(f));
-                        boolean enabled = Boolean.parseBoolean(br.readLine());
-                        millisecondsToSleep = Integer.parseInt(br.readLine());
+            File f = new File(DirectoryManager.getAppDir() + "config.txt");
 
-                        if (enabled && DirectoryManager.wishlistExists()) {
-                            Games gs = DirectoryManager.importGames();
-                            if(gs!=null) {
-                                for (GamePreview gp : gs) {
-                                    Game game = (Game) gp;
-                                    List<String> notifications = game.update();
+            if (f.exists()) {
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(f));
+                    boolean enabled = Boolean.parseBoolean(br.readLine());
+                    millisecondsToSleep = Integer.parseInt(br.readLine());
 
-                                    /*List<String> notifications = new ArrayList<String>();
-                                    notifications.add("Gioco in sconto");*/
+                    //Read unnecessary lines
+                    br.readLine();
+                    br.readLine();
 
-                                    if (notifications != null) {
+                    boolean notificationSound = Boolean.parseBoolean(br.readLine());
 
-                                        for (String str : notifications) {
+                    if (enabled && DirectoryManager.wishlistExists()) {
+                        Games gs = DirectoryManager.importGames();
+                        if(gs!=null) {
+                            for (GamePreview gp : gs) {
+                                Game game = (Game) gp;
 
-                                            //Read notification id
-                                            try {
-                                                BufferedReader br2 = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
-                                                notificationId = Integer.parseInt(br2.readLine());
-                                            } catch (FileNotFoundException e) {
-                                                e.printStackTrace();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+                                //Update every game
+                                List<String> notifications = game.update();
 
-                                            Notification.Builder notification = new Notification.Builder(this)
-                                                    .setSmallIcon(R.drawable.notification_icon)
-                                                    .setContentTitle(game.getTitle())
-                                                    .setContentText(str);
+                                if (notifications != null) {
 
-                                            Intent intent = new Intent(this, ActivityMain.class);
-                                            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-                                            notification.setContentIntent(pendingIntent);
+                                    for (String str : notifications) {
 
-                                            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                            notificationManager.notify(notificationId, notification.build());
+                                        //Read notification id
+                                        try {
+                                            BufferedReader br2 = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
+                                            notificationId = Integer.parseInt(br2.readLine());
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
 
-                                            notificationId++;
+                                        Notification.Builder notification = new Notification.Builder(this)
+                                                .setSmallIcon(R.drawable.notification_icon)
+                                                .setContentTitle(game.getTitle())
+                                                .setContentText(str);
+
+                                        if(notificationSound){
+                                            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                            notification.setSound(alarmSound);
+                                        }
+
+                                        Intent intent = new Intent(this, ActivityMain.class);
+                                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+                                        notification.setContentIntent(pendingIntent);
+
+                                        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                        notificationManager.notify(notificationId, notification.build());
+
+                                        notificationId++;
 
 
-                                            //Write notification id
-                                            try {
-                                                BufferedWriter bw2 = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir()+"notificationId.txt"));
-                                                bw2.write(""+notificationId);
-                                                bw2.newLine();
-                                                bw2.close();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+                                        //Write notification id
+                                        try {
+                                            BufferedWriter bw2 = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir()+"notificationId.txt"));
+                                            bw2.write(""+notificationId);
+                                            bw2.newLine();
+                                            bw2.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
                                     }
                                 }
                             }
                         }
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
-
+            //Wait until next check
             try {
                 Thread.sleep(millisecondsToSleep);
             } catch (InterruptedException e) {
