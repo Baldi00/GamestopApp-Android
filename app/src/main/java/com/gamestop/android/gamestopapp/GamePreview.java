@@ -402,4 +402,14 @@ public class GamePreview implements Comparable<GamePreview> {
         }
     }
 
+
+
+
+    //TODO TEST METHODS
+    public void debugNotifications(){
+        usedPrice = null;
+        newPrice = null;
+        preorderPrice = 200.0;
+    }
+
 }

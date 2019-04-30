@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Gamestop Wishlist</string>
+    <string name="app_name">Gamestop Wishlist TEST</string> <!--TODO TEST-->
 
     <string name="title_wishlist" tools:ignore="ExtraTranslation">Wishlist</string>
     <string name="title_search" tools:ignore="ExtraTranslation">Cerca</string>
@@ -52,7 +52,7 @@
         <item>30 minuti</item>
         <item>1 ora</item>
         <item>3 ore</item>
-        <!--<item>5 secondi TEST</item>-->
+        <!-- TODO TEST --><item>5 secondi TEST</item>
     </string-array>
 
 </resources>

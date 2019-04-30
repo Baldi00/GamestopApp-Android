@@ -205,7 +205,7 @@ public class ActivitySettings extends AppCompatActivity {
             bw.write(String.valueOf(((Switch)findViewById(R.id.backgroundService)).isChecked())); //Notification service enabled (background)
             bw.newLine();
 
-            switch (((Spinner)findViewById(R.id.updateInterval)).getSelectedItemPosition()){
+            /*switch (((Spinner)findViewById(R.id.updateInterval)).getSelectedItemPosition()){
                 case 0:
                     bw.write("600000");
                     break;
@@ -221,7 +221,8 @@ public class ActivitySettings extends AppCompatActivity {
                 case 4:
                     bw.write("5000");
                     break;
-            }
+            }*/
+            bw.write("10000"); //TODO TEST
             bw.newLine();
 
             bw.write(String.valueOf(((Switch)findViewById(R.id.updateOnAppStart)).isChecked())); //Update games on app start
@@ -240,5 +241,20 @@ public class ActivitySettings extends AppCompatActivity {
 
         Toast.makeText(this,"Modifiche salvate",Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    //TODO TEST
+    public void debugNotifications(View v){
+        try {
+            Games games = DirectoryManager.importGames();
+            GamePreview g = games.get(0);
+            games.clear();
+            g.debugNotifications();
+            games.add(g);
+            DirectoryManager.exportGames(games);
+            finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

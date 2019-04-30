@@ -219,6 +219,21 @@
 
             </LinearLayout>
 
+            <!--TODO TEST-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="[DEBUG NOTIFICATIONS]"
+                    android:onClick="debugNotifications"/>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
