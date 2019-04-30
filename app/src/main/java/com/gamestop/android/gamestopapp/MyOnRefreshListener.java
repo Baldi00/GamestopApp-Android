@@ -1,8 +1,8 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
@@ -10,19 +10,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.Toast;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,7 +46,8 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
 
     private void onEndRefresh(Boolean result){
         pullToRefresh.setRefreshing(false);
-        main.getWishlistAdapter().notifyDataSetChanged();
+        main.updateWishlist();
+
 
         if(result!=null)
             if(result)
@@ -73,7 +68,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
         @Override
         protected Object doInBackground(Object[] objects) {
 
-            if(!DirectoryManager.wishlistExists()){
+            if(!DirectoryManager.wishlistExistsAndIsntEmpty()){
                 return null;
             }
 
@@ -97,7 +92,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                     e.printStackTrace();
                 }
 
-                if (DirectoryManager.wishlistExists()) {
+                if (DirectoryManager.wishlistExistsAndIsntEmpty()) {
                     Games gs = null;
 
                     try {
@@ -129,21 +124,30 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                         e.printStackTrace();
                                     }
 
-                                    Notification.Builder notification = new Notification.Builder(main)
-                                            .setSmallIcon(R.drawable.notification_icon)
-                                            .setContentTitle(game.getTitle())
-                                            .setContentText(str);
+
+                                    Intent resultIntent = new Intent(main, ActivityGamePage.class);
+                                    resultIntent.putExtra("source","wishlist");
+                                    resultIntent.putExtra("id",game.getId());
+                                    // Create the TaskStackBuilder and add the intent, which inflates the back stack
+                                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(main);
+                                    stackBuilder.addNextIntentWithParentStack(resultIntent);
+                                    // Get the PendingIntent containing the entire back stack
+                                    PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
+                                    NotificationCompat.Builder notification = new NotificationCompat.Builder(main, "GAMESTOPAPP");
+                                    notification.setContentIntent(resultPendingIntent);
+                                    notification.setSmallIcon(R.drawable.notification_icon);
+                                    notification.setContentTitle(game.getTitle());
+                                    notification.setContentText(str);
 
                                     if(notificationSound){
                                         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                                         notification.setSound(alarmSound);
                                     }
 
-                                    Intent intent = new Intent(main, ActivityMain.class);
-                                    PendingIntent pendingIntent = PendingIntent.getActivity(main, 0, intent, 0);
-                                    notification.setContentIntent(pendingIntent);
-
-                                    notificationManager = (NotificationManager) main.getSystemService(main.NOTIFICATION_SERVICE);
+                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(main);
                                     notificationManager.notify(notificationId, notification.build());
 
                                     notificationId++;
@@ -171,116 +175,6 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
         @Override
         protected void onPostExecute(Object o) {
             refreshListener.onEndRefresh((Boolean)o);
-        }
-
-        /**
-         * returned value checked
-         * @param buySection
-         * @return
-         */
-        private boolean updatePrices(Element buySection, GamePreview g) {
-
-            boolean changes = false;
-
-            // if the element hasn't got the class name "buySection"
-            if (!buySection.className().equals("buySection")) {
-                // search for a tag with this class name
-                if (buySection.getElementsByClass("buySection").isEmpty()) {
-                    throw new GameException();
-                }
-
-                buySection = buySection.getElementsByClass("buySection").get(0);
-            }
-
-            // I make a copy of all the prices before overwriting them
-            Double newPriceCopy = g.newPrice;
-            Double usedPriceCopy = g.usedPrice;
-            Double preorderPriceCopy = g.preorderPrice;
-
-            // if the prices are removed they don't change
-            // example: newPrice is 20€ > then newPrice no longer exist > newPrice is still 20€
-            g.newPrice = null;
-            g.usedPrice = null;
-            g.preorderPrice = null;
-            g.olderNewPrices = null;
-            g.olderUsedPrices = null;
-
-            for (Element singleVariantDetails : buySection.getElementsByClass("singleVariantDetails")) {
-
-                if (singleVariantDetails.getElementsByClass("singleVariantText").isEmpty()) {
-                    throw new GameException();
-                }
-
-                Element singleVariantText = singleVariantDetails.getElementsByClass("singleVariantText").get(0);
-
-                if (singleVariantText.getElementsByClass("variantName").get(0).text().equals("Nuovo")) {
-                    String price = singleVariantText.getElementsByClass("prodPriceCont").get(0).text();
-
-                    g.newPrice = stringToPrice(price);
-
-                    for (Element olderPrice : singleVariantText.getElementsByClass("olderPrice")) {
-
-                        if ( g.olderNewPrices == null ){
-                            g.olderNewPrices = new ArrayList<>();
-                        }
-
-                        price = olderPrice.text();
-                        g.olderNewPrices.add(stringToPrice(price));
-                    }
-                }
-
-                if (singleVariantText.getElementsByClass("variantName").get(0).text().equals("Usato")) {
-                    String price = singleVariantText.getElementsByClass("prodPriceCont").get(0).text();
-
-                    g.usedPrice = stringToPrice(price);
-
-                    for (Element olderPrice : singleVariantText.getElementsByClass("olderPrice")) {
-
-                        if ( g.olderUsedPrices == null ){
-                            g.olderUsedPrices = new ArrayList<>();
-                        }
-
-                        price = olderPrice.text();
-                        g.olderUsedPrices.add(stringToPrice(price));
-                    }
-                }
-
-                if (singleVariantText.getElementsByClass("variantName").get(0).text().equals("Prenotazione")) {
-                    String price = singleVariantText.getElementsByClass("prodPriceCont").get(0).text();
-
-                    g.preorderPrice = stringToPrice(price);
-                }
-            }
-
-            if ( g.newPrice != null && !g.newPrice.equals(newPriceCopy) )
-                changes = true;
-
-            if ( g.usedPrice != null && !g.usedPrice.equals(usedPriceCopy) )
-                changes = true;
-
-            if ( g.preorderPrice != null && !g.preorderPrice.equals(preorderPriceCopy) )
-                changes = true;
-
-            return changes;
-        }
-
-        protected double stringToPrice(String price) {
-
-            // example "Nuovo 19.99€"
-            price = price.replaceAll("[^0-9.,]","");    // remove all the characters except for numbers, ',' and '.'
-            price = price.replace(".", "");             // to handle prices over 999,99€ like 1.249,99€
-            price = price.replace(',', '.');            // to convert the price in a string that can be parsed
-
-        /* OLD
-        price = price.split(" ")[1];        // <-- example "Nuovo 19.99€"
-        price = price.replace(".", "");     // <-- to handle prices over 999,99€ like 1.249,99€
-        price = price.replace(',', '.');    // <-- to convert the price in a string that can be parsed
-        price = price.replace("€", "");     // <-- remove unecessary characters
-        price = price.replace("CHF", "");   // <-- remove unecessary characters
-        price = price.trim();               // <-- remove remaning spaces
-        */
-
-            return Double.parseDouble(price);
         }
     }
 }

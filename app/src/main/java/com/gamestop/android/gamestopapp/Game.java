@@ -658,7 +658,7 @@ public class Game extends GamePreview {
      */
     public ArrayList<String> update() throws IOException {
 
-        ArrayList<String> notifications = null;
+        ArrayList<String> notifications = new ArrayList();
 
         // SAVE INFO BEFORE UPDATE
         Double mainPrice = null;
@@ -693,29 +693,30 @@ public class Game extends GamePreview {
             // IF PRICES ARE LOWER
             if ( mainPrice != null ){
                 if ( this.hasNewPrice() ){
-                    if ( mainPrice < this.getNewPrice() ){
+                    if ( mainPrice > this.getNewPrice() ){
                         notifications.add("Il prezzo del NUOVO è diminuito");
                     }
                 }
 
-                if ( this.hasUsedPrice() ){
-                    if ( mainPrice < this.getUsedPrice() ){
-                        notifications.add("Il prezzo dell'USATO è diminuito");
-                    }
-                }
-
                 if ( this.hasDigitalPrice() ){
-                    if ( mainPrice < this.getDigitalPrice() ){
+                    if ( mainPrice > this.getDigitalPrice() ){
                         notifications.add("Il prezzo della versione DIGITALE è diminuito");
                     }
                 }
 
                 if ( this.hasPreorderPrice() ){
-                    if ( mainPrice < this.getPreorderPrice() ){
+                    if ( mainPrice > this.getPreorderPrice() ){
                         notifications.add("Il prezzo del PREORDINE è diminuito");
                     }
                 }
             }
+
+            if ( this.hasUsedPrice() && usedPrice!=null){
+                if ( usedPrice > this.getUsedPrice() ){
+                    notifications.add("Il prezzo dell'USATO è diminuito");
+                }
+            }
+
         }
 
         if ( updateBonus(body) == true ){
@@ -724,6 +725,11 @@ public class Game extends GamePreview {
             }
         }
 
+        try {
+            DirectoryManager.exportGame(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return notifications;
     }

@@ -213,6 +213,12 @@ public class ActivityGamePage extends Activity {
 
     //Set all informations and images in the page
     public void setGameOfThePageGraphic(){
+        if(gameOfThePage==null){
+            Toast.makeText(this,"Non sei connesso a internet",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         titleHeader.setText(gameOfThePage.getTitle());
 
         if(gameOfThePage.getTitle()!=null && !gameOfThePage.getTitle().equals(""))

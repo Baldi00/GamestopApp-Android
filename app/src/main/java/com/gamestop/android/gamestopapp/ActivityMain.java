@@ -90,7 +90,9 @@ public class ActivityMain extends AppCompatActivity{
     //Searcher bar in the "Searcher" page
     private EditText gameToSearch;
 
+    //System
     private static Context appContext;
+    private static boolean active = false;
 
 
     /*********************************************************************************************************************************/
@@ -271,11 +273,14 @@ public class ActivityMain extends AppCompatActivity{
     @Override
     protected void onStart() {
         super.onStart();
+        active=true;
         try {
             Games temp = DirectoryManager.importGames();
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
             }
+            wishlistAdapter.notifyDataSetChanged();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
@@ -291,18 +296,21 @@ public class ActivityMain extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        active=true;
         checkAndSetGamestopBunnyWishlist();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        active=true;
         checkAndSetGamestopBunnyWishlist();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        active=false;
     }
 
     @Override
@@ -321,6 +329,7 @@ public class ActivityMain extends AppCompatActivity{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        active=false;
     }
 
     @Override
@@ -515,6 +524,32 @@ public class ActivityMain extends AppCompatActivity{
             e.printStackTrace();
         }
         checkAndSetGamestopBunnyWishlist();
+    }
+
+    //Update wishlist
+    public static void updateWishlist(){
+        try {
+            Games temp = DirectoryManager.importGames();
+
+            //If coming from backservice with inactive app
+            if(!active) {
+                wishlistData = new Games();
+            }
+
+            wishlistData.clear();
+            for (GamePreview gp : temp) {
+                wishlistData.add(gp);
+            }
+
+            if(active){
+                wishlistAdapter.notifyDataSetChanged();
+            }
+
+            DirectoryManager.exportGames(wishlistData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

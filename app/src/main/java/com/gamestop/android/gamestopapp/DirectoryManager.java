@@ -3,8 +3,10 @@ package com.gamestop.android.gamestopapp;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DirectoryManager {
-    private static final String APP_DIR = "/data/data/com.gamestop.android.gamestopapp/";      // the folder of the app
+    private static final String APP_DIR = "/data/data/com.gamestop.android.gamestopapp/";      //the folder of the app
     private static final String GAMES_DIRECTORY = APP_DIR + "userdata/";
     private static final String WISHLIST = GAMES_DIRECTORY + "data.csv";
     private static final String SCHEMA_GAME = APP_DIR + "Game.xsd";
@@ -469,9 +471,22 @@ public class DirectoryManager {
 
     //CHECK FILE EXISTS
 
-    public static boolean wishlistExists(){
+    public static boolean wishlistExistsAndIsntEmpty(){
         File f = new File(WISHLIST);
-        return f.exists();
+        String line = null;
+        if(f.exists()){
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                line = br.readLine();
+                if(line!=null && line.equals("")){
+                    line = null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return f.exists() && line!=null;
     }
 
     //DELETE SYSTEM -----------------------------------------------------------

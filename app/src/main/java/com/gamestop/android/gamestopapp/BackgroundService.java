@@ -1,9 +1,9 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
@@ -11,21 +11,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BackgroundService extends Service {
@@ -78,7 +72,7 @@ public class BackgroundService extends Service {
 
                     boolean notificationSound = Boolean.parseBoolean(br.readLine());
 
-                    if (enabled && DirectoryManager.wishlistExists()) {
+                    if (enabled && DirectoryManager.wishlistExistsAndIsntEmpty()) {
                         Games gs = DirectoryManager.importGames();
                         if(gs!=null) {
                             for (GamePreview gp : gs) {
@@ -99,21 +93,29 @@ public class BackgroundService extends Service {
                                             e.printStackTrace();
                                         }
 
-                                        Notification.Builder notification = new Notification.Builder(this)
-                                                .setSmallIcon(R.drawable.notification_icon)
-                                                .setContentTitle(game.getTitle())
-                                                .setContentText(str);
+                                        Intent resultIntent = new Intent(this, ActivityGamePage.class);
+                                        resultIntent.putExtra("source","wishlist");
+                                        resultIntent.putExtra("id",game.getId());
+                                        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+                                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                                        stackBuilder.addNextIntentWithParentStack(resultIntent);
+                                        // Get the PendingIntent containing the entire back stack
+                                        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
+                                        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, "GAMESTOPAPP");
+                                        notification.setContentIntent(resultPendingIntent);
+                                        notification.setSmallIcon(R.drawable.notification_icon);
+                                        notification.setContentTitle(game.getTitle());
+                                        notification.setContentText(str);
 
                                         if(notificationSound){
                                             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                                             notification.setSound(alarmSound);
                                         }
 
-                                        Intent intent = new Intent(this, ActivityMain.class);
-                                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-                                        notification.setContentIntent(pendingIntent);
-
-                                        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
                                         notificationManager.notify(notificationId, notification.build());
 
                                         notificationId++;
@@ -137,6 +139,8 @@ public class BackgroundService extends Service {
                     e.printStackTrace();
                 }
             }
+
+            ActivityMain.updateWishlist();
 
             //Wait until next check
             try {
