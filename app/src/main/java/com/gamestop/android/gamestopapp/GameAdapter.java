@@ -1,8 +1,11 @@
 package com.gamestop.android.gamestopapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,11 +84,23 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
             }
         }
 
-        image.setImageURI(Uri.fromFile(new File(game.getCover())));
+        loadBitmap(game.getCover());
 
         oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
+    }
+
+
+    //CACHE
+    public void loadBitmap(String key) {
+        final Bitmap bitmap = ActivityMain.getBitmapFromMemCache(key);
+        if (bitmap != null) {
+            image.setImageBitmap(bitmap);
+        } else {
+            image.setImageURI(Uri.fromFile(new File(key)));
+            ActivityMain.addBitmapToMemoryCache(key,((BitmapDrawable)image.getDrawable()).getBitmap());
+        }
     }
 }

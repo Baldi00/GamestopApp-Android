@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -268,6 +270,19 @@ public class ActivityMain extends AppCompatActivity{
 
         //Set application static context
         appContext = getApplicationContext();
+
+
+
+        //CACHE
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+
+        memoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount() / 1024;
+            }
+        };
     }
 
     @Override
@@ -854,5 +869,21 @@ public class ActivityMain extends AppCompatActivity{
             }
         }
     }
+
+
+
+    //CACHE
+    private static LruCache<String, Bitmap> memoryCache;
+
+    public static void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            memoryCache.put(key, bitmap);
+        }
+    }
+
+    public static Bitmap getBitmapFromMemCache(String key) {
+        return memoryCache.get(key);
+    }
+
 
 }
