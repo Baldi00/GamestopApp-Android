@@ -23,28 +23,29 @@ import javax.xml.transform.TransformerException;
 
 public class Games extends ArrayList<GamePreview> {
 
-    private static final String SCHEMA_PATH = "schema.xsd";
-
     @Override
     public boolean add ( GamePreview game ) {
 
+        if ( game == null ){
+            Log.info("Games", "impossible to add the game to the list. The object is null");
+            return false;
+        }
+
         for ( GamePreview g : this ){
             if ( g.equals(game) ){
-                // it's a warning because equals() requires a revision
                 Log.warning("Games", "the game already exist", game.getTitle() );
                 return false;
             }
         }
 
         super.add(game);
-        Log.info("Games", "game added", game.getPlatform() + ": " + game.getTitle() );
+        Log.info("Games", "game added", "["+game.getId()+"]" + "["+game.getPlatform()+"]" + " - \"" + game.getTitle() + "\"" );
 
         return true;
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString () {
         String str = new String();
         for( int game=0; game<this.size(); ++game ){
             str += this.get(game).toString()+"\n\n";
@@ -71,4 +72,5 @@ public class Games extends ArrayList<GamePreview> {
     public void sortByReleaseDate () {
         Collections.sort( this, new GameReleaseDateComparator() );
     }
+
 }

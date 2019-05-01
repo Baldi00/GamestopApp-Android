@@ -353,7 +353,7 @@ public class ActivityGamePage extends Activity {
 
         //Add images to gallery
         LinearLayout gallery = (LinearLayout) findViewById(R.id.gallery);
-        File [] galleryImages = new File(gameOfThePage.getGalleryDirectory()).listFiles();
+        File [] galleryImages = new File(DirectoryManager.getGameGalleryDirectory(gameOfThePage.getId())).listFiles();
         if(galleryImages!=null && galleryImages.length>0) {
             for (int i = 0; i < galleryImages.length; i++) {
                 ImageView galleryImage = new ImageView(getBaseContext());
@@ -385,7 +385,7 @@ public class ActivityGamePage extends Activity {
     //Open the gallery when an image is clicked
     public void openGallery(View v){
 
-        File [] galleryImages = new File(gameOfThePage.getGalleryDirectory()).listFiles();
+        File [] galleryImages = new File(DirectoryManager.getGameGalleryDirectory(gameOfThePage.getId())).listFiles();
         String[] images = new String[galleryImages.length];
         for(int i=0;i<galleryImages.length;i++){
             images[i] = "file://" + galleryImages[i].getPath();
