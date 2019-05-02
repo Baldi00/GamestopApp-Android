@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -274,9 +276,7 @@ public class ActivityMain extends AppCompatActivity{
 
 
         //CACHE
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
-
+        int cacheSize = 20*1024*1024; // 20MiB, around 100 covers of games
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
@@ -293,6 +293,7 @@ public class ActivityMain extends AppCompatActivity{
             Games temp = DirectoryManager.importGames();
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
+                storeBitmapInCache(gp.getCover());
             }
             wishlistAdapter.notifyDataSetChanged();
 
@@ -415,6 +416,7 @@ public class ActivityMain extends AppCompatActivity{
         if(result!=null){
             for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
+                storeBitmapInCache(g.getCover());
             }
             searchedGameListAdapter.notifyDataSetChanged();
         }else{
@@ -668,7 +670,17 @@ public class ActivityMain extends AppCompatActivity{
                 } else if (item.getTitle().toString().equals(getString(R.string.sort_by_used_price))) {
                     wishlistData.sortByUsedPrice();
                 }
+
                 wishlistAdapter.notifyDataSetChanged();
+
+                try {
+                    DirectoryManager.exportGames(wishlistData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                wishlistView.smoothScrollToPosition(0);
+
                 return false;
             }
         });
@@ -885,5 +897,11 @@ public class ActivityMain extends AppCompatActivity{
         return memoryCache.get(key);
     }
 
+    public void storeBitmapInCache(String key) {
+        final Bitmap bitmap = getBitmapFromMemCache(key);
+        if (bitmap == null) {
+            addBitmapToMemoryCache(key,BitmapFactory.decodeFile(key));
+        }
+    }
 
 }

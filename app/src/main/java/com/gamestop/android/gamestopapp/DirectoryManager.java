@@ -612,7 +612,11 @@ public class DirectoryManager {
         File f = new File(WISHLIST);
         BufferedReader br = new BufferedReader(new FileReader(f));
         String row = br.readLine();
-        String[] IDs = row.split(";");
+        String[] IDs;
+        if(row!=null)
+            IDs = row.split(";");
+        else
+            IDs = new String[0];
 
         File wishlistDir = new File(GAMES_DIRECTORY);
         File[] games = wishlistDir.listFiles();
