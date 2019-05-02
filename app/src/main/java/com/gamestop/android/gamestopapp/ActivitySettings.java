@@ -100,7 +100,7 @@ public class ActivitySettings extends AppCompatActivity {
                         dialog.cancel();
                         try {
                             toApplyChanges = false;
-                            DirectoryManager.deleteTempGames();
+                            DirectoryManager.deleteTempGames(ActivityMain.getWishlistData());
                             ActivityMain.resetResearh();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -165,9 +165,9 @@ public class ActivitySettings extends AppCompatActivity {
                         try {
                             toApplyChanges = false;
                             DirectoryManager.deleteAllGames();
-                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "config.txt"));
-                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "Game.xsd"));
-                            DirectoryManager.deleteFolderRecursive(new File(DirectoryManager.getAppDir() + "notificationId.txt"));
+                            DirectoryManager.deleteFilesRecursive(new File(DirectoryManager.getAppDir() + "config.txt"));
+                            DirectoryManager.deleteFilesRecursive(new File(DirectoryManager.getAppDir() + "Game.xsd"));
+                            DirectoryManager.deleteFilesRecursive(new File(DirectoryManager.getAppDir() + "notificationId.txt"));
 
                             NotificationManager nManager = ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
                             nManager.cancelAll();

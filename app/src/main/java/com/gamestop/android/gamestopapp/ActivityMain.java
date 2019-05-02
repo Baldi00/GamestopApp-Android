@@ -1,12 +1,11 @@
 package com.gamestop.android.gamestopapp;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,14 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.Buffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -273,9 +266,8 @@ public class ActivityMain extends AppCompatActivity{
 
 
 
-        //CACHE
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
+        // CACHE
+        int cacheSize = 20*1024*1024;   // 20MiB, around 100 covers of games
 
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
@@ -293,6 +285,7 @@ public class ActivityMain extends AppCompatActivity{
             Games temp = DirectoryManager.importGames();
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
+                storeBitmapInCache(gp.getCover());
             }
             wishlistAdapter.notifyDataSetChanged();
 
@@ -351,7 +344,7 @@ public class ActivityMain extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         try {
-            DirectoryManager.deleteTempGames();
+            DirectoryManager.deleteTempGames(wishlistData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -415,6 +408,7 @@ public class ActivityMain extends AppCompatActivity{
         if(result!=null){
             for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
+                storeBitmapInCache(g.getCover());
             }
             searchedGameListAdapter.notifyDataSetChanged();
         }else{
@@ -668,7 +662,17 @@ public class ActivityMain extends AppCompatActivity{
                 } else if (item.getTitle().toString().equals(getString(R.string.sort_by_used_price))) {
                     wishlistData.sortByUsedPrice();
                 }
+
                 wishlistAdapter.notifyDataSetChanged();
+
+                try {
+                    DirectoryManager.exportGames(wishlistData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                wishlistView.smoothScrollToPosition(0);
+
                 return false;
             }
         });
@@ -885,5 +889,11 @@ public class ActivityMain extends AppCompatActivity{
         return memoryCache.get(key);
     }
 
+    public void storeBitmapInCache(String key) {
+        final Bitmap bitmap = getBitmapFromMemCache(key);
+        if (bitmap == null) {
+            addBitmapToMemoryCache(key,BitmapFactory.decodeFile(key));
+        }
+    }
 
 }
