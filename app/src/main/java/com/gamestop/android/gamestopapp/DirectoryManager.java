@@ -1,16 +1,24 @@
 package com.gamestop.android.gamestopapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -26,6 +34,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DirectoryManager {
+
+    // variables modified on android
     private static final String APP_DIR = "/data/data/com.gamestop.android.gamestopapp/";      //the folder of the app
     private static final String GAMES_DIRECTORY = APP_DIR + "userdata/";
     private static final String WISHLIST = GAMES_DIRECTORY + "data.csv";
@@ -39,12 +49,18 @@ public class DirectoryManager {
         }
     }
 
-    public static String getGamesDirectory() {
-        return GAMES_DIRECTORY;
+    public static void mkdir(String gameId){
+        mkdir();
+
+        File dir = new File(getGameDirectory(gameId));
+
+        if(!dir.exists()){
+            dir.mkdir();
+        }
     }
 
-    public static File getWishlist() {
-        return new File(WISHLIST);
+    public static String getGamesDirectory() {
+        return GAMES_DIRECTORY;
     }
 
     public static String getGameDirectory(String gameId){
@@ -55,10 +71,54 @@ public class DirectoryManager {
         return getGameDirectory(gameId) + "gallery/";
     }
 
+    public static File getWishlist() {
+        return new File(WISHLIST);
+    }
+
     public static File getGameXML(String gameId){
         return new File(getGameDirectory(gameId)+"data.xml");
     }
 
+    // modified on android
+    protected static void downloadImage(String imgPath, String imgUrl) throws MalformedURLException, IOException {
+
+        File f = new File(imgPath);
+
+        // if the image already exists
+        if (f.exists()) {
+            Log.warning("GamePreview", "img already exists", imgPath);
+            return;
+        }
+
+        Bitmap image = getBitmapFromURL(imgUrl);
+
+
+        try (FileOutputStream out = new FileOutputStream(imgPath)) {
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.info("GamePreview", "image downloaded", imgUrl);
+    }
+
+    // reserved for android
+    protected static Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // reserved for android
     public static String getAppDir() {
         return APP_DIR;
     }
@@ -74,13 +134,12 @@ public class DirectoryManager {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         File f = getGameXML(game.getId());
-
         transformer.transform( new DOMSource(doc), new StreamResult(f) );
 
         // check the XML
         validateGame(f);
 
-        Log.info("DirectoryManager", "Game exported successfully", game.getId() + ": \"" + game.getTitle() + "\"");
+        Log.info("DirectoryManager", "Game exported successfully", "["+game.getId()+"]" + "["+game.getPlatform()+"]" + " - \"" + game.getTitle() + "\"");
     }
 
     public static Element exportGame(Game game, Document doc){
@@ -158,11 +217,37 @@ public class DirectoryManager {
             prices.appendChild(elementPreorderPrice);
         }
 
+        //Element OlderPreorderPrices
+        if( game.hasOlderPreorderPrices() ){
+            Element elementOlderPreorderPrice = doc.createElement("olderPreorderPrices");
+
+            for(Double price : game.getOlderDigitalPrices()){
+                Element elementPrice = doc.createElement("price");
+                elementPrice.setTextContent(price.toString());
+                elementOlderPreorderPrice.appendChild(elementPrice);
+            }
+
+            prices.appendChild(elementOlderPreorderPrice);
+        }
+
         //Element DigitalPrice
         if( game.hasDigitalPrice() ){
             Element elementDigitalPrice = doc.createElement("digitalPrice");
             elementDigitalPrice.setTextContent(String.valueOf(game.getDigitalPrice()));
             prices.appendChild(elementDigitalPrice);
+        }
+
+        //Element OlderDigitalPrices
+        if( game.hasOlderDigitalPrices() ){
+            Element elementolderDigitalPrice = doc.createElement("olderDigitalPrices");
+
+            for(Double price : game.getOlderDigitalPrices()){
+                Element elementPrice = doc.createElement("price");
+                elementPrice.setTextContent(price.toString());
+                elementolderDigitalPrice.appendChild(elementPrice);
+            }
+
+            prices.appendChild(elementolderDigitalPrice);
         }
 
         gameElement.appendChild(prices);
@@ -336,11 +421,35 @@ public class DirectoryManager {
             game.preorderPrice = Double.valueOf(preorderPrice.getTextContent());
         }
 
+        //OLDER PREORDER PRICES
+        nl = prices.getElementsByTagName("olderPreorderPrices");
+        if(nl.getLength() > 0){
+            game.olderPreorderPrices = new ArrayList();
+            Element olderPreorderPrices = (Element)nl.item(0);
+            nl = olderPreorderPrices.getElementsByTagName("price");
+            for(int i = 0; i<nl.getLength(); i++){
+                Element elementPrice = (Element)nl.item(i);
+                game.olderPreorderPrices.add(Double.valueOf(elementPrice.getTextContent()));
+            }
+        }
+
         //DIGITAL PRICE
         nl = prices.getElementsByTagName("digitalPrice");
         if(nl.getLength() > 0){
             Element digitalPrice = (Element)nl.item(0);
             game.digitalPrice = Double.valueOf(digitalPrice.getTextContent());
+        }
+
+        //OLDER DIGITAL PRICES
+        nl = prices.getElementsByTagName("olderDigitalPrices");
+        if(nl.getLength() > 0){
+            game.olderDigitalPrices = new ArrayList();
+            Element olderDigitalPrices = (Element)nl.item(0);
+            nl = olderDigitalPrices.getElementsByTagName("price");
+            for(int i = 0; i<nl.getLength(); i++){
+                Element elementPrice = (Element)nl.item(i);
+                game.olderDigitalPrices.add(Double.valueOf(elementPrice.getTextContent()));
+            }
         }
 
         //PEGI
@@ -429,11 +538,21 @@ public class DirectoryManager {
         return game;
     }
 
+    // modified on android
     public static void validateGame(File f) throws Exception  {
+
         return;
-        /*Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new File(DirectoryManager.SCHEMA_GAME));
+        /*
+        File gameSchema = new File(SCHEMA_GAME);
+
+        if ( !gameSchema.exists() ){
+            Log.error("DirectoryManager", "game schema doesn't exist");
+        }
+
+        Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(gameSchema);
         javax.xml.validation.Validator validator = schema.newValidator();
-        validator.validate(new StreamSource(f));*/
+        validator.validate(new StreamSource(f));
+        */
     }
 
     // IMPORT/EXPORT METHODS FOR GAMES CLASS ----------------------------------
@@ -469,8 +588,10 @@ public class DirectoryManager {
         return games;
     }
 
-    //CHECK FILE EXISTS
+    // CHECK FILE EXISTS ------------------------------------------------------
 
+    // reserved for android
+    // TODO : a cosa serve? / considerare cambio di nome
     public static boolean wishlistExistsAndIsntEmpty(){
         File f = new File(WISHLIST);
         String line = null;
@@ -491,38 +612,34 @@ public class DirectoryManager {
 
     //DELETE SYSTEM -----------------------------------------------------------
 
-    public static void deleteTempGames() throws Exception{
-        File f = new File(WISHLIST);
-        BufferedReader br = new BufferedReader(new FileReader(f));
-        String row = br.readLine();
-        String[] IDs = row.split(";");
+    public static void deleteTempGames(Games games){
 
-        File wishlistDir = new File(GAMES_DIRECTORY);
-        File[] games = wishlistDir.listFiles();
-
-        for(File game : games){
-            boolean toDelete = true;
-            for(int i=0;i<IDs.length && toDelete;i++){
-                if(game.getName().equals(IDs[i]) || game.getName().equals("data.csv")){
-                    toDelete=false;
-                }
-            }
-
-            if(toDelete)
-                deleteFolderRecursive(game);
+        // make a tree with the ids to speed the operations
+        HashSet<String> ids = new HashSet<>();
+        for ( GamePreview game : games ){
+            ids.add(game.getId());
         }
+
+        File[] gameFolders = new File(getGamesDirectory()).listFiles();
+
+        for ( File file : gameFolders ){
+            // if the file is a folder and doesn't have the name of an id contained in the wishlist
+            if ( file.isDirectory() && ids.contains(file.getName()) == false ){
+                deleteFilesRecursive(file);
+                Log.info("DirectoryManager", "\""+file.getName()+"\" folder deleted");
+            }
+        }
+
     }
 
-    public static void deleteAllGames() throws Exception{
-        File wishlistDir = new File(GAMES_DIRECTORY);
-        deleteFolderRecursive(wishlistDir);
+    public static void deleteAllGames() {
+        deleteFilesRecursive(new File(GAMES_DIRECTORY));
     }
 
-    public static void deleteFolderRecursive(File f){
-        if(f.isDirectory()){
-            File[] files = f.listFiles();
-            for (File file : files){
-                deleteFolderRecursive(file);
+    public static void deleteFilesRecursive(File f){
+        if(f.isDirectory()) {
+            for (File file : f.listFiles()){
+                deleteFilesRecursive(file);
             }
         }
 
@@ -531,6 +648,7 @@ public class DirectoryManager {
 
     //CREATE VALIDATOR --------------------------------------------------------
 
+    // reserved for android
     public static void createValidatorFile() throws Exception{
         File f = new File(SCHEMA_GAME);
 
