@@ -70,9 +70,8 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
 
             try {
 
-                if (DirectoryManager.wishlistExists() && !DirectoryManager.wishlistEmpty()) {
-                    return null;
-                }
+                if ( !DirectoryManager.wishlistExists() ) { return null; }
+                if ( DirectoryManager.wishlistEmpty() ) { return null; }
 
                 ConnectivityManager cm = (ConnectivityManager) main.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
