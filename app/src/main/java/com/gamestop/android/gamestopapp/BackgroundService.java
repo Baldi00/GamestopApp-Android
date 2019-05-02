@@ -72,7 +72,7 @@ public class BackgroundService extends Service {
 
                     boolean notificationSound = Boolean.parseBoolean(br.readLine());
 
-                    if (enabled && DirectoryManager.wishlistExistsAndIsntEmpty()) {
+                    if (enabled && DirectoryManager.wishlistExists() && !DirectoryManager.wishlistEmpty()) {
                         Games gs = DirectoryManager.importGames();
                         if(gs!=null) {
                             for (GamePreview gp : gs) {
@@ -86,12 +86,8 @@ public class BackgroundService extends Service {
                                     for (String str : notifications) {
 
                                         //Read notification id
-                                        try {
-                                            BufferedReader br2 = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
-                                            notificationId = Integer.parseInt(br2.readLine());
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        BufferedReader br2 = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
+                                        notificationId = Integer.parseInt(br2.readLine());
 
                                         Intent resultIntent = new Intent(this, ActivityGamePage.class);
                                         resultIntent.putExtra("source","wishlist");
@@ -122,20 +118,18 @@ public class BackgroundService extends Service {
 
 
                                         //Write notification id
-                                        try {
-                                            BufferedWriter bw2 = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir()+"notificationId.txt"));
-                                            bw2.write(""+notificationId);
-                                            bw2.newLine();
-                                            bw2.close();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        BufferedWriter bw2 = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir()+"notificationId.txt"));
+                                        bw2.write(""+notificationId);
+                                        bw2.newLine();
+                                        bw2.close();
                                     }
                                 }
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (IOException e ){
+                    e.printStackTrace();
+                } catch (Exception e) {     // TODO : try to remove
                     e.printStackTrace();
                 }
             }

@@ -591,23 +591,15 @@ public class DirectoryManager {
     // CHECK FILE EXISTS ------------------------------------------------------
 
     // reserved for android
-    // TODO : a cosa serve? / considerare cambio di nome
-    public static boolean wishlistExistsAndIsntEmpty(){
+    public static boolean wishlistExists ()  {
         File f = new File(WISHLIST);
-        String line = null;
-        if(f.exists()){
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(f));
-                line = br.readLine();
-                if(line!=null && line.equals("")){
-                    line = null;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        return f.exists();
+    }
 
-        return f.exists() && line!=null;
+    // reserved for android
+    public static boolean wishlistEmpty() throws IOException {
+        FileReader fw = new FileReader(new File(WISHLIST));
+        return (fw.read() != -1);
     }
 
     //DELETE SYSTEM -----------------------------------------------------------

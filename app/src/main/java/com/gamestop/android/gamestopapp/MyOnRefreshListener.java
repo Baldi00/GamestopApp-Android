@@ -68,18 +68,20 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
         @Override
         protected Object doInBackground(Object[] objects) {
 
-            if(!DirectoryManager.wishlistExistsAndIsntEmpty()){
-                return null;
-            }
+            try {
 
-            ConnectivityManager cm = (ConnectivityManager)main.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+                if (DirectoryManager.wishlistExists() && !DirectoryManager.wishlistEmpty()) {
+                    return null;
+                }
 
-            if(isConnected) {
-                boolean notificationSound = false;
-                BufferedReader brConfig = null;
-                try {
+                ConnectivityManager cm = (ConnectivityManager) main.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+
+                if (isConnected) {
+                    boolean notificationSound = false;
+                    BufferedReader brConfig = null;
+
                     brConfig = new BufferedReader(new FileReader(DirectoryManager.getAppDir() + "config.txt"));
 
                     //Read unnecessary lines
@@ -88,88 +90,72 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                     brConfig.readLine();
                     brConfig.readLine();
                     notificationSound = Boolean.parseBoolean(brConfig.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                if (DirectoryManager.wishlistExistsAndIsntEmpty()) {
-                    Games gs = null;
+                    if (DirectoryManager.wishlistExists() && !DirectoryManager.wishlistEmpty()) {
+                        Games gs = null;
 
-                    try {
                         gs = DirectoryManager.importGames();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
-                    if(gs!=null) {
-                        for (GamePreview gp : gs) {
-                            Game game = (Game) gp;
-                            List<String> notifications = null;
-                            try {
+                        if (gs != null) {
+                            for (GamePreview gp : gs) {
+                                Game game = (Game) gp;
+                                List<String> notifications = null;
                                 notifications = game.update();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
 
-                            if (notifications != null) {
+                                if (notifications != null) {
 
-                                for (String str : notifications) {
+                                    for (String str : notifications) {
 
-
-                                    //Read notification id
-                                    try {
-                                        BufferedReader br = new BufferedReader(new FileReader(DirectoryManager.getAppDir()+"notificationId.txt"));
+                                        //Read notification id
+                                        BufferedReader br = new BufferedReader(new FileReader(DirectoryManager.getAppDir() + "notificationId.txt"));
                                         notificationId = Integer.parseInt(br.readLine());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+
+                                        Intent resultIntent = new Intent(main, ActivityGamePage.class);
+                                        resultIntent.putExtra("source", "wishlist");
+                                        resultIntent.putExtra("id", game.getId());
+                                        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+                                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(main);
+                                        stackBuilder.addNextIntentWithParentStack(resultIntent);
+                                        // Get the PendingIntent containing the entire back stack
+                                        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-                                    Intent resultIntent = new Intent(main, ActivityGamePage.class);
-                                    resultIntent.putExtra("source","wishlist");
-                                    resultIntent.putExtra("id",game.getId());
-                                    // Create the TaskStackBuilder and add the intent, which inflates the back stack
-                                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(main);
-                                    stackBuilder.addNextIntentWithParentStack(resultIntent);
-                                    // Get the PendingIntent containing the entire back stack
-                                    PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
+                                        NotificationCompat.Builder notification = new NotificationCompat.Builder(main, "GAMESTOPAPP");
+                                        notification.setContentIntent(resultPendingIntent);
+                                        notification.setSmallIcon(R.drawable.notification_icon);
+                                        notification.setContentTitle(game.getTitle());
+                                        notification.setContentText(str);
 
+                                        if (notificationSound) {
+                                            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                            notification.setSound(alarmSound);
+                                        }
 
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(main);
+                                        notificationManager.notify(notificationId, notification.build());
 
-                                    NotificationCompat.Builder notification = new NotificationCompat.Builder(main, "GAMESTOPAPP");
-                                    notification.setContentIntent(resultPendingIntent);
-                                    notification.setSmallIcon(R.drawable.notification_icon);
-                                    notification.setContentTitle(game.getTitle());
-                                    notification.setContentText(str);
+                                        notificationId++;
 
-                                    if(notificationSound){
-                                        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                                        notification.setSound(alarmSound);
-                                    }
-
-                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(main);
-                                    notificationManager.notify(notificationId, notification.build());
-
-                                    notificationId++;
-
-                                    //Write notification id
-                                    try {
-                                        BufferedWriter bw = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir()+"notificationId.txt"));
-                                        bw.write(""+notificationId);
+                                        //Write notification id
+                                        BufferedWriter bw = new BufferedWriter(new FileWriter(DirectoryManager.getAppDir() + "notificationId.txt"));
+                                        bw.write("" + notificationId);
                                         bw.newLine();
                                         bw.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
                                     }
                                 }
                             }
                         }
                     }
+                    return true;
                 }
-                return true;
-            } else {
-                return false;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {         // TODO: try to remove
+                e.printStackTrace();
             }
+
+            return false;
         }
 
         @Override
