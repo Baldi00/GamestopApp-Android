@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class Promo {
 
-    private final String header;
-    private final String validity;
-    private final String message;
-    private final String messageURL;
+    private String header;
+    private String validity;
+    private String message;
+    private String messageURL;
 
     public Promo(String header, String validity, String message, String messageURL) {
         this.header = header;
@@ -33,20 +33,12 @@ public class Promo {
         return messageURL;
     }
 
-    public boolean hasMessage() {
-        return message != null;
-    }
-
-    public boolean hasMessageURL() {
-        return hasMessage();
-    }
-
     @Override
     public String toString() {
         if ( message == null )
-            return "Promo{" + "\n  header = " + header + ",\n  validity = " + validity + "  \n }";
+            return "Promo{" + "\n  header=" + header + ",\n  validity=" + validity + "  \n }";
 
-        return "Promo{" + "\n  header = " + header + ",\n  validity = " + validity + ",\n  message = " + message + ",\n  messageURL = " + messageURL + "  \n }";
+        return "Promo{" + "\n  header=" + header + ",\n  validity=" + validity + ",\n  message=" + message + ",\n  messageURL=" + messageURL + "  \n }";
     }
 
     @Override

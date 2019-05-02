@@ -52,8 +52,8 @@ public class Game extends GamePreview {
     protected List<Promo> promo;
     protected String description;
 
-    public Game() {
-        // used by Directory Manager import methods
+    protected Game() {
+        // used by importXML
     }
 
     public Game(String url) throws IOException {
@@ -63,18 +63,19 @@ public class Game extends GamePreview {
         Document html = Jsoup.connect(url).get();
         Element body = html.body();
 
+        // these three methods are necessary to create a Game
         updateMainInfo(body);
         updateMetadata(body);
         updatePrices(body);
 
-        Log.info("Game", "Game found", "["+id+"]" + "["+platform+"]" + " - \"" + title + "\"");
+        Log.info("Game", "Game found", title);
 
         // the following information are not necessary to create a game
         updatePEGI(body);
         updateBonus(body);
         updateDescription(body);
 
-        DirectoryManager.mkdir(id);
+        mkdir();
         updateCover(body);
         updateGallery(body);
     }
@@ -84,9 +85,7 @@ public class Game extends GamePreview {
     }
 
     public boolean hasGenres() {
-        if ( genres == null )
-            return false;
-        return genres.size() > 0;
+        return genres != null;
     }
 
     public String getOfficialSite() {
@@ -94,9 +93,7 @@ public class Game extends GamePreview {
     }
 
     public boolean hasOfficialSite() {
-        if ( officialSite == null )
-            return false;
-        return !officialSite.equals("");
+        return officialSite != null;
     }
 
     public String getPlayers() {
@@ -104,9 +101,7 @@ public class Game extends GamePreview {
     }
 
     public boolean hasPlayers() {
-        if ( players == null )
-            return false;
-        return !players.equals("");
+        return players != null;
     }
 
     public boolean isValidForPromotions() {
@@ -118,9 +113,7 @@ public class Game extends GamePreview {
     }
 
     public boolean hasPromo() {
-        if ( promo == null )
-            return false;
-        return promo.size() > 0;
+        return promo != null;
     }
 
     public String getDescription() {
@@ -142,22 +135,34 @@ public class Game extends GamePreview {
         return "www.gamestop.it/StoreLocator/Index?productId=" + getId();
     }
 
+    public String getGalleryDirectory() {
+        return getGameDirectory() + "gallery/";
+    }
+
+    public String getCover() {
+        return getGameDirectory() + "cover.jpg";
+    }
+
+    public boolean hasCover() {
+        return new File(getCover()).exists();
+    }
+
     public String[] getGallery() {
 
         // salvo i nomi delle immagini
-        File file = new File(DirectoryManager.getGameGalleryDirectory(id));
+        File file = new File(getGalleryDirectory());
         String[] images = file.list();
 
         // aggiungo il percorso al nome delle immagini
         for ( int i=0; i<images.length; ++i ){
-            images[i] = DirectoryManager.getGameGalleryDirectory(id) + images[i];
+            images[i] = getGalleryDirectory() + images[i];
         }
 
         return images;
     }
 
     public boolean hasGallery() {
-        return new File(DirectoryManager.getGameGalleryDirectory(id)).exists();
+        return new File(getGalleryDirectory()).exists();
     }
 
     @Override
@@ -170,61 +175,43 @@ public class Game extends GamePreview {
         str += "publisher = " + publisher + "\n ";
         str += "platform = " + platform + "\n ";
 
-        if ( hasNewPrice() ){
+        if ( newPrice != null ){
             str += "newPrice = " + newPrice + "\n ";
-
-            if ( hasOlderNewPrices() )
-                str += "olderNewPrices = " + olderNewPrices + "\n ";
+            str += "olderNewPrices = " + olderNewPrices + "\n ";
         }
 
-        if ( hasUsedPrice() ){
+        if ( usedPrice != null ){
             str += "usedPrice = " + usedPrice + "\n ";
-
-            if ( hasOlderUsedPrices() )
-                str += "olderUsedPrices = " + olderUsedPrices + "\n ";
+            str += "olderUsedPrices = " + olderUsedPrices + "\n ";
         }
 
-        if ( hasPreorderPrice() ){
+        if ( preorderPrice != null ){
             str += "preorderPrice = " + preorderPrice + "\n ";
-
-            if ( hasOlderPreorderPrices() )
-                str += "olderPreorderPrices = " + olderPreorderPrices + "\n ";
         }
 
-        if ( hasDigitalPrice() ){
-            str += "digitalPrice = " + digitalPrice + "\n ";
-
-            if ( hasOlderDigitalPrices() )
-                str += "olderDigitalPrices = " + olderDigitalPrices + "\n ";
-        }
-
-        if ( hasPromo() ){
+        if ( promo != null ){
             for ( Promo p : promo )
                 str += p + "\n ";
         }
 
-        if ( hasPegi() ){
+        if ( pegi != null ){
             str += "pegi = " + pegi + "\n ";
         }
 
-        if ( hasPegi() ){
+        if ( genres != null ){
             str += "genres = " + genres + "\n ";
         }
 
-        if ( hasOfficialSite() ){
+        if ( officialSite != null ){
             str += "officialSite = " + officialSite + "\n ";
         }
 
-        if ( hasPlayers() ){
+        if ( players != null ){
             str += "players = " + players + "\n ";
         }
 
-        if ( hasReleaseDate() ){
+        if ( releaseDate != null ){
             str += "releaseDate = " + releaseDate + "\n ";
-        }
-
-        if ( hasDescription() ){
-            str += "description = " + description + "\n ";
         }
 
         str += "validForPromotions = " + validForPromotions + "\n";
@@ -234,6 +221,12 @@ public class Game extends GamePreview {
         return str;
     }
 
+
+    /**
+     * returned value checked
+     * @param prodTitle
+     * @return
+     */
     private boolean updateMainInfo(Element prodTitle) {
 
         boolean changes = false;
@@ -266,6 +259,11 @@ public class Game extends GamePreview {
         return changes;
     }
 
+    /**
+     * returned value checked
+     * @param addedDet
+     * @return
+     */
     private boolean updateMetadata(Element addedDet) {
 
         // the content is inside "addedDetInfo" which is inside "addedDet"
@@ -294,8 +292,8 @@ public class Game extends GamePreview {
             // important check to avoid IndexOutOfBound Exception
             if (e.childNodeSize() > 1) {
 
+                // set item ID (DEPRECATED)
                 if (e.child(0).text().equals("Codice articolo")) {
-                    // set item ID (DEPRECATED)
                     continue;
                 }
 
@@ -337,6 +335,8 @@ public class Game extends GamePreview {
             }
         }
 
+        //Log.debug("Game", "Ok");
+
         // search for a tag with this class name
         if ( !addedDet.getElementsByClass("ProdottoValido").isEmpty() ) {
             this.validForPromotions = true;
@@ -349,6 +349,11 @@ public class Game extends GamePreview {
         return changes;
     }
 
+    /**
+     * returned value checked
+     * @param buySection
+     * @return
+     */
     private boolean updatePrices(Element buySection) {
 
         boolean changes = false;
@@ -367,18 +372,14 @@ public class Game extends GamePreview {
         Double newPriceCopy = this.newPrice;
         Double usedPriceCopy = this.usedPrice;
         Double preorderPriceCopy = this.preorderPrice;
-        Double digitalPriceCopy = this.digitalPrice;
 
         // if the prices are removed they don't change
         // example: newPrice is 20€ > then newPrice no longer exist > newPrice is still 20€
         this.newPrice = null;
         this.usedPrice = null;
         this.preorderPrice = null;
-        this.digitalPrice = null;
         this.olderNewPrices = null;
         this.olderUsedPrices = null;
-        this.olderPreorderPrices = null;
-        this.olderDigitalPrices = null;
 
         for (Element singleVariantDetails : buySection.getElementsByClass("singleVariantDetails")) {
 
@@ -425,23 +426,6 @@ public class Game extends GamePreview {
 
                 this.preorderPrice = stringToPrice(price);
             }
-
-            if (singleVariantText.getElementsByClass("variantName").get(0).text().equals("Contenuto Digitale")) {
-                String price = singleVariantText.getElementsByClass("prodPriceCont").get(0).text();
-
-                this.digitalPrice = stringToPrice(price);
-
-                // OLDER DIGITAL PRICE : need revision / example cases
-
-                singleVariantText.getElementsByClass("pricetext2").remove();
-                singleVariantText.getElementsByClass("detailsLink").remove();
-                price = singleVariantText.text().replaceAll("[^0-9.,]","");
-
-                if ( !price.isEmpty() ){
-                    olderDigitalPrices = new ArrayList<>();
-                    olderDigitalPrices.add(stringToPrice(price));
-                }
-            }
         }
 
         if ( newPrice != null && !newPrice.equals(newPriceCopy) )
@@ -453,12 +437,14 @@ public class Game extends GamePreview {
         if ( preorderPrice != null && !preorderPrice.equals(preorderPriceCopy) )
             changes = true;
 
-        if ( digitalPrice != null && !digitalPrice.equals(digitalPriceCopy) )
-            changes = true;
-
         return changes;
     }
 
+    /**
+     * returned value checked
+     * @param ageBlock
+     * @return
+     */
     private boolean updatePEGI(Element ageBlock) {
 
         boolean changes = false;
@@ -505,6 +491,11 @@ public class Game extends GamePreview {
         return changes;
     }
 
+    /**
+     * returned value checked
+     * @param bonusBlock
+     * @return
+     */
     private boolean updateBonus(Element bonusBlock) {
 
         boolean changes = false;
@@ -538,7 +529,7 @@ public class Game extends GamePreview {
             // se la promozione contiene un link per personalizzare l'acquisto
             if ( p.size() > 1 ) {
                 message = p.get(1).text();
-                messageURL = "www.gamestop.it" + p.get(1).getElementsByTag("a").attr("href");
+                messageURL = "https://www.gamestop.it" + p.get(1).getElementsByTag("a").attr("href");
             }
 
             promo.add(new Promo(header, validity, message, messageURL));
@@ -550,8 +541,11 @@ public class Game extends GamePreview {
         return changes;
     }
 
-    // modified on android : doesn't support wholeText() method
-    // TODO : trovare soluzione a wholeText()
+    /**
+     * returned value checked
+     * @param prodDesc
+     * @return
+     */
     private boolean updateDescription(Element prodDesc) {
 
         boolean changes = false;
@@ -570,36 +564,15 @@ public class Game extends GamePreview {
         if ( descriptionCopy == null )
             descriptionCopy = new String();
 
-        // ----------------------------------------
+        this.description = new String();
 
-        // NEED REVISION
-
-        description = new String();
-
-        // remove uneccesary div
-        prodDesc.getElementsByClass("prodToTop").remove();
-        prodDesc.getElementsByClass("prodSecHead").remove();
-
-        // wholeText() crea artefatti nel testo
-        // per questo motivo suddivido i blocchi di testo e poi eseguo un trim()
-        String[] text = prodDesc.text().split("\n");
-        for ( int i=0; i<text.length; ++i ){
-            text[i] = text[i].trim();
-            description += text[i] + "\n";
+        for (Element e : prodDesc.getElementsByTag("p")) {
+            for (TextNode tn : e.textNodes()) {
+                description += tn.text() + "\n";
+            }
         }
 
-        // vado a capo ogni volta che c'è un .
-        description = description.replace(". ", ".\n");
-
-        // faccio un trim per rimuovere \n all'inizio o alla fine
-        description = description.trim();
-
-        // elimino tutti i \n in eccesso
-        while ( description.contains("\n\n\n") ) {
-            description = description.replace("\n\n\n", "\n\n");
-        }
-
-        // ------------------------------------------
+        android.util.Log.d("DESCRIPTION","HERE, " + description);
 
         if ( !description.equals(descriptionCopy) )
             changes = true;
@@ -607,6 +580,10 @@ public class Game extends GamePreview {
         return changes;
     }
 
+    /**
+     *
+     * @param prodImgMax
+     */
     private void updateCover(Element prodImgMax) {
 
         // if the element hasn't got the class name "prodImg max"
@@ -620,10 +597,10 @@ public class Game extends GamePreview {
         }
 
         String imgUrl = prodImgMax.attr("href");
-        String imgPath = getCover();
+        String imgPath = getGameDirectory();
 
         try {
-            DirectoryManager.downloadImage(imgPath, imgUrl);
+            downloadImage("cover.jpg", imgUrl, imgPath);
         } catch ( MalformedURLException ex ) {
             Log.error("Game", "ID: " + getId() + " - malformed URL", imgUrl);
         } catch (IOException ex) {
@@ -631,6 +608,10 @@ public class Game extends GamePreview {
         }
     }
 
+    /**
+     *
+     * @param mediaImages
+     */
     private void updateGallery(Element mediaImages) {
 
         // if the element hasn't got the class name "mediaImages"
@@ -643,7 +624,7 @@ public class Game extends GamePreview {
             mediaImages = mediaImages.getElementsByClass("mediaImages").get(0);
         }
 
-        String imgPath = DirectoryManager.getGameGalleryDirectory(id);
+        String imgPath = getGalleryDirectory();
 
         File dir = new File(imgPath);
         if (!dir.exists()) {
@@ -651,7 +632,6 @@ public class Game extends GamePreview {
         }
 
         for (Element e : mediaImages.getElementsByTag("a")) {
-
             String imgUrl = e.attr("href");
             if (imgUrl.equals("")) {
                 // this can handle very rare cases of malformed HTMLs
@@ -659,10 +639,10 @@ public class Game extends GamePreview {
                 imgUrl = e.getElementsByTag("img").get(0).attr("src");
             }
 
-            String imgName = imgUrl.split("/")[imgUrl.split("/").length-1];
+            String imgName = imgUrl.split("/")[6];
 
             try {
-                DirectoryManager.downloadImage(imgPath+imgName, imgUrl);
+                downloadImage(imgName, imgUrl, imgPath);
             } catch ( MalformedURLException ex ) {
                 Log.error("Game", "ID: " + getId() + " - malformed URL", imgUrl);
             } catch (IOException ex) {
@@ -672,6 +652,10 @@ public class Game extends GamePreview {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public ArrayList<String> update() throws IOException {
 
         ArrayList<String> notifications = new ArrayList();

@@ -40,8 +40,6 @@ public class GamePreview implements Comparable<GamePreview> {
     protected Double digitalPrice;
     protected List<Double> olderNewPrices;
     protected List<Double> olderUsedPrices;
-    protected List<Double> olderDigitalPrices;
-    protected List<Double> olderPreorderPrices;
 
     protected List<String> pegi;
     protected String releaseDate;
@@ -99,9 +97,7 @@ public class GamePreview implements Comparable<GamePreview> {
     }
 
     public boolean hasOlderNewPrices() {
-        if ( olderNewPrices == null )
-            return false;
-        return olderNewPrices.size() > 0;
+        return olderNewPrices != null;
     }
 
     public List<Double> getOlderUsedPrices() {
@@ -109,33 +105,7 @@ public class GamePreview implements Comparable<GamePreview> {
     }
 
     public boolean hasOlderUsedPrices() {
-        if ( olderUsedPrices == null )
-            return false;
-        return olderUsedPrices.size() > 0;
-    }
-
-    // TODO : implementare l'utilizzo di questo metodo
-    public List<Double> getOlderPreorderPrices() {
-        return olderPreorderPrices;
-    }
-
-    // TODO : implementare l'utilizzo di questo metodo
-    public boolean hasOlderPreorderPrices() {
-        if ( olderPreorderPrices == null )
-            return false;
-        return olderPreorderPrices.size() > 0;
-    }
-
-    // TODO : implementare l'utilizzo di questo metodo
-    public List<Double> getOlderDigitalPrices() {
-        return olderDigitalPrices;
-    }
-
-    // TODO : implementare l'utilizzo di questo metodo
-    public boolean hasOlderDigitalPrices() {
-        if ( olderDigitalPrices == null )
-            return false;
-        return olderDigitalPrices.size() > 0;
+        return olderUsedPrices != null;
     }
 
     public List<String> getPegi() {
@@ -153,25 +123,23 @@ public class GamePreview implements Comparable<GamePreview> {
     }
 
     public boolean hasReleaseDate() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            sdf.parse(releaseDate);
-            return true;
-        } catch (ParseException ex) {
-            return false;
-        }
+        return releaseDate != null;
     }
 
     public String getURL() {
-        return getURLbyID(id);
+        return getURLByID(id);
     }
 
-    public static String getURLbyID ( String id ) {
+    public static String getURLByID ( String id ) {
         return "http://www.gamestop.it/Platform/Games/" + id;
     }
 
+    public String getGameDirectory() {
+        return DirectoryManager.getGameDirectory(id);
+    }
+
     public String getCover() {
-        return DirectoryManager.getGameDirectory(id)+ "cover.jpg";
+        return getGameDirectory() + "preview.jpg";
     }
 
     public boolean hasCover() {
@@ -236,12 +204,6 @@ public class GamePreview implements Comparable<GamePreview> {
         if ( olderUsedPrices != null )
             str += " olderUsedPrices = " + olderUsedPrices + "\n";
 
-        if ( olderPreorderPrices != null )
-            str += " olderPreorderPrices = " + olderPreorderPrices + "\n";
-
-        if ( olderDigitalPrices != null )
-            str += " olderDigitalPrices = " + olderDigitalPrices + "\n";
-
         if ( pegi != null )
             str += " pegi = " + pegi + "\n";
 
@@ -254,20 +216,10 @@ public class GamePreview implements Comparable<GamePreview> {
 
     @Override
     public int compareTo(GamePreview gamePreview) {
-        return title.compareToIgnoreCase(gamePreview.title);
+        return title.compareTo(gamePreview.getTitle());
     }
 
-    protected static double stringToPrice(String price) {
-
-        // example "Nuovo 19.99€"
-        price = price.replaceAll("[^0-9.,]","");    // remove all the characters except for numbers, ',' and '.'
-        price = price.replace(".", "");             // to handle prices over 999,99€ like 1.249,99€
-        price = price.replace(',', '.');            // to convert the price in a string that can be parsed
-
-        return Double.parseDouble(price);
-    }
-
-    public static Games searchGame(String searchedGameName) throws UnsupportedEncodingException, IOException {
+    public static List<GamePreview> searchGame(String searchedGameName) throws UnsupportedEncodingException, IOException {
 
         String url = "https://www.gamestop.it/SearchResult/QuickSearch?q=" + URLEncoder.encode(searchedGameName, "UTF-8");
 
@@ -282,7 +234,7 @@ public class GamePreview implements Comparable<GamePreview> {
             return null;
         }
 
-        Games searchedGames = new Games();
+        List<GamePreview> searchedGames = new ArrayList();
 
         for ( Element game : gamesList )
         {
@@ -350,58 +302,14 @@ public class GamePreview implements Comparable<GamePreview> {
 
             e = game.getElementsByClass("buyPresell");
             if ( !e.isEmpty() ){
-                Elements prices = e.get(0).getElementsByTag("em");
-
-                // if there's just one price
-                // NB: <em> tag is present only if there are multiple prices
-                if ( prices.isEmpty() ){
-                    String price = e.get(0).text();
-                    gamePreview.preorderPrice = stringToPrice(price);
-                }
-
-                // if more than one price is present
-                if ( prices.size() > 1 ) {
-                    gamePreview.olderPreorderPrices = new ArrayList<>();
-
-                    // memorize the prices
-                    for ( int i=0; i<prices.size(); ++i ){
-                        String price = prices.get(i).text();
-
-                        if ( i==0 ){
-                            gamePreview.preorderPrice = stringToPrice(price);
-                        } else {
-                            gamePreview.olderPreorderPrices.add(stringToPrice(price));
-                        }
-                    }
-                }
+                String price = e.get(0).text();
+                gamePreview.preorderPrice = stringToPrice(price);
             }
 
             e = game.getElementsByClass("buyDLC");
             if ( !e.isEmpty() ){
-                Elements prices = e.get(0).getElementsByTag("em");
-
-                // if there's just one price
-                // NB: <em> tag is present only if there are multiple prices
-                if ( prices.isEmpty() ){
-                    String price = e.get(0).text();
-                    gamePreview.digitalPrice = stringToPrice(price);
-                }
-
-                // if more than one price is present
-                if ( prices.size() > 1 ) {
-                    gamePreview.olderDigitalPrices = new ArrayList<>();
-
-                    // memorize the prices
-                    for ( int i=0; i<prices.size(); ++i ){
-                        String price = prices.get(i).text();
-
-                        if ( i==0 ){
-                            gamePreview.digitalPrice = stringToPrice(price);
-                        } else {
-                            gamePreview.olderDigitalPrices.add(stringToPrice(price));
-                        }
-                    }
-                }
+                String price = e.get(0).text();
+                gamePreview.digitalPrice = stringToPrice(price);
             }
 
             gamePreview.pegi = new ArrayList<>();
@@ -409,17 +317,89 @@ public class GamePreview implements Comparable<GamePreview> {
             gamePreview.releaseDate = game.getElementsByTag("li").get(0).text().split(": ")[1];
 
             // create the necessary directories
-            DirectoryManager.mkdir(gamePreview.id);
+            gamePreview.mkdir();
 
             // download the cover
             String imageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).attr("data-llsrc");
-            imageUrl = imageUrl.replace("2med", "3max");
-            DirectoryManager.downloadImage(gamePreview.getCover(), imageUrl);
+            String imageName = imageUrl.split("/")[6];
+            downloadImage("", imageUrl, gamePreview.getCover());
 
             searchedGames.add(gamePreview);
         }
 
         return searchedGames;
+    }
+
+    protected static double stringToPrice(String price) {
+
+        // example "Nuovo 19.99€"
+        price = price.replaceAll("[^0-9.,]","");    // remove all the characters except for numbers, ',' and '.'
+        price = price.replace(".", "");             // to handle prices over 999,99€ like 1.249,99€
+        price = price.replace(',', '.');            // to convert the price in a string that can be parsed
+
+        /* OLD
+        price = price.split(" ")[1];        // <-- example "Nuovo 19.99€"
+        price = price.replace(".", "");     // <-- to handle prices over 999,99€ like 1.249,99€
+        price = price.replace(',', '.');    // <-- to convert the price in a string that can be parsed
+        price = price.replace("€", "");     // <-- remove unecessary characters
+        price = price.replace("CHF", "");   // <-- remove unecessary characters
+        price = price.trim();               // <-- remove remaning spaces
+        */
+
+        return Double.parseDouble(price);
+    }
+
+    protected static void downloadImage(String name, String imgUrl, String imgPath) throws MalformedURLException, IOException {
+        imgPath = imgPath + name;
+        File f = new File(imgPath);
+
+        // if the image already exists
+        if (f.exists()) {
+            Log.warning("GamePreview", "img already exists", imgPath);
+            return;
+        }
+
+        Bitmap image = getBitmapFromURL(imgUrl);
+
+
+        try (FileOutputStream out = new FileOutputStream(imgPath)) {
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.info("GamePreview", "image downloaded", imgUrl);
+    }
+
+    protected static Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected void mkdir() {
+        // create userData folder if doesn't exist
+        File dir = new File(DirectoryManager.getGamesDirectory());
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        // create the game folder if doesn't exist
+        dir = new File( getGameDirectory() );
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
     }
 
 }

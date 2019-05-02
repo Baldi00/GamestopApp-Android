@@ -4,11 +4,12 @@ package com.gamestop.android.gamestopapp;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 
 public class Log {
+
+    private static final int MAX_MESSAGE_LENGTH = 40;
 
     // Reset
     private static final String RESET = "\033[0m";  // Text Reset
@@ -36,43 +37,59 @@ public class Log {
 
     //info
     public static void info(String className, String message) {
-        System.out.println(GREEN + format(className,message,null) + RESET);
+        System.out.println(GREEN + className + " : " + message + RESET);
     }
 
     public static void info(String className, String message, String resource) {
-        System.out.println(GREEN + format(className,message,resource) + RESET);
+        message = formatMessage(message);
+        System.out.println(GREEN + className + " : " + message + "\t\t" + resource + RESET);
     }
 
     //error
     public static void error(String className, String message) {
-        System.out.println(RED + format(className,message,null) + RESET);
+        System.out.println(RED + className + " : " + message + RESET);
     }
 
     public static void error(String className, String message, String resource) {
-        System.out.println(RED + format(className,message,resource)+ RESET);
+        message = formatMessage(message);
+        System.out.println(RED + className + " : " + message + "\t\t" + resource + RESET);
     }
 
     //debug
     public static void debug(String className, String message) {
-        System.out.println(CYAN + format(className,message,null) + RESET);
+        System.out.println( CYAN + className + " : " + message + RESET);
     }
 
     public static void debug(String className, String message, String resource) {
-        System.out.println(CYAN + format(className,message,resource) + RESET);
+        message = formatMessage(message);
+        System.out.println( CYAN + className + " : " + message + "\t\t" + resource + RESET);
     }
 
     //warning
     public static void warning(String className, String message) {
-        System.out.println(PURPLE_BOLD + format(className,message,null) + RESET);
+        System.out.println( PURPLE_BOLD + className + " : " + message + RESET);
     }
 
     public static void warning(String className, String message, String resource) {
-        System.out.println(PURPLE_BOLD + format(className,message,resource) + RESET);
+        message = formatMessage(message);
+        System.out.println( PURPLE_BOLD + className + " : " + message + "\t\t" + resource + RESET);
+    }
+
+    private static String formatMessage( String message )
+    {
+        if ( message.length() > MAX_MESSAGE_LENGTH ){
+            message = message.substring(0, MAX_MESSAGE_LENGTH-3) + "...";
+        } else {
+            while ( message.length() < MAX_MESSAGE_LENGTH )
+                message += " ";
+        }
+        return message;
     }
 
     public static void crash ( Exception e, String src ) {
 
         try {
+
             // create log directory if doesn't exist
             File directory = new File("log");
             if ( !directory.exists() )
@@ -89,39 +106,10 @@ public class Log {
 
             Log.error("Log", "Crash Log file created");
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Log.error("Log", "Failed to create crash log");
         }
 
     }
-
-    private static String format( String className, String message, String resource ){
-
-        final int CLASS_NAME = 15;
-        final int MESSAGE = 50;
-
-        if ( className.length() > CLASS_NAME ){
-            className = className.substring(0, CLASS_NAME-3) + ".: ";
-        } else {
-            className += ":";
-            while ( className.length() != CLASS_NAME ) {
-                className += " ";
-            }
-        }
-
-        if ( message.length() > MESSAGE ){
-            message = message.substring(0, MESSAGE-3) + "...";
-        } else {
-            while ( message.length() != MESSAGE ) {
-                message += " ";
-            }
-        }
-
-        if ( resource == null )
-            resource = "";
-
-        return className + message + "\t\t" + resource;
-    }
-
 }
 
