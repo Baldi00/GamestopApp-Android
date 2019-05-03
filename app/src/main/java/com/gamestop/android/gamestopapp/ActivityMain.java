@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -228,15 +229,15 @@ public class ActivityMain extends AppCompatActivity{
         if (!f.exists()) {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write("true"); //Notification service enabled (background)
+                bw.write("true");   //Notification service enabled (background)
                 bw.newLine();
                 bw.write("600000"); //Notification service sleep time (600000ms = 10min)
                 bw.newLine();
-                bw.write("true"); //Update games on app start
+                bw.write("true");   //Update games on app start
                 bw.newLine();
-                bw.write("false"); //Visualize gamestop bunny
+                bw.write("false");  //Visualize gamestop bunny
                 bw.newLine();
-                bw.write("false"); //Notification sound
+                bw.write("false");  //Notification sound
                 bw.newLine();
                 bw.close();
             } catch (IOException e) {
@@ -265,14 +266,20 @@ public class ActivityMain extends AppCompatActivity{
         appContext = getApplicationContext();
 
 
-
         // CACHE
-        int cacheSize = 20*1024*1024;   // 20MiB, around 100 covers of games
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory());
+        int cacheSize = 30*1024*1024;   // 30 MiB, about 20 images
 
+        // if the cache is too big
+        if ( cacheSize > maxMemory ){
+            cacheSize = maxMemory;
+        }
+
+        // set cache dimension & override sizeOf()
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
-            protected int sizeOf(String key, Bitmap bitmap) {
-                return bitmap.getByteCount() / 1024;
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
             }
         };
     }
@@ -421,7 +428,6 @@ public class ActivityMain extends AppCompatActivity{
         searchedGameListView.smoothScrollToPosition(0);
         checkAndSetGamestopBunnySearch();
     }
-
 
 
     //ADD AND REMOVE SYSTEM
@@ -891,6 +897,7 @@ public class ActivityMain extends AppCompatActivity{
 
     public void storeBitmapInCache(String key) {
         final Bitmap bitmap = getBitmapFromMemCache(key);
+        
         if (bitmap == null) {
             addBitmapToMemoryCache(key,BitmapFactory.decodeFile(key));
         }
