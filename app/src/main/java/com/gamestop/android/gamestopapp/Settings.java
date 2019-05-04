@@ -1,8 +1,5 @@
 package com.gamestop.android.gamestopapp;
 
-import android.widget.Spinner;
-import android.widget.Switch;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,21 +10,21 @@ import java.io.IOException;
 public class Settings {
 
     private static Settings instance;
-    private static String configFileName = DirectoryManager.getAppDir() + "config.txt";
+    private static String settingsFileName = DirectoryManager.getAppDir() + "config.txt";
 
-    private boolean notificationServiceEnabled;
-    private int notificationServiceSleepTime;
-    private boolean notificationSoundEnabled;
-    private boolean updateOnStartEnabled;
-    private boolean visualizeBunnyEnabled;
+    private boolean notificationServiceEnabled;     // notification service enabled
+    private int notificationServiceSleepTime;       // notification service sleep time
+    private boolean notificationSoundEnabled;       // notification sound
+    private boolean updateOnStartEnabled;           // update games on startup
+    private boolean bunnyEnabled;                   // visualize bunny
 
     private Settings() throws IOException {
 
-        File f = new File(configFileName);
+        File f = new File(settingsFileName);
 
         // create file if doesn't exist
         if ( !f.exists() ){
-            this.createFile();
+            this.createSettingsFile();
         }
 
         // read parameters
@@ -35,9 +32,9 @@ public class Settings {
 
         notificationServiceEnabled = Boolean.parseBoolean(br.readLine());
         notificationServiceSleepTime = Integer.parseInt(br.readLine());
-        updateOnStartEnabled = Boolean.parseBoolean(br.readLine());
-        visualizeBunnyEnabled = Boolean.parseBoolean(br.readLine());
         notificationSoundEnabled = Boolean.parseBoolean(br.readLine());
+        updateOnStartEnabled = Boolean.parseBoolean(br.readLine());
+        bunnyEnabled = Boolean.parseBoolean(br.readLine());
     }
 
     public static Settings getInstance() throws IOException {
@@ -48,38 +45,35 @@ public class Settings {
         return instance;
     }
 
-    private void createFile() throws IOException {
-        File f = new File(configFileName);
+    private void createSettingsFile() throws IOException {
+
+        notificationServiceEnabled = true;
+        notificationServiceSleepTime = 600000;
+        notificationSoundEnabled = false;
+        updateOnStartEnabled = true;
+        bunnyEnabled = false;
+
+        this.saveSettings();
+    }
+
+    public void saveSettings() throws IOException {
+
+        File f = new File(settingsFileName);
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
-        // Notification service enabled (background)
-        bw.write("true");   bw.newLine();
-
-        // Notification service sleep time (600000ms = 10min)
-        bw.write("600000"); bw.newLine();
-
-        // Update games on app start
-        bw.write("true");   bw.newLine();
-
-        // Visualize gamestop bunny
-        bw.write("false");  bw.newLine();
-
-        // Notification sound
-        bw.write("false");  bw.newLine();
-
+        bw.write( Boolean.toString(notificationServiceEnabled) );   bw.newLine();
+        bw.write( Integer.toString(notificationServiceSleepTime) ); bw.newLine();
+        bw.write( Boolean.toString(notificationSoundEnabled) );     bw.newLine();
+        bw.write( Boolean.toString(updateOnStartEnabled) );         bw.newLine();
+        bw.write( Boolean.toString(bunnyEnabled) );                 bw.newLine();
         bw.close();
     }
 
+    public void resetSettings() throws IOException {
+        this.createSettingsFile();
+    }
+
     // getters and setters
-    // TODO : save file after set
-
-    public static String getConfigFileName() {
-        return configFileName;
-    }
-
-    public static void setConfigFileName(String configFileName) {
-        Settings.configFileName = configFileName;
-    }
 
     public boolean isNotificationServiceEnabled() {
         return notificationServiceEnabled;
@@ -93,7 +87,7 @@ public class Settings {
         return notificationServiceSleepTime;
     }
 
-    public void setNotificationServiceSleepTime(int notificationServiceSleepTime) {
+    public void setNotificationServiceSleepTime(int notificationServiceSleepTime)  {
         this.notificationServiceSleepTime = notificationServiceSleepTime;
     }
 
@@ -113,11 +107,11 @@ public class Settings {
         this.updateOnStartEnabled = updateOnStartEnabled;
     }
 
-    public boolean isVisualizeBunnyEnabled() {
-        return visualizeBunnyEnabled;
+    public boolean isBunnyEnabled() {
+        return bunnyEnabled;
     }
 
-    public void setVisualizeBunnyEnabled(boolean visualizeBunnyEnabled) {
-        this.visualizeBunnyEnabled = visualizeBunnyEnabled;
+    public void setBunnyEnabled(boolean bunnyEnabled) {
+        this.bunnyEnabled = bunnyEnabled;
     }
 }
