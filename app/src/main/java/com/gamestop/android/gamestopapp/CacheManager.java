@@ -46,7 +46,7 @@ public class CacheManager {
 
     /**
      * Add the bitmap image to the cache
-     * @param key the name of the image
+     * @param key the path of the image
      */
     public void addBitmapToMemCache(String key) {
         final Bitmap bitmap = getBitmapFromMemCache(key);
@@ -58,7 +58,7 @@ public class CacheManager {
 
     /**
      * Add the bitmap image to the cache
-     * @param key the name of the image
+     * @param key the path of the image
      * @param bitmap the bitmap image
      */
     public void addBitmapToMemCache(String key, Bitmap bitmap) {
@@ -69,7 +69,7 @@ public class CacheManager {
 
     /**
      * Get the bitmap image from the cache
-     * @param key the name of the image
+     * @param key the path of the image
      * @return the image if it has been found in the cache, null otherwise
      */
     public Bitmap getBitmapFromMemCache(String key) {

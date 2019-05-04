@@ -10,7 +10,7 @@ import java.io.IOException;
 public class SettingsManager {
 
     private static SettingsManager instance;
-    private static String settingsFileName = DirectoryManager.getAppDir() + "config.txt";
+    private static String settingsFilePath = DirectoryManager.getAppDir() + "config.txt";
 
     private boolean notificationServiceEnabled;     // notification service enabled
     private int notificationServiceSleepTime;       // notification service sleep time
@@ -20,7 +20,7 @@ public class SettingsManager {
 
     private SettingsManager() throws IOException {
 
-        File f = new File(settingsFileName);
+        File f = new File(settingsFilePath);
 
         // create file if doesn't exist
         if ( !f.exists() ){
@@ -63,7 +63,7 @@ public class SettingsManager {
      */
     public void saveSettings() throws IOException {
 
-        File f = new File(settingsFileName);
+        File f = new File(settingsFilePath);
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
         bw.write( Boolean.toString(notificationServiceEnabled) );   bw.newLine();
