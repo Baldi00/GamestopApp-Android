@@ -17,6 +17,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 
 public class GameAdapter extends ArrayAdapter<GamePreview>{
+
     private TextView title, platform, publisher, newPrice, oldNewPrice, usedPrice, oldUsedPrice, digitalPrice, preorderPrice;
     private ImageView image;
 
@@ -84,23 +85,20 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
             }
         }
 
-        loadBitmap(game.getCover());
+        // get image from cache if available
+        CacheManager cache = CacheManager.getInstance();
+        Bitmap bitmap = cache.getBitmapFromMemCache(game.getCover());
+
+        if ( bitmap == null ){
+            image.setImageURI(Uri.fromFile(new File(game.getCover())));
+            cache.addBitmapToMemCache(game.getCover());
+        } else {
+            image.setImageBitmap(bitmap);
+        }
 
         oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
-    }
-
-
-    //CACHE
-    public void loadBitmap(String key) {
-        final Bitmap bitmap = ActivityMain.getBitmapFromMemCache(key);
-        if (bitmap != null) {
-            image.setImageBitmap(bitmap);
-        } else {
-            image.setImageURI(Uri.fromFile(new File(key)));
-            ActivityMain.addBitmapToMemoryCache(key,((BitmapDrawable)image.getDrawable()).getBitmap());
-        }
     }
 }

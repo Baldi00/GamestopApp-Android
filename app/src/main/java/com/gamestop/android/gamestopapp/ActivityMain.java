@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,8 +11,6 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -89,6 +85,9 @@ public class ActivityMain extends AppCompatActivity{
     //System
     private static Context appContext;
     private static boolean active = false;
+
+    // CacheManager
+    private static CacheManager cache;
 
 
     /*********************************************************************************************************************************/
@@ -216,6 +215,7 @@ public class ActivityMain extends AppCompatActivity{
         }
 
 
+
         //FIRST START OPERATIONS
 
         //Create validator file (xsd)
@@ -224,6 +224,7 @@ public class ActivityMain extends AppCompatActivity{
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         //Create config file and start background service
         if (!f.exists()) {
@@ -267,21 +268,7 @@ public class ActivityMain extends AppCompatActivity{
 
 
         // CACHE
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory());
-        int cacheSize = 30*1024*1024;   // 30 MiB, about 20 images
-
-        // if the cache is too big
-        if ( cacheSize > maxMemory ){
-            cacheSize = maxMemory;
-        }
-
-        // set cache dimension & override sizeOf()
-        memoryCache = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
+        cache = CacheManager.getInstance();
     }
 
     @Override
@@ -292,7 +279,7 @@ public class ActivityMain extends AppCompatActivity{
             Games temp = DirectoryManager.importGames();
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
-                storeBitmapInCache(gp.getCover());
+                cache.addBitmapToMemCache(gp.getCover());
             }
             wishlistAdapter.notifyDataSetChanged();
 
@@ -415,7 +402,8 @@ public class ActivityMain extends AppCompatActivity{
         if(result!=null){
             for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
-                storeBitmapInCache(g.getCover());
+                cache.addBitmapToMemCache(g.getCover());
+                //storeBitmapInCache(g.getCover());
             }
             searchedGameListAdapter.notifyDataSetChanged();
         }else{
@@ -877,29 +865,6 @@ public class ActivityMain extends AppCompatActivity{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-
-
-    //CACHE
-    private static LruCache<String, Bitmap> memoryCache;
-
-    public static void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            memoryCache.put(key, bitmap);
-        }
-    }
-
-    public static Bitmap getBitmapFromMemCache(String key) {
-        return memoryCache.get(key);
-    }
-
-    public void storeBitmapInCache(String key) {
-        final Bitmap bitmap = getBitmapFromMemCache(key);
-        
-        if (bitmap == null) {
-            addBitmapToMemoryCache(key,BitmapFactory.decodeFile(key));
         }
     }
 
