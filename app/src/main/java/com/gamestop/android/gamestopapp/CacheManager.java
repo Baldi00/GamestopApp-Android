@@ -15,6 +15,7 @@ public class CacheManager {
         int maxMemory = (int) (Runtime.getRuntime().maxMemory());
 
         // set a cache size : 30 MiB, about 20 images
+        // TODO: make the cache size dynamic
         int cacheSize = 30*1024*1024;
 
         // if the cache is too big
