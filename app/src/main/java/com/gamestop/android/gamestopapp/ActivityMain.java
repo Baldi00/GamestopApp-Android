@@ -403,7 +403,6 @@ public class ActivityMain extends AppCompatActivity{
             for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
                 cache.addBitmapToMemCache(g.getCover());
-                //storeBitmapInCache(g.getCover());
             }
             searchedGameListAdapter.notifyDataSetChanged();
         }else{
