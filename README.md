@@ -10,3 +10,4 @@ Link apk: [GamestopApp-Android v1.4](https://github.com/Baldi00/GamestopApp-Andr
 ## Dependencies
 - [AndroidStudio 3.2.1](https://developer.android.com/studio)
 - [Jsoup](https://jsoup.org/download)
+- [Picasso](https://square.github.io/picasso/#download)
