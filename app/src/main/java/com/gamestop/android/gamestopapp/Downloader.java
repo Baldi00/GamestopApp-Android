@@ -1,7 +1,6 @@
 package com.gamestop.android.gamestopapp;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.IOException;
 

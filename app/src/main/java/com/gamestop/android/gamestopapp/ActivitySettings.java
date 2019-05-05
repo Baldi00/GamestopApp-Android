@@ -12,9 +12,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class ActivitySettings extends AppCompatActivity {

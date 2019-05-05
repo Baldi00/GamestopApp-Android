@@ -1,7 +1,5 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.ActivityManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
@@ -17,7 +15,6 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;

@@ -1,6 +1,5 @@
 package com.gamestop.android.gamestopapp;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
@@ -20,7 +19,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
