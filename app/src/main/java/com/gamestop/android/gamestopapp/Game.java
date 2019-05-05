@@ -40,7 +40,7 @@ public class Game extends GamePreview {
 
         // the following information are not necessary to create a game
         updatePEGI(body);
-        updateBonus(body);
+        updatePromos(body);
         updateDescription(body);
 
         DirectoryManager.mkdir(id);
@@ -474,7 +474,7 @@ public class Game extends GamePreview {
         return changes;
     }
 
-    private boolean updateBonus(Element bonusBlock) {
+    private boolean updatePromos(Element bonusBlock) {
 
         boolean changes = false;
 
@@ -508,6 +508,9 @@ public class Game extends GamePreview {
             if ( p.size() > 1 ) {
                 message = p.get(1).text();
                 messageURL = "www.gamestop.it" + p.get(1).getElementsByTag("a").attr("href");
+                if ( messageURL.startsWith("www") ){
+                    messageURL = "http://" + messageURL;
+                }
             }
 
             promo.add(new Promo(header, validity, message, messageURL));
@@ -704,7 +707,7 @@ public class Game extends GamePreview {
 
         }
 
-        if ( updateBonus(body) == true ){
+        if ( updatePromos(body) == true ){
             if ( hasPromo() == true && promo == false ){
                 notifications.add("Il gioco è in promozione");
             }

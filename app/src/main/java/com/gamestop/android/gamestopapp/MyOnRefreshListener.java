@@ -1,5 +1,7 @@
 package com.gamestop.android.gamestopapp;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -93,8 +96,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                         if (gs != null) {
                             for (GamePreview gp : gs) {
                                 Game game = (Game) gp;
-                                List<String> notifications = null;
-                                notifications = game.update();
+                                List<String> notifications = game.update();
 
                                 if (notifications != null) {
 
@@ -116,7 +118,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(notificationId, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-                                        NotificationCompat.Builder notification = new NotificationCompat.Builder(main, "GAMESTOPAPP");
+                                        NotificationCompat.Builder notification = new NotificationCompat.Builder(main, "Gamestop");
                                         notification.setContentIntent(resultPendingIntent);
                                         notification.setSmallIcon(R.drawable.notification_icon);
                                         notification.setContentTitle(game.getTitle());
@@ -127,7 +129,17 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                             notification.setSound(alarmSound);
                                         }
 
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(main);
+                                        // -----------------    ANDROID OREO + NOTIFICATIONS   ---------------------------
+
+                                        NotificationManager notificationManager = (NotificationManager) main.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            NotificationChannel channel = new NotificationChannel("Gamestop","Gamestop",NotificationManager.IMPORTANCE_DEFAULT);
+                                            notificationManager.createNotificationChannel(channel);
+                                        }
+
+                                        // -------------------------------------------------------------------------------
+
                                         notificationManager.notify(notificationId, notification.build());
 
                                         notificationId++;
