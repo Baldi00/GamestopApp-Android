@@ -97,7 +97,6 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                             for (GamePreview gp : gs) {
                                 Game game = (Game) gp;
                                 List<String> notifications = game.update();
-                                notifications.add("CIAO");
 
                                 if (notifications != null) {
 
@@ -130,12 +129,16 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                             notification.setSound(alarmSound);
                                         }
 
+                                        // -----------------    ANDROID OREO + NOTIFICATIONS   ---------------------------
+
                                         NotificationManager notificationManager = (NotificationManager) main.getSystemService(Context.NOTIFICATION_SERVICE);
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                             NotificationChannel channel = new NotificationChannel("Gamestop","Gamestop",NotificationManager.IMPORTANCE_DEFAULT);
                                             notificationManager.createNotificationChannel(channel);
                                         }
+
+                                        // -------------------------------------------------------------------------------
 
                                         notificationManager.notify(notificationId, notification.build());
 
