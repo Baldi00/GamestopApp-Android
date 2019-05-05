@@ -1,5 +1,6 @@
 package com.gamestop.android.gamestopapp;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -88,6 +89,9 @@ public class ActivityMain extends AppCompatActivity{
 
     // CacheManager
     private static CacheManager cache;
+
+    //SettingsManager
+    private static SettingsManager settingsManager;
 
 
     /*********************************************************************************************************************************/
@@ -186,66 +190,31 @@ public class ActivityMain extends AppCompatActivity{
 
 
         //Check and do update at startup
-        File f = new File(DirectoryManager.getAppDir() + "config.txt");
-        if(f.exists()){
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(f));
-
-                //read unnecessary lines
-                br.readLine();
-                br.readLine();
-                boolean updateOnAppStart = Boolean.parseBoolean(br.readLine());
-
-                if(updateOnAppStart) {
-                    pullToRefreshLayout.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            pullToRefreshLayout.setRefreshing(true);
-                            pullToRefreshListener.onRefresh();
-                        }
-                    });
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            settingsManager = SettingsManager.getInstance();
+            boolean updateOnStartEnabled = settingsManager.isUpdateOnStartEnabled();
+            if(updateOnStartEnabled) {
+                pullToRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        pullToRefreshLayout.setRefreshing(true);
+                        pullToRefreshListener.onRefresh();
+                    }
+                });
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-
-
-        //FIRST START OPERATIONS
-
-        //Create validator file (xsd)
+        //Create validator file (xsd) if not exists
         try {
             DirectoryManager.createValidatorFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        //Create config file and start background service
-        if (!f.exists()) {
-            try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write("true");   //Notification service enabled (background)
-                bw.newLine();
-                bw.write("600000"); //Notification service sleep time (600000ms = 10min)
-                bw.newLine();
-                bw.write("true");   //Update games on app start
-                bw.newLine();
-                bw.write("false");  //Visualize gamestop bunny
-                bw.newLine();
-                bw.write("false");  //Notification sound
-                bw.newLine();
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Start background service
+        //Start background service if not already running
+        if(!isBackgroundServiceRunning(BackgroundService.class)) {
             Intent service = new Intent(this, BackgroundService.class);
             startService(service);
         }
@@ -283,30 +252,24 @@ public class ActivityMain extends AppCompatActivity{
             }
             wishlistAdapter.notifyDataSetChanged();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        checkAndSetGamestopBunnyWishlist();
+        checkAndSetGamestopBunny();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         active=true;
-        checkAndSetGamestopBunnyWishlist();
+        checkAndSetGamestopBunny();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         active=true;
-        checkAndSetGamestopBunnyWishlist();
+        checkAndSetGamestopBunny();
     }
 
     @Override
@@ -320,14 +283,6 @@ public class ActivityMain extends AppCompatActivity{
         super.onStop();
         try {
             DirectoryManager.exportGames(wishlistData);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -413,8 +368,9 @@ public class ActivityMain extends AppCompatActivity{
         findViewById(R.id.resultsOfSearchLayout).setVisibility(View.VISIBLE);
         gameToSearch.setEnabled(true);
         searchedGameListView.smoothScrollToPosition(0);
-        checkAndSetGamestopBunnySearch();
+        checkAndSetGamestopBunny();
     }
+
 
 
     //ADD AND REMOVE SYSTEM
@@ -469,7 +425,7 @@ public class ActivityMain extends AppCompatActivity{
                             e.printStackTrace();
                         }
 
-                        checkAndSetGamestopBunnyWishlist();
+                        checkAndSetGamestopBunny();
                         dialog.cancel();
                     }
                 });
@@ -513,7 +469,7 @@ public class ActivityMain extends AppCompatActivity{
             Toast.makeText(appContext, g.getTitle().substring(0,g.getTitle().length()-2) + " è già presente nella wishlist", Toast.LENGTH_SHORT).show();
         }
 
-        checkAndSetGamestopBunnyWishlist();
+        checkAndSetGamestopBunny();
     }
 
     //Remove a game from wishlist if caller is a game from ActivityGamePage
@@ -525,7 +481,7 @@ public class ActivityMain extends AppCompatActivity{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        checkAndSetGamestopBunnyWishlist();
+        checkAndSetGamestopBunny();
     }
 
     //Update wishlist
@@ -809,18 +765,32 @@ public class ActivityMain extends AppCompatActivity{
     public static void resetResearh(){
         searchedGameListData.clear();
         searchedGameListAdapter.notifyDataSetChanged();
-        checkAndSetGamestopBunnySearch();
+        checkAndSetGamestopBunny();
     }
 
     public static void resetAll(){
         resetResearh();
         wishlistData.clear();
         wishlistAdapter.notifyDataSetChanged();
+        checkAndSetGamestopBunny();
+    }
+
+    public static void checkAndSetGamestopBunny(){
+        boolean bunnyEnabled = settingsManager.isBunnyEnabled();
+
+        if(bunnyEnabled){
+            bunnySearchImage.setVisibility(View.VISIBLE);
+            bunnyWishlistImage.setVisibility(View.VISIBLE);
+        }else{
+            bunnySearchImage.setVisibility(View.GONE);
+            bunnyWishlistImage.setVisibility(View.GONE);
+        }
+
+        checkAndSetGamestopBunnyWishlist();
         checkAndSetGamestopBunnySearch();
     }
 
     public static void checkAndSetGamestopBunnyWishlist(){
-        checkAndSetGamestopBunny();
         if(wishlistData.size()==0){
             bunnyWishlist.setVisibility(View.VISIBLE);
         }else{
@@ -829,7 +799,6 @@ public class ActivityMain extends AppCompatActivity{
     }
 
     public static void checkAndSetGamestopBunnySearch(){
-        checkAndSetGamestopBunny();
         if(searchedGameListData.size()==0){
             bunnySearch.setVisibility(View.VISIBLE);
         }else{
@@ -837,34 +806,14 @@ public class ActivityMain extends AppCompatActivity{
         }
     }
 
-    public static void checkAndSetGamestopBunny(){
-        //Visualize gamestop bunny
-        File f = new File(DirectoryManager.getAppDir() + "config.txt");
-        if (f.exists()) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(f));
-
-                //Read unnecessary lines
-                br.readLine();
-                br.readLine();
-                br.readLine();
-
-                boolean visualizeGamestopBunny = Boolean.parseBoolean(br.readLine());
-
-                if(visualizeGamestopBunny){
-                    bunnySearchImage.setVisibility(View.VISIBLE);
-                    bunnyWishlistImage.setVisibility(View.VISIBLE);
-                }else{
-                    bunnySearchImage.setVisibility(View.GONE);
-                    bunnyWishlistImage.setVisibility(View.GONE);
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+    private boolean isBackgroundServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
             }
         }
+        return false;
     }
 
 }

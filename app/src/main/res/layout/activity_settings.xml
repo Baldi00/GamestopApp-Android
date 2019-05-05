@@ -72,7 +72,7 @@
                     android:text="Servizio notifiche in background"/>
 
                 <Switch
-                    android:id="@+id/backgroundService"
+                    android:id="@+id/notificationServiceEnabled"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
@@ -95,7 +95,7 @@
                     android:text="Intervallo di aggiornamento"/>
 
                 <Spinner
-                    android:id="@+id/updateInterval"
+                    android:id="@+id/notificationServiceSleepTime"
                     android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
                     android:text="Notifica con suono"/>
 
                 <Switch
-                    android:id="@+id/notificationSound"
+                    android:id="@+id/notificationSoundEnabled"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
@@ -144,7 +144,7 @@
                     android:text="Aggiorna dati all'avvio dell'applicazione"/>
 
                 <Switch
-                    android:id="@+id/updateOnAppStart"
+                    android:id="@+id/updateOnStartEnabled"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
@@ -168,7 +168,7 @@
                     android:text="Visualizza Gamestop Bunny"/>
 
                 <Switch
-                    android:id="@+id/visualizeGamestopBunny"
+                    android:id="@+id/bunnyEnabled"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"

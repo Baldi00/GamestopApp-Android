@@ -28,11 +28,16 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
     private SwipeRefreshLayout pullToRefresh;
     private ActivityMain main;
     private int notificationId;
-    private NotificationManager notificationManager;
+    private SettingsManager settingsManager;
 
     public MyOnRefreshListener(SwipeRefreshLayout pullToRefresh, ActivityMain main) {
         this.pullToRefresh = pullToRefresh;
         this.main = main;
+        try {
+            settingsManager = SettingsManager.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //Call the update for the games in wishlist
@@ -46,7 +51,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
 
     private void onEndRefresh(Boolean result){
         pullToRefresh.setRefreshing(false);
-        main.updateWishlist();
+        ActivityMain.updateWishlist();
 
 
         if(result!=null)
@@ -78,22 +83,10 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
                 if (isConnected) {
-                    boolean notificationSound = false;
-                    BufferedReader brConfig = null;
-
-                    brConfig = new BufferedReader(new FileReader(DirectoryManager.getAppDir() + "config.txt"));
-
-                    //Read unnecessary lines
-                    brConfig.readLine();
-                    brConfig.readLine();
-                    brConfig.readLine();
-                    brConfig.readLine();
-                    notificationSound = Boolean.parseBoolean(brConfig.readLine());
+                    boolean notificationSoundEnabled = settingsManager.isNotificationSoundEnabled();
 
                     if (DirectoryManager.wishlistExists() && !DirectoryManager.wishlistEmpty()) {
-                        Games gs = null;
-
-                        gs = DirectoryManager.importGames();
+                        Games gs = DirectoryManager.importGames();
 
                         if (gs != null) {
                             for (GamePreview gp : gs) {
@@ -125,7 +118,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                         notification.setContentTitle(game.getTitle());
                                         notification.setContentText(str);
 
-                                        if (notificationSound) {
+                                        if (notificationSoundEnabled) {
                                             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                                             notification.setSound(alarmSound);
                                         }
@@ -148,8 +141,6 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                     return true;
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
             } catch (Exception e) {         // TODO: try to remove
                 e.printStackTrace();
             }

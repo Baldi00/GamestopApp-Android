@@ -8,83 +8,81 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class ActivitySettings extends AppCompatActivity {
 
     private boolean toApplyChanges = true;
+    private SettingsManager settingsManager;
+
+    private boolean notificationServiceEnabled;
+    private int notificationServiceSleepTime;
+    private boolean updateOnStartEnabled;
+    private boolean bunnyEnabled;
+    private boolean notificationSoundEnabled;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        File f = new File(DirectoryManager.getAppDir()+"config.txt");
+        try {
+            settingsManager = SettingsManager.getInstance();
+            notificationServiceEnabled = settingsManager.isNotificationServiceEnabled();
+            notificationServiceSleepTime = settingsManager.getNotificationServiceSleepTime();
+            updateOnStartEnabled = settingsManager.isUpdateOnStartEnabled();
+            bunnyEnabled = settingsManager.isBunnyEnabled();
+            notificationSoundEnabled = settingsManager.isNotificationSoundEnabled();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        if(f.exists()) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(f));
-                boolean backgroundServiceEnabled = Boolean.parseBoolean(br.readLine());
-                int millisecondsToSleep = Integer.parseInt(br.readLine());
-                boolean updateOnAppStart = Boolean.parseBoolean(br.readLine());
-                boolean visualizeGamestopBunny = Boolean.parseBoolean(br.readLine());
-                boolean notificationSound = Boolean.parseBoolean(br.readLine());
+        if(!notificationServiceEnabled){
+            ((Switch)findViewById(R.id.notificationServiceEnabled)).setChecked(false);
+        }
 
-                if(!backgroundServiceEnabled){
-                    ((Switch)findViewById(R.id.backgroundService)).setChecked(false);
-                }
+        Spinner spinner = (Spinner)findViewById(R.id.notificationServiceSleepTime);
+        switch (notificationServiceSleepTime){
+            case 600000:
+                spinner.setSelection(0);
+                break;
+            case 1800000:
+                spinner.setSelection(1);
+                break;
+            case 3600000:
+                spinner.setSelection(2);
+                break;
+            case 10800000:
+                spinner.setSelection(3);
+                break;
+            case 5000:
+                spinner.setSelection(4);
+                break;
+        }
 
-                Spinner spinner = (Spinner)findViewById(R.id.updateInterval);
-                switch (millisecondsToSleep){
-                    case 600000:
-                        spinner.setSelection(0);
-                        break;
-                    case 1800000:
-                        spinner.setSelection(1);
-                        break;
-                    case 3600000:
-                        spinner.setSelection(2);
-                        break;
-                    case 10800000:
-                        spinner.setSelection(3);
-                        break;
-                    case 5000:
-                        spinner.setSelection(4);
-                        break;
-                }
+        if(!updateOnStartEnabled){
+            ((Switch)findViewById(R.id.updateOnStartEnabled)).setChecked(false);
+        }
 
-                if(!updateOnAppStart){
-                    ((Switch)findViewById(R.id.updateOnAppStart)).setChecked(false);
-                }
+        if(bunnyEnabled){
+            ((Switch)findViewById(R.id.bunnyEnabled)).setChecked(true);
+        }
 
-                if(visualizeGamestopBunny){
-                    ((Switch)findViewById(R.id.visualizeGamestopBunny)).setChecked(true);
-                }
-
-                if(notificationSound){
-                    ((Switch)findViewById(R.id.notificationSound)).setChecked(true);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(notificationSoundEnabled){
+            ((Switch)findViewById(R.id.notificationSoundEnabled)).setChecked(true);
         }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         if(toApplyChanges)
             applyChanges(null);
     }
@@ -197,48 +195,39 @@ public class ActivitySettings extends AppCompatActivity {
     }
 
     public void applyChanges(View v){
-        File f = new File(DirectoryManager.getAppDir()+"config.txt");
 
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        settingsManager.setNotificationServiceEnabled(((Switch)findViewById(R.id.notificationServiceEnabled)).isChecked());
 
-            bw.write(String.valueOf(((Switch)findViewById(R.id.backgroundService)).isChecked())); //Notification service enabled (background)
-            bw.newLine();
-
-            switch (((Spinner)findViewById(R.id.updateInterval)).getSelectedItemPosition()){
-                case 0:
-                    bw.write("600000");
-                    break;
-                case 1:
-                    bw.write("1800000");
-                    break;
-                case 2:
-                    bw.write("3600000");
-                    break;
-                case 3:
-                    bw.write("10800000");
-                    break;
-                case 4:
-                    bw.write("5000");
-                    break;
-            }
-            bw.newLine();
-
-            bw.write(String.valueOf(((Switch)findViewById(R.id.updateOnAppStart)).isChecked())); //Update games on app start
-            bw.newLine();
-
-            bw.write(String.valueOf(((Switch)findViewById(R.id.visualizeGamestopBunny)).isChecked())); //Update games on app start
-            bw.newLine();
-
-            bw.write(String.valueOf(((Switch)findViewById(R.id.notificationSound)).isChecked())); //Notification sound
-            bw.newLine();
-
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        switch (((Spinner)findViewById(R.id.notificationServiceSleepTime)).getSelectedItemPosition()){
+            case 0:
+                settingsManager.setNotificationServiceSleepTime(600000);
+                break;
+            case 1:
+                settingsManager.setNotificationServiceSleepTime(1800000);
+                break;
+            case 2:
+                settingsManager.setNotificationServiceSleepTime(3600000);
+                break;
+            case 3:
+                settingsManager.setNotificationServiceSleepTime(10800000);
+                break;
+            case 4:
+                settingsManager.setNotificationServiceSleepTime(5000);
+                break;
         }
 
-        Toast.makeText(this,"Modifiche salvate",Toast.LENGTH_SHORT).show();
+        settingsManager.setUpdateOnStartEnabled(((Switch)findViewById(R.id.updateOnStartEnabled)).isChecked());
+        settingsManager.setBunnyEnabled(((Switch)findViewById(R.id.bunnyEnabled)).isChecked());
+        settingsManager.setNotificationSoundEnabled(((Switch)findViewById(R.id.notificationSoundEnabled)).isChecked());
+
+        try {
+            settingsManager.saveSettings();
+            Toast.makeText(this,"Modifiche salvate",Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,"Errore durante il salvataggio delle impostazioni",Toast.LENGTH_SHORT).show();
+        }
+
         finish();
     }
 }
