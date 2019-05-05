@@ -481,7 +481,7 @@ public class ActivityGamePage extends Activity {
 
     //Open the official site of the game
     public void goToPromoMessageUrl(View v){
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(gameOfThePage.getPromo().get(0).getMessageURL()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + gameOfThePage.getPromo().get(0).getMessageURL()));
         startActivity(intent);
     }
 }
