@@ -27,6 +27,7 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
     private ActivityMain main;
     private int notificationId;
     private SettingsManager settingsManager;
+    private int numNotifications;
 
     public MyOnRefreshListener(SwipeRefreshLayout pullToRefresh, ActivityMain main) {
         this.pullToRefresh = pullToRefresh;
@@ -41,10 +42,9 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
     //Call the update for the games in wishlist
     @Override
     public void onRefresh() {
+        numNotifications = 0;
         Updater up = new Updater(main,this);
         up.execute();
-
-        //pullToRefresh.setRefreshing(false);
     }
 
     private void onEndRefresh(Boolean result){
@@ -53,10 +53,14 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
 
 
         if(result!=null)
-            if(result)
-                Toast.makeText(main,"Aggiornamento terminato correttamente",Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(main,"Non sei connesso a internet",Toast.LENGTH_SHORT).show();
+            if(result) {
+                Toast.makeText(main, "Aggiornamento terminato correttamente", Toast.LENGTH_SHORT).show();
+                if(numNotifications==0){
+                    Toast.makeText(main, "Non ci sono novità", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(main, "Non sei connesso a internet", Toast.LENGTH_SHORT).show();
+            }
     }
 
     private class Updater extends AsyncTask {
@@ -95,6 +99,8 @@ public class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener
                                 if (notifications != null) {
 
                                     for (String str : notifications) {
+
+                                        numNotifications++;
 
                                         //Read notification id
                                         BufferedReader br = new BufferedReader(new FileReader(DirectoryManager.getAppDir() + "notificationId.txt"));

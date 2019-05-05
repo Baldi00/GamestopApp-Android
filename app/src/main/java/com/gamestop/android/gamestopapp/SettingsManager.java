@@ -49,7 +49,7 @@ public class SettingsManager {
     private void createSettingsFile() throws IOException {
 
         notificationServiceEnabled = true;
-        notificationServiceSleepTime = 600000;
+        notificationServiceSleepTime = 3600000;
         notificationSoundEnabled = false;
         updateOnStartEnabled = true;
         bunnyEnabled = false;

@@ -30,7 +30,17 @@ public class ActivitySettings extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        setSettingsGraphic();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(toApplyChanges)
+            applyChanges(null);
+    }
+
+    public void setSettingsGraphic(){
         try {
             settingsManager = SettingsManager.getInstance();
             notificationServiceEnabled = settingsManager.isNotificationServiceEnabled();
@@ -42,9 +52,7 @@ public class ActivitySettings extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(!notificationServiceEnabled){
-            ((Switch)findViewById(R.id.notificationServiceEnabled)).setChecked(false);
-        }
+        ((Switch)findViewById(R.id.notificationServiceEnabled)).setChecked(notificationServiceEnabled);
 
         Spinner spinner = (Spinner)findViewById(R.id.notificationServiceSleepTime);
         switch (notificationServiceSleepTime){
@@ -60,29 +68,22 @@ public class ActivitySettings extends AppCompatActivity {
             case 10800000:
                 spinner.setSelection(3);
                 break;
-            case 5000:
+            case 21600000:
                 spinner.setSelection(4);
+                break;
+            case 43200000:
+                spinner.setSelection(5);
+                break;
+            case 5000:
+                spinner.setSelection(6);
                 break;
         }
 
-        if(!updateOnStartEnabled){
-            ((Switch)findViewById(R.id.updateOnStartEnabled)).setChecked(false);
-        }
+        ((Switch)findViewById(R.id.updateOnStartEnabled)).setChecked(updateOnStartEnabled);
 
-        if(bunnyEnabled){
-            ((Switch)findViewById(R.id.bunnyEnabled)).setChecked(true);
-        }
+        ((Switch)findViewById(R.id.bunnyEnabled)).setChecked(bunnyEnabled);
 
-        if(notificationSoundEnabled){
-            ((Switch)findViewById(R.id.notificationSoundEnabled)).setChecked(true);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(toApplyChanges)
-            applyChanges(null);
+        ((Switch)findViewById(R.id.notificationSoundEnabled)).setChecked(notificationSoundEnabled);
     }
 
     public void deleteTempGames(View v){
@@ -135,6 +136,35 @@ public class ActivitySettings extends AppCompatActivity {
                         }
                         Toast.makeText(getApplicationContext(),"Wishlist svuotata",Toast.LENGTH_SHORT).show();
                         finish();
+                    }
+                });
+
+        dialog.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        dialog.show();
+    }
+
+    public void resetSettings(View v){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
+        dialog.setMessage("Vuoi ripristinare le impostazioni di default?");
+        dialog.setPositiveButton(
+                "Si",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        try {
+                            settingsManager.resetSettings();
+                            setSettingsGraphic();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 
