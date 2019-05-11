@@ -14,7 +14,7 @@ public class Downloader extends AsyncTask {
         this.url = url;
     }
 
-    //Downloads in background of the game info, if not present NOT IMPLEMENTED YET
+    // Downloads in background of the game info, if not present
     @Override
     protected Object doInBackground(Object[] params) {
         try {

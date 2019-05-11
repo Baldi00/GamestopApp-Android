@@ -79,11 +79,8 @@ public class ActivityMain extends AppCompatActivity{
     private static Context appContext;
     private static boolean active = false;
 
-    // CacheManager
     private static CacheManager cache;
-
-    //SettingsManager
-    private static SettingsManager settingsManager;
+    private static SettingsManager settings;
 
 
     /*********************************************************************************************************************************/
@@ -183,8 +180,8 @@ public class ActivityMain extends AppCompatActivity{
 
         //Check and do update at startup
         try {
-            settingsManager = SettingsManager.getInstance();
-            boolean updateOnStartEnabled = settingsManager.isUpdateOnStartEnabled();
+            settings = SettingsManager.getInstance();
+            boolean updateOnStartEnabled = settings.isUpdateOnStartEnabled();
             if(updateOnStartEnabled) {
                 pullToRefreshLayout.post(new Runnable() {
                     @Override
@@ -226,7 +223,6 @@ public class ActivityMain extends AppCompatActivity{
 
         //Set application static context
         appContext = getApplicationContext();
-
 
         // CACHE
         cache = CacheManager.getInstance();
@@ -768,7 +764,7 @@ public class ActivityMain extends AppCompatActivity{
     }
 
     public static void checkAndSetGamestopBunny(){
-        boolean bunnyEnabled = settingsManager.isBunnyEnabled();
+        boolean bunnyEnabled = settings.isBunnyEnabled();
 
         if(bunnyEnabled){
             bunnySearchImage.setVisibility(View.VISIBLE);

@@ -9,12 +9,13 @@ public class Searcher extends AsyncTask {
 
     private ActivityMain main;
     private String gameToSearch;
+
     public Searcher(ActivityMain main, String gameToSearch) {
         this.main = main;
         this.gameToSearch = gameToSearch;
     }
 
-    //Search in background the game NOT IMPLEMENTED YET
+    // Search in background the game
     @Override
     protected Object doInBackground(Object[] params) {
         List<GamePreview> gamesFound;

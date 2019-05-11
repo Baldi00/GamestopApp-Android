@@ -158,7 +158,7 @@ public class GamePreview implements Comparable<GamePreview> {
     }
 
     public String getCover() {
-        return DirectoryManager.getGameDirectory(id)+ "cover.jpg";
+        return DirectoryManager.getGameDirectory(id)+ "preview.jpg";
     }
 
     public boolean hasCover() {
@@ -391,6 +391,7 @@ public class GamePreview implements Comparable<GamePreview> {
                 }
             }
 
+            // memorize pegi & release date
             gamePreview.pegi = new ArrayList<>();
             gamePreview.pegi.add( game.getElementsByTag("p").get(0).text() );
             gamePreview.releaseDate = game.getElementsByTag("li").get(0).text().split(": ")[1];
@@ -400,7 +401,8 @@ public class GamePreview implements Comparable<GamePreview> {
 
             // download the cover
             String imageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).attr("data-llsrc");
-            imageUrl = imageUrl.replace("2med", "3max");
+            // TODO : remove
+            //imageUrl = imageUrl.replace("2med", "3max");
             DirectoryManager.downloadImage(gamePreview.getCover(), imageUrl);
 
             searchedGames.add(gamePreview);

@@ -111,6 +111,11 @@ public class Game extends GamePreview {
         return "www.gamestop.it/StoreLocator/Index?productId=" + getId();
     }
 
+    @Override
+    public String getCover() {
+        return DirectoryManager.getGameDirectory(id)+ "cover.jpg";
+    }
+
     public String[] getGallery() {
 
         // salvo i nomi delle immagini
@@ -522,8 +527,8 @@ public class Game extends GamePreview {
         return changes;
     }
 
-    // modified on android : doesn't support wholeText() method
-    // TODO : trovare soluzione a wholeText()
+    // modified on android
+    // TODO : doesn't support wholeText() method
     private boolean updateDescription(Element prodDesc) {
 
         boolean changes = false;
