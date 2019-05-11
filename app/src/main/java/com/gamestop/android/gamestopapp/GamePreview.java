@@ -401,8 +401,6 @@ public class GamePreview implements Comparable<GamePreview> {
 
             // download the cover
             String imageUrl = game.getElementsByClass("prodImg").get(0).getElementsByTag("img").get(0).attr("data-llsrc");
-            // TODO : remove
-            //imageUrl = imageUrl.replace("2med", "3max");
             DirectoryManager.downloadImage(gamePreview.getCover(), imageUrl);
 
             searchedGames.add(gamePreview);

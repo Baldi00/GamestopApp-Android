@@ -6,25 +6,33 @@ import android.graphics.BitmapFactory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 public class DirectoryManager {
 
@@ -32,7 +40,7 @@ public class DirectoryManager {
     private static final String APP_DIR = "/data/data/com.gamestop.android.gamestopapp/";      //the folder of the app
     private static final String GAMES_DIRECTORY = APP_DIR + "userdata/";
     private static final String WISHLIST = GAMES_DIRECTORY + "data.csv";
-    private static final String SCHEMA_GAME = APP_DIR + "Game.xsd";
+    private static final String GAME_SCHEMA = APP_DIR + "Game.xsd";
 
     public static void mkdir(){
         File dir = new File(GAMES_DIRECTORY);
@@ -64,16 +72,12 @@ public class DirectoryManager {
         return getGameDirectory(gameId) + "gallery/";
     }
 
-    public static File getWishlist() {
-        return new File(WISHLIST);
-    }
-
     public static File getGameXML(String gameId){
         return new File(getGameDirectory(gameId)+"data.xml");
     }
 
     // modified on android
-    protected static void downloadImage(String imgPath, String imgUrl) throws MalformedURLException, IOException {
+    protected static void downloadImage(String imgPath, String imgUrl) {
 
         File f = new File(imgPath);
 
@@ -85,9 +89,9 @@ public class DirectoryManager {
 
         Bitmap image = getBitmapFromURL(imgUrl);
 
-
+        // TODO: should throw the exception
         try (FileOutputStream out = new FileOutputStream(imgPath)) {
-            image.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,7 +122,7 @@ public class DirectoryManager {
 
     // IMPORT/EXPORT METHODS FOR GAME CLASS -----------------------------------
 
-    public static void exportGame(Game game) throws Exception  {
+    public static void exportGame(Game game) throws TransformerException, ParserConfigurationException {
 
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         doc.appendChild( exportGame(game, doc) );
@@ -129,8 +133,7 @@ public class DirectoryManager {
         File f = getGameXML(game.getId());
         transformer.transform( new DOMSource(doc), new StreamResult(f) );
 
-        // check the XML
-        validateGame(f);
+        // TODO: make use validateGame() (problem with constant W3C_XML_SCHEMA_NS_URI)
 
         Log.info("DirectoryManager", "Game exported successfully", "["+game.getId()+"]" + "["+game.getPlatform()+"]" + " - \"" + game.getTitle() + "\"");
     }
@@ -344,12 +347,11 @@ public class DirectoryManager {
         return gameElement;
     }
 
-    public static Game importGame(String gameId) throws Exception  {
+    public static Game importGame(String gameId) throws ParserConfigurationException, IOException, SAXException {
 
-        File f = getGameXML(gameId);      // need revision
+        File f = getGameXML(gameId);
 
-        // check the XML
-        validateGame(f);
+        // TODO: make use validateGame() (problem with constant W3C_XML_SCHEMA_NS_URI)
 
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(f);
         return importGame(doc);
@@ -532,38 +534,36 @@ public class DirectoryManager {
     }
 
     // modified on android
-    public static void validateGame(File f) throws Exception  {
+    public static boolean validateGame(File f)  {
 
-        return;
-        /*
-        File gameSchema = new File(SCHEMA_GAME);
-
-        if ( !gameSchema.exists() ){
-            Log.error("DirectoryManager", "game schema doesn't exist");
+        try {
+            File gameSchema = new File(GAME_SCHEMA);
+            Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(gameSchema);
+            javax.xml.validation.Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(f));
+        } catch (Exception e) {
+            return false;
         }
 
-        Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(gameSchema);
-        javax.xml.validation.Validator validator = schema.newValidator();
-        validator.validate(new StreamSource(f));
-        */
+        return true;
     }
 
     // IMPORT/EXPORT METHODS FOR GAMES CLASS ----------------------------------
 
-    public static void exportGames(Games games) throws Exception {
+    public static void exportGames(Games games) throws TransformerException, ParserConfigurationException, IOException {
 
         File f = new File(WISHLIST);
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
         for ( GamePreview game : games ){
             exportGame((Game)game);
-            bw.write( game.getId() + ";" );
+            bw.write(game.getId()+';');
         }
 
         bw.close();
     }
 
-    public static Games importGames() throws Exception {
+    public static Games importGames() throws IOException, ParserConfigurationException, SAXException {
 
         Games games = new Games();
 
@@ -631,105 +631,4 @@ public class DirectoryManager {
         f.delete();
     }
 
-    //CREATE VALIDATOR --------------------------------------------------------
-
-    // reserved for android
-    public static void createValidatorFile() throws Exception{
-        File f = new File(SCHEMA_GAME);
-
-        if(!f.exists()) {
-
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-
-            String schema = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                    "\n" +
-                    "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
-                    "\t\n" +
-                    "\t<xs:element name=\"game\">\t\t\n" +
-                    "\t\t<xs:complexType>\n" +
-                    "\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t<xs:element name=\"title\" type=\"xs:string\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"publisher\" type=\"xs:string\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"platform\" type=\"xs:string\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"prices\">\n" +
-                    "\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"newPrice\" minOccurs=\"0\" type=\"xs:double\"/>\n" +
-                    "\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"olderNewPrices\" minOccurs=\"0\">\n" +
-                    "\t\t\t\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<xs:element name=\"price\" type=\"xs:double\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n" +
-                    "\t\t\t\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"usedPrice\" minOccurs=\"0\" type=\"xs:double\"/>\n" +
-                    "\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"olderUsedPrices\" minOccurs=\"0\">\n" +
-                    "\t\t\t\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<xs:element name=\"price\" type=\"xs:double\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n" +
-                    "\t\t\t\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"preorderPrice\" minOccurs=\"0\" type=\"xs:double\"/>\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"digitalPrice\" minOccurs=\"0\" type=\"xs:double\"/>\n" +
-                    "                                                        \n" +
-                    "\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t<xs:element name=\"pegi\" minOccurs=\"0\">\n" +
-                    "\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"type\" type=\"xs:string\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n" +
-                    "\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t<xs:element name=\"genres\" minOccurs=\"0\">\n" +
-                    "\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"genre\" type=\"xs:string\" minOccurs=\"1\" maxOccurs=\"unbounded\"/>\n" +
-                    "\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t<xs:element name=\"officialSite\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"players\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"releaseDate\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "\t\t\t\t\n" +
-                    "\t\t\t\t<xs:element name=\"promos\" minOccurs=\"0\">\n" +
-                    "\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t<xs:element name=\"promo\" minOccurs=\"1\" maxOccurs=\"unbounded\">\n" +
-                    "\t\t\t\t\t\t\t\t<xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t\t\t<xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<xs:element name=\"header\" type=\"xs:string\" minOccurs=\"1\"/>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<xs:element name=\"validity\" type=\"xs:string\" minOccurs=\"1\"/>\n" +
-                    "                                        <xs:element name=\"message\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "                                        <xs:element name=\"messageURL\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "\t\t\t\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t\t\t\t</xs:element>\n" +
-                    "\t\t\t\t\t\t</xs:sequence>\n" +
-                    "\t\t\t\t\t</xs:complexType>\n" +
-                    "\t\t\t\t</xs:element>\n" +
-                    "\n" +
-                    "\t\t\t\t<xs:element name=\"description\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-                    "\t\t\t\t<xs:element name=\"validForPromo\" type=\"xs:boolean\" minOccurs=\"0\"/>\n" +
-                    "\n" +
-                    "\t\t\t</xs:sequence>\n" +
-                    "\t\t\t<xs:attribute name=\"id\" type=\"xs:string\"/>                      \n" +
-                    "\t\t</xs:complexType>\n" +
-                    "\t</xs:element>\n" +
-                    "</xs:schema>";
-
-            bw.write(schema);
-            bw.close();
-        }
-    }
 }

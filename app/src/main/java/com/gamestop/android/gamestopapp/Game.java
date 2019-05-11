@@ -584,6 +584,7 @@ public class Game extends GamePreview {
         return changes;
     }
 
+    // modified on android
     private void updateCover(Element prodImgMax) {
 
         // if the element hasn't got the class name "prodImg max"
@@ -599,15 +600,10 @@ public class Game extends GamePreview {
         String imgUrl = prodImgMax.attr("href");
         String imgPath = getCover();
 
-        try {
-            DirectoryManager.downloadImage(imgPath, imgUrl);
-        } catch ( MalformedURLException ex ) {
-            Log.error("Game", "ID: " + getId() + " - malformed URL", imgUrl);
-        } catch (IOException ex) {
-            Log.error("Game", "cannot download cover", imgUrl);
-        }
+        DirectoryManager.downloadImage(imgPath, imgUrl);
     }
 
+    // modified on android
     private void updateGallery(Element mediaImages) {
 
         // if the element hasn't got the class name "mediaImages"
@@ -628,7 +624,6 @@ public class Game extends GamePreview {
         }
 
         for (Element e : mediaImages.getElementsByTag("a")) {
-
             String imgUrl = e.attr("href");
             if (imgUrl.equals("")) {
                 // this can handle very rare cases of malformed HTMLs
@@ -637,14 +632,7 @@ public class Game extends GamePreview {
             }
 
             String imgName = imgUrl.split("/")[imgUrl.split("/").length-1];
-
-            try {
-                DirectoryManager.downloadImage(imgPath+imgName, imgUrl);
-            } catch ( MalformedURLException ex ) {
-                Log.error("Game", "ID: " + getId() + " - malformed URL", imgUrl);
-            } catch (IOException ex) {
-                Log.error("Game", "cannot download image", imgUrl);
-            }
+            DirectoryManager.downloadImage(imgPath+imgName, imgUrl);
         }
 
     }

@@ -195,12 +195,7 @@ public class ActivityMain extends AppCompatActivity{
             e.printStackTrace();
         }
 
-        //Create validator file (xsd) if not exists
-        try {
-            DirectoryManager.createValidatorFile();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO: creation of XSD to validate gameXML
 
         //Start background service if not already running
         if(!isBackgroundServiceRunning(BackgroundService.class)) {
