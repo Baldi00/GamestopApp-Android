@@ -30,6 +30,7 @@
         <activity android:name=".ActivitySettings" />
         <activity
             android:name=".ActivityGallery"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" />
 
         <receiver
