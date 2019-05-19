@@ -181,7 +181,7 @@ public class ActivitySettings extends AppCompatActivity {
 
     public void resetAll(View v){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.DialogActivityGamePage);
-        dialog.setMessage("L'app verrà ripristinata e tutti i giochi verranno cancellati! Sei sicuro di voler ritornare allo stato iniziale?");
+        dialog.setMessage("L'app verrà ripristinata e tutti i giochi verranno cancellati! Sei sicuro di voler ritornare allo stato iniziale? (L'app verrà chiusa)");
         dialog.setPositiveButton(
                 "Si",
                 new DialogInterface.OnClickListener() {
