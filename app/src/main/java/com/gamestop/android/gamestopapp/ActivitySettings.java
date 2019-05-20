@@ -5,9 +5,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -17,7 +20,6 @@ import java.io.IOException;
 
 public class ActivitySettings extends AppCompatActivity {
 
-    private boolean toApplyChanges = true;
     private SettingsManager settingsManager;
 
     private boolean notificationServiceEnabled;
@@ -34,10 +36,9 @@ public class ActivitySettings extends AppCompatActivity {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(toApplyChanges)
-            applyChanges(null);
+    public void onBackPressed() {
+        super.onBackPressed();
+        applyChanges(null);
     }
 
     public void setSettingsGraphic(){
@@ -96,7 +97,6 @@ public class ActivitySettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         try {
-                            toApplyChanges = false;
                             DirectoryManager.deleteTempGames(ActivityMain.getWishlistData());
                             ActivityMain.resetResearh();
                         } catch (Exception e) {
@@ -128,7 +128,6 @@ public class ActivitySettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         try {
-                            toApplyChanges = false;
                             DirectoryManager.deleteAllGames();
                             ActivityMain.resetAll();
                         } catch (Exception e) {
@@ -189,7 +188,6 @@ public class ActivitySettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         try {
-                            toApplyChanges = false;
                             DirectoryManager.deleteAllGames();
                             DirectoryManager.deleteFilesRecursive(new File(DirectoryManager.getAppDir() + "config.txt"));
                             DirectoryManager.deleteFilesRecursive(new File(DirectoryManager.getAppDir() + "Game.xsd"));
@@ -235,6 +233,12 @@ public class ActivitySettings extends AppCompatActivity {
                 settingsManager.setNotificationServiceSleepTime(10800000);
                 break;
             case 4:
+                settingsManager.setNotificationServiceSleepTime(21600000);
+                break;
+            case 5:
+                settingsManager.setNotificationServiceSleepTime(43200000);
+                break;
+            case 6:
                 settingsManager.setNotificationServiceSleepTime(5000);
                 break;
         }
