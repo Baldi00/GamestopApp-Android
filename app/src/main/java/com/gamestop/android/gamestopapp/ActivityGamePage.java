@@ -359,9 +359,12 @@ public class ActivityGamePage extends Activity {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 int marginInPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
                 int marginInPixelRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
-                if (i == galleryImages.length - 1) {
+                if (i == galleryImages.length - 1)
+                {
                     layoutParams.setMargins(marginInPixel, 0, marginInPixelRight, 0);
-                } else {
+                }
+                else
+                    {
                     layoutParams.setMargins(marginInPixel, 0, 0, 0);
                 }
                 galleryImage.setTag(i);
@@ -400,6 +403,7 @@ public class ActivityGamePage extends Activity {
     }
 
     public void enlargeCover(View v){
+
         String[] images = new String[1];
 
         images[0] = "file://" + gameOfThePage.getCover();
@@ -408,6 +412,7 @@ public class ActivityGamePage extends Activity {
         i.putExtra("images",images);
         i.putExtra("position",0);
         startActivity(i);
+
     }
 
     //Show the menu on more options button

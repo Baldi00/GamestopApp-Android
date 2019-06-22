@@ -28,6 +28,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -79,7 +81,7 @@ public class ActivityMain extends AppCompatActivity{
     private static Context appContext;
     private static boolean active = false;
 
-    private static CacheManager cache;
+    //private static CacheManager cache;
     private static SettingsManager settings;
 
 
@@ -168,8 +170,8 @@ public class ActivityMain extends AppCompatActivity{
         //Adapters
         //Maybe 2 different adapter classes in the future
 
-        wishlistAdapter = new GameAdapter(wishlistData, this);
-        searchedGameListAdapter = new GameAdapter(searchedGameListData, this);
+        wishlistAdapter = new GameAdapter(wishlistData, this, getApplicationContext() );
+        searchedGameListAdapter = new GameAdapter(searchedGameListData, this, getApplicationContext());
 
         wishlistView.setAdapter(wishlistAdapter);
         searchedGameListView.setAdapter(searchedGameListAdapter);
@@ -220,7 +222,7 @@ public class ActivityMain extends AppCompatActivity{
         appContext = getApplicationContext();
 
         // CACHE
-        cache = CacheManager.getInstance();
+        //cache = CacheManager.getInstance();
     }
 
     @Override
@@ -231,7 +233,8 @@ public class ActivityMain extends AppCompatActivity{
             Games temp = DirectoryManager.importGames();
             for(GamePreview gp : temp){
                 wishlistData.add(gp);
-                cache.addBitmapToMemCache(gp.getCover());
+                //Picasso.with(this).load( new File(gp.getCover()) ); // TODO: it's useful?
+                //cache.addBitmapToMemCache(gp.getCover());
             }
             wishlistAdapter.notifyDataSetChanged();
 
@@ -340,7 +343,8 @@ public class ActivityMain extends AppCompatActivity{
         if(result!=null){
             for(GamePreview g : (ArrayList<GamePreview>)result){
                 searchedGameListData.add(g);
-                cache.addBitmapToMemCache(g.getCover());
+                //Picasso.with(this).load( new File(g.getCover()) ); // TODO : is it useful?
+                //cache.addBitmapToMemCache(g.getCover());
             }
             searchedGameListAdapter.notifyDataSetChanged();
         }else{

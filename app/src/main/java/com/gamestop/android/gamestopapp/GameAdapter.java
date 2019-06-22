@@ -4,23 +4,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class GameAdapter extends ArrayAdapter<GamePreview>{
 
     private TextView title, platform, publisher, newPrice, oldNewPrice, usedPrice, oldUsedPrice, digitalPrice, preorderPrice;
     private ImageView image;
+    private Context context;
 
-    public GameAdapter(Games list, ActivityMain main) {
+    public GameAdapter(Games list, ActivityMain main, Context context) {
         super(main, R.layout.gamepreview_compact, list);
+        this.context = context;
     }
 
     @Override
@@ -83,6 +90,7 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
             }
         }
 
+        /*
         // get image from cache if available
         CacheManager cache = CacheManager.getInstance();
         Bitmap bitmap = cache.getBitmapFromMemCache(game.getCover());
@@ -93,6 +101,10 @@ public class GameAdapter extends ArrayAdapter<GamePreview>{
         } else {
             image.setImageBitmap(bitmap);
         }
+        */
+
+
+        Picasso.with(context).load( new File(game.getCover()) ).into(image);
 
         oldNewPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         oldUsedPrice.setPaintFlags(usedPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
