@@ -489,6 +489,7 @@ public class Game extends GamePreview {
             bonusBlock = bonusBlock.getElementById("bonusBlock");
 
             if (bonusBlock == null) {
+                promo = null;
                 return changes;
             }
         }
@@ -700,12 +701,14 @@ public class Game extends GamePreview {
 
         }
 
+        // UPDATE PROMOS
         if ( updatePromos(body) == true ){
             if ( hasPromo() == true && promo == false ){
                 notifications.add("Il gioco è in promozione");
             }
         }
 
+        // save changes
         try {
             DirectoryManager.exportGame(this);
         } catch (Exception e) {
