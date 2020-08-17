@@ -1,6 +1,11 @@
+# [DEPRECATED]
+This project is no longer supported. New version at https://github.com/Brankale/gamestop_android_app
+
+# [OLD README]
+
 # GamestopApp-Android
 The app is a videogame wishlist.<br>
-Games and prices are provided by [Gamestop](https://www.gamestop.it).
+Games and prices are provided by [Gamestop Italia](https://www.gamestop.it).
 
 This is the Android app of the [Java version](https://github.com/Brankale/GamestopApp).
 
